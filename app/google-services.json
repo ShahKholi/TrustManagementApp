@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "991381290904",
+    "project_id": "trust-management-app",
+    "storage_bucket": "trust-management-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:991381290904:android:15e6263773f5b4709975ed",
+        "android_client_info": {
+          "package_name": "com.android.trustmanagementapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "991381290904-puml52ok53pf7jqneu9g0fk8rnqq8lj5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCL7Kbk2MoYWihlpxWWnVem9QMGBTZNcfA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "991381290904-puml52ok53pf7jqneu9g0fk8rnqq8lj5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.RegisterActivity"
+    android:background="@color/bar_color">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_register"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/bar_color">
+        <com.android.trustmanagementapp.utils.MSPTextViewBold
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/user_registration_page"
+            android:textColor="@color/white"
+            android:layout_gravity="center"
+            android:textSize="20sp"/>
+    </androidx.appcompat.widget.Toolbar>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/ll_register_screen"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_register"
+        >
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_marginTop="25dp"
+            android:id="@+id/first_name_reg"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:hint="@string/enter_first_name"
+            android:textColorHint="@color/teal_700"
+            app:boxStrokeColor="@color/teal_700"
+            app:hintTextColor="@color/teal_700"
+            >
+
+            <com.android.trustmanagementapp.utils.MSPEditText
+                android:id="@+id/et_first_name_reg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:padding="16dp"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                tools:ignore="SpeakableTextPresentCheck"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_marginTop="25dp"
+            android:id="@+id/last_name_reg"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:hint="@string/enter_last_name"
+            android:textColorHint="@color/teal_700"
+            app:boxStrokeColor="@color/teal_700"
+            app:hintTextColor="@color/teal_700"
+            >
+
+            <com.android.trustmanagementapp.utils.MSPEditText
+                android:id="@+id/et_last_name_reg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:padding="16dp"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                tools:ignore="SpeakableTextPresentCheck"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_marginTop="25dp"
+            android:id="@+id/email_reg"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:hint="@string/enter_email_address"
+            android:textColorHint="@color/teal_700"
+            app:boxStrokeColor="@color/teal_700"
+            app:hintTextColor="@color/teal_700"
+            >
+
+            <com.android.trustmanagementapp.utils.MSPEditText
+                android:id="@+id/et_email_reg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:padding="16dp"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                tools:ignore="SpeakableTextPresentCheck"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_marginTop="25dp"
+            android:id="@+id/ti_password_reg"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:hint="@string/enter_password"
+            android:textColorHint="@color/teal_700"
+            app:boxStrokeColor="@color/teal_700"
+            app:hintTextColor="@color/teal_700"
+            >
+
+            <com.android.trustmanagementapp.utils.MSPEditText
+                android:id="@+id/et_password_reg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:padding="16dp"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                tools:ignore="SpeakableTextPresentCheck"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_marginTop="25dp"
+            android:id="@+id/ti_confirm_password_reg"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:hint="@string/confirm_password"
+            android:textColorHint="@color/teal_700"
+            app:boxStrokeColor="@color/teal_700"
+            app:hintTextColor="@color/teal_700"
+            >
+
+            <com.android.trustmanagementapp.utils.MSPEditText
+                android:id="@+id/et_confirm_password_reg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:padding="16dp"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                tools:ignore="SpeakableTextPresentCheck"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_marginTop="25dp"
+            android:id="@+id/ti_mob_reg"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:hint="@string/enter_mobile_number"
+            android:textColorHint="@color/teal_700"
+            app:boxStrokeColor="@color/teal_700"
+            app:hintTextColor="@color/teal_700"
+            >
+
+            <com.android.trustmanagementapp.utils.MSPEditText
+                android:id="@+id/et_mob_reg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:padding="16dp"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                tools:ignore="SpeakableTextPresentCheck"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_marginTop="25dp"
+            android:id="@+id/ti_code_reg"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:hint="@string/create_code"
+            android:textColorHint="@color/teal_700"
+            app:boxStrokeColor="@color/teal_700"
+            app:hintTextColor="@color/teal_700"
+            >
+
+            <com.android.trustmanagementapp.utils.MSPEditText
+                android:id="@+id/et_code_reg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:padding="16dp"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                tools:ignore="SpeakableTextPresentCheck"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_terms_and_condition"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:gravity="center_vertical"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
+            >
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/cb_terms_and_condition"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:checked="false" />
+
+        <com.android.trustmanagementapp.utils.MSPTextViewBold
+            android:id="@+id/tv_terms_condition"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="@string/term_and_condition"
+            android:textColor="@color/teal_700"
+            android:textSize="14sp" />
+        </LinearLayout>
+
+        <com.android.trustmanagementapp.utils.MSPButton
+            android:id="@+id/btn_reg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/button_background"
+            android:foreground="?attr/selectableItemBackground"
+            android:text="@string/register"
+            android:textColor="@color/white"
+            tools:layout_editor_absoluteY="475dp"
+            />
+
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

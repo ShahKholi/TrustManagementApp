@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/r.hameed/.gradle/caches/transforms-3/368face66d1c80c1e333953313c58587/transformed/appcompat-1.4.2/res/layout/support_simple_spinner_dropdown_item.xml" value="0.1796875" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/drawable-v24/button_background.xml" value="0.19583333333333333" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/drawable-v24/date_background.xml" value="0.19583333333333333" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/drawable-v24/ic_baseline_arrow_back_ios_24.xml" value="0.1925925925925926" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/drawable-v24/rv_item_image_background.xml" value="0.19583333333333333" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/drawable/custom_edit_text.xml" value="0.19583333333333333" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/drawable/ic_baseline_edit_24.xml" value="0.19583333333333333" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_add_account.xml" value="0.3333333333333333" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_add_expense.xml" value="0.1796875" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_add_member.xml" value="0.22" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_admin_screen.xml" value="0.22" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_base.xml" value="0.1796875" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_create_group.xml" value="0.1796875" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_login.xml" value="0.1" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_member_detailed.xml" value="0.22" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_pre_view_account.xml" value="0.1796875" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_pre_view_member.xml" value="0.165625" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_register.xml" value="0.3333333333333333" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_view_account.xml" value="0.22" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_view_member_account.xml" value="0.3333333333333333" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/custom_dilog_box_delete.xml" value="0.1796875" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/custom_dilog_box_edit_text.xml" value="0.3333333333333333" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/dialog_progress.xml" value="0.1796875" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/dropdown_list_layout.xml" value="0.1796875" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/item_account_view_rc_layout.xml" value="0.22" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/item_expense_view_rc_layout.xml" value="0.3333333333333333" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/item_group_rc_layout.xml" value="0.1796875" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/item_member_account_detail_view_rc_layout.xml" value="0.1" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/item_member_account_view.xml" value="0.6" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/item_member_account_view_rc_layout.xml" value="0.1796875" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/item_member_detail_view_rc_layout.xml" value="0.5" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/item_member_list_view_rc_layout.xml" value="0.22" />
+        <entry key="..\:/Users/r.hameed/AppData/Local/Android/Sdk/platforms/android-31/data/res/layout/simple_spinner_dropdown_item.xml" value="0.1796875" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

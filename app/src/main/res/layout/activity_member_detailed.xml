@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.MemberDetailedActivity"
+    android:background="@color/bar_color">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_view_member_detail"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/bar_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.android.trustmanagementapp.utils.MSPTextViewBold
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/member_details"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+    </androidx.appcompat.widget.Toolbar>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="2dp"
+        android:id="@+id/ll_member_detail"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_view_member_detail">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="4dp"
+            android:padding="2dp"
+            app:cardCornerRadius="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#36454F"
+                android:orientation="horizontal">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/cv_profile_member_detail"
+                    android:layout_width="96dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="2dp"
+                    android:src="@drawable/ic_user_placeholder"
+                    app:civ_border_color="#00E5FF"
+                    app:civ_border_width="2dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="3dp"
+                    >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <com.android.trustmanagementapp.utils.MSPTextViewBold
+                            android:id="@+id/tv_user_name_member_detail"
+                            android:layout_width="match_parent"
+                            android:layout_height="54dp"
+                            android:layout_marginStart="4dp"
+                            android:gravity="center_vertical"
+                            android:textColor="@color/white"
+                            android:textSize="18sp"
+                            tools:text="Shahul" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@color/colorDarkGrey"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+
+                    <com.android.trustmanagementapp.utils.MSPTextViewBold
+                        android:id="@+id/tv_contact_number_member"
+                        android:layout_width="match_parent"
+                        android:layout_height="54dp"
+                        android:layout_marginStart="4dp"
+                        android:gravity="center_vertical"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        tools:text="8754771005" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@color/colorDarkGrey"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+
+                    <com.android.trustmanagementapp.utils.MSPTextViewBold
+                        android:id="@+id/tv_email_member_detail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:gravity="center_vertical"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        tools:text="shah@gmail.com" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView_view_account"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:padding="2dp"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/ll_total_balance_detail"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ll_member_detail"
+        >
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rcv_view_account_detail"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="4dp"
+            tools:listitem="@layout/item_member_detail_view_rc_layout" />
+
+    </androidx.core.widget.NestedScrollView>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="2dp"
+        android:id="@+id/ll_total_balance_detail"
+        app:layout_constraintTop_toBottomOf="@+id/scrollView_view_account"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:gravity="center"
+        >
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:padding="2dp"
+            app:cardCornerRadius="20dp"
+            app:cardBackgroundColor="#36454F"
+
+            >
+
+            <com.android.trustmanagementapp.utils.MSPTextViewBold
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/total_amount"
+                android:textColor="@color/white"
+                android:gravity="center"
+                android:layout_marginStart="8dp"
+                />
+
+            <com.android.trustmanagementapp.utils.MSPTextViewBold
+                android:id="@+id/tv_total_amount_detail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center|end"
+                android:textColor="@color/white"
+                tools:text="1000"
+                android:layout_marginEnd="4dp"/>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

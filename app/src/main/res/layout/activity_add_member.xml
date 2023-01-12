@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.AddMemberActivity"
+    android:background="@color/bar_color">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_add_member"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/bar_color">
+        <com.android.trustmanagementapp.utils.MSPTextViewBold
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_group_member"
+            android:textColor="@color/white"
+            android:layout_gravity="center"
+            android:textSize="20sp"/>
+    </androidx.appcompat.widget.Toolbar>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/ll_add_member_screen"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_add_member">
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/coordinate_layout"
+            >
+
+          <com.google.android.material.textfield.TextInputLayout
+                android:layout_marginTop="25dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:hint="@string/select_group_name"
+                android:textColorHint="@color/teal_700"
+                app:boxStrokeColor="@color/teal_700"
+                app:hintTextColor="@color/teal_700"
+                >
+
+                <AutoCompleteTextView
+                    android:id="@+id/auto_complete_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_marginTop="25dp"
+            android:id="@+id/member_name"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:hint="@string/enter_member_name"
+            android:textColorHint="@color/teal_700"
+            app:boxStrokeColor="@color/teal_700"
+            app:hintTextColor="@color/teal_700"
+            >
+
+            <com.android.trustmanagementapp.utils.MSPEditText
+                android:id="@+id/et_member_name_add_mem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapWords"
+                android:padding="16dp"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                tools:ignore="SpeakableTextPresentCheck"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_marginTop="25dp"
+            android:id="@+id/member_email"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:hint="@string/enter_member_email"
+            android:textColorHint="@color/teal_700"
+            app:boxStrokeColor="@color/teal_700"
+            app:hintTextColor="@color/teal_700"
+            >
+
+            <com.android.trustmanagementapp.utils.MSPEditText
+                android:id="@+id/et_member_email_add_mem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:padding="16dp"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                tools:ignore="SpeakableTextPresentCheck"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_marginTop="25dp"
+            android:id="@+id/member_phone"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:hint="@string/enter_member_phone"
+            android:textColorHint="@color/teal_700"
+            app:boxStrokeColor="@color/teal_700"
+            app:hintTextColor="@color/teal_700"
+            >
+
+            <com.android.trustmanagementapp.utils.MSPEditText
+                android:id="@+id/et_member_phone_add_mem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:padding="16dp"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                tools:ignore="SpeakableTextPresentCheck"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <ImageView
+            android:layout_marginTop="25dp"
+            android:id="@+id/iv_user_profile_icon"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:contentDescription="@string/group_icon"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_baseline_image_24"/>
+
+        <com.android.trustmanagementapp.utils.MSPButton
+            android:id="@+id/btn_add_mem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/button_background"
+            android:text="@string/save"
+            android:textColor="@color/white"
+            tools:layout_editor_absoluteY="475dp"
+            />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,87 @@
+<resources>
+    <string name="app_name">TrustManagementApp</string>
+    <string name="login_page">LOGIN PAGE</string>
+    <string name="enter_mobile_number">Enter Mobile Number</string>
+    <string name="get_otp">GET OTP</string>
+    <string name="login">LOGIN</string>
+    <string name="enter_otp">Enter OTP</string>
+    <string name="register_here"><u>Register here</u></string>
+    <string name="please_wait">Please wait....</string>
+    <string name="user_registration_page">User Registration Page</string>
+    <string name="enter_first_name">Enter First Name</string>
+    <string name="enter_last_name">Enter Last Name</string>
+    <string name="register">Register</string>
+
+
+    <string name="err_msg_enter_first_name">Please enter first name.</string>
+    <string name="err_msg_enter_last_name">Please enter last name.</string>
+    <string name="err_msg_mobile_not_valid">Please enter phone number</string>
+
+    <string name="please_select_group_dropdown">Please select Group dropdown</string>
+    <string name="please_select_member_dropdown">Please select Member dropdown</string>
+    <string name="please_select_date_dropdown">Please select Date dropdown</string>
+    <string name="please_enter_amount">Please Amount Detail</string>
+    <string name="err_msg_enter_member_name">Please enter member name.</string>
+    <string name="please_enter_detail">Please enter detail</string>
+
+    <string name="otp">OTP</string>
+    <string name="enter_email_address">Enter Email Address</string>
+    <string name="enter_password">Enter Password</string>
+    <string name="term_and_condition"><u>Term and condition</u></string>
+
+    <string name="err_msg_enter_password">Please enter password.</string>
+    <string name="err_msg_enter_confirm_password">Please enter confirm password.</string>
+    <string name="err_msg_password_and_confirm_password_mismatch">Password and confirm password does not match.</string>
+    <string name="err_msg_agree_terms_and_condition">Please agree terms and condition.</string>
+    <string name="err_msg_enter_email">Please enter email.</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="create_code">Create Code</string>
+    <string name="code_error">Admin Should Create code</string>
+    <string name="enter_code_given_by_admin">Enter Code Given By Admin</string>
+    <string name="admin_dashboard">Admin DashBoard</string>
+    <string name="create_group">Create Group</string>
+    <string name="add_member_detail">Add Member Detail</string>
+    <string name="add_account_detail">Add Account Detail</string>
+    <string name="view_member_detail">View Member Detail</string>
+    <string name="view_account_detail">View Account Detail</string>
+    <string name="enter_group_name">ENTER GROUP NAME</string>
+    <string name="group_originate_date">Group Originate Date</string>
+    <string name="group_icon">Group Icon</string>
+    <string name="select_date">Select Date</string>
+    <string name="originate_date">Select Group Originate Date</string>
+
+    <string name="err_msg_enter_group_name">Please enter Group name.</string>
+    <string name="err_msg_previous_balance">Previous Balance Minimum Amount should be 0</string>
+    <string name="err_msg_select_date">Please select date.</string>
+    <string name="image">image</string>
+    <string name="add_group_member">ADD GROUP MEMBER</string>
+    <string name="enter_member_name">ENTER MEMBER NAME</string>
+    <string name="save">SAVE</string>
+    <string name="enter_member_email">ENTER MEMBER EMAIL</string>
+    <string name="enter_member_phone">ENTER MEMBER PHONE</string>
+    <string name="select_group_name">Select Group Name</string>
+    <string name="select_member_name">Select Member Name</string>
+    <string name="select_month">Select Month</string>
+    <string name="enter_the_amount">Enter the Amount</string>
+    <string name="select_group">Select Group</string>
+    <string name="view_detail">View Detail</string>
+    <string name="this_month_expense">This month Expense</string>
+    <string name="previous_balance">Previous Balance</string>
+    <string name="add_expense_month_wise">Add Expense Month Wise</string>
+    <string name="total_available_balance">TOTAL AVAILABLE BALANCE</string>
+    <string name="enter_previous_balance">ENTER PREVIOUS BALANCE</string>
+    <string name="add_expense_detail">ADD EXPENSE DETAIL</string>
+    <string name="detail">DETAIL</string>
+    <string name="click_to_view_detail">click to view detail</string>
+    <string name="view_member_account_detail">View Member Account Detail</string>
+    <string name="member_name">Member Name</string>
+    <string name="contact_number">Contact number</string>
+    <string name="group_name">GROUP NAME</string>
+    <string name="group_admin">GROUP ADMIN</string>
+    <string name="member_details">Member Details</string>
+    <string name="total_amount">Total Amount</string>
+    <string name="enter_amount">Enter Amount</string>
+    <string name="are_you_sure_you_want_to_delete_this_entry">Are you sure you want to delete this entry?</string>
+
+
+</resources>
