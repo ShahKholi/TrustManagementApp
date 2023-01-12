@@ -59,7 +59,7 @@ class MemberDetailAdapter(
                     builder.setView(customerLayout)
                     builder.setTitle("DELETE")
                     builder.setPositiveButton("YES") { dialogInterface, _ ->
-
+                        Log.e("delete flow", model.month + " " +model.currentAmount)
                     }
                     builder.setNegativeButton("NO") { dialogInterface, _ ->
                         dialogInterface.dismiss()
