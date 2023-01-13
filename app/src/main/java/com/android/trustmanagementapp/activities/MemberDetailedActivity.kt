@@ -205,7 +205,7 @@ class MemberDetailedActivity : BaseActivity() {
     }
 
     suspend fun deletionSuccess(currentAmount: Int, month: String) {
-        Log.e("Delete Success",currentAmount.toString())
+
         for(i in mCurrentDeleteDocumentID) {
                 mCurrentAmount =
                     FireStoreClass().checkAmountMasterAccountForSameMonth(
@@ -215,7 +215,7 @@ class MemberDetailedActivity : BaseActivity() {
                         currentYear().toString()
                     )
 
-            Log.e("Delete Success2",mCurrentAmount.sum().toString())
+
             if(mCurrentAmount.sum() == 0){
                 val userHashMap = HashMap<String, Any>()
                 userHashMap[Constants.INCOME] = mCurrentAmount.sum()
