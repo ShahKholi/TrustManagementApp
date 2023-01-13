@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.trustmanagementapp.R
 import com.android.trustmanagementapp.adapter.MemberDetailAdapter
 import com.android.trustmanagementapp.firestore.FireStoreClass
+import com.android.trustmanagementapp.model.MasterAccountDetail
 import com.android.trustmanagementapp.model.MemberAccountDetail
 import com.android.trustmanagementapp.utils.Constants
 import com.android.trustmanagementapp.utils.GlideLoaderClass
@@ -170,15 +171,16 @@ class MemberDetailedActivity : BaseActivity() {
                     i.month,
                     currentYear().toString()
                 )
+            Log.e("mCurrentMonthTotal", mCurrentMonthTotal.toString())
             val month = i.month
-            val totalAmount = mCurrentMonthTotal.sum()
-            val userHashMap = HashMap<String, Any>()
-            userHashMap[Constants.INCOME] = totalAmount
+                val totalAmount = mCurrentMonthTotal.sum()
+                val userHashMap = HashMap<String, Any>()
+                userHashMap[Constants.INCOME] = totalAmount
 
-            FireStoreClass().updateMasterAccount(
-                this, i.adminEmail,
-                i.groupName, month, currentYear(), userHashMap
-            )
+                FireStoreClass().updateMasterAccount(
+                    this, i.adminEmail,
+                    i.groupName, month, currentYear(), userHashMap
+                )
         }
 
     }
@@ -203,7 +205,8 @@ class MemberDetailedActivity : BaseActivity() {
     }
 
     suspend fun deletionSuccess(currentAmount: Int, month: String) {
-            for(i in mCurrentDeleteDocumentID) {
+        Log.e("Delete Success",currentAmount.toString())
+        for(i in mCurrentDeleteDocumentID) {
                 mCurrentAmount =
                     FireStoreClass().checkAmountMasterAccountForSameMonth(
                         i.groupName,
@@ -212,6 +215,16 @@ class MemberDetailedActivity : BaseActivity() {
                         currentYear().toString()
                     )
 
+            Log.e("Delete Success2",mCurrentAmount.sum().toString())
+            if(mCurrentAmount.sum() == 0){
+                val userHashMap = HashMap<String, Any>()
+                userHashMap[Constants.INCOME] = mCurrentAmount.sum()
+                FireStoreClass().updateMasterAccount(
+                    this, i.adminEmail,
+                    i.groupName, month, currentYear(), userHashMap
+                )
+
+            }else{
                 val userHashMap = HashMap<String, Any>()
                 val totalAmount = mCurrentAmount.sum()
                 val finalAmount = currentAmount - totalAmount
@@ -220,6 +233,10 @@ class MemberDetailedActivity : BaseActivity() {
                     this, i.adminEmail,
                     i.groupName, month, currentYear(), userHashMap
                 )
+            }
+
+
+
             }
     }
 }
