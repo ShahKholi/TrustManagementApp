@@ -24,7 +24,6 @@ import com.android.trustmanagementapp.adapter.ExpenseDetailAdapter
 import com.android.trustmanagementapp.firestore.FireStoreClass
 import com.android.trustmanagementapp.model.GroupNameClass
 import com.android.trustmanagementapp.model.MasterAccountDetail
-import com.android.trustmanagementapp.model.MemberAccountDetail
 import com.android.trustmanagementapp.model.MonthExpense
 import com.android.trustmanagementapp.utils.Constants
 import com.android.trustmanagementapp.utils.MSPButton
@@ -47,6 +46,7 @@ class AddExpenseActivity : BaseActivity() {
     private lateinit var currentGroupNameSelect: String
     private lateinit var mGroupList: ArrayList<GroupNameClass>
     private val hashMapUp: HashMap<String, Any> = HashMap()
+    private lateinit var mCurrentMonthTotal: ArrayList<Int>
 
     private lateinit var mExpenseList: ArrayList<MonthExpense>
     private lateinit var recyclerView: RecyclerView
@@ -55,8 +55,8 @@ class AddExpenseActivity : BaseActivity() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult())
         { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                finish()
 
+                finish()
             }
         }
 
@@ -105,7 +105,6 @@ class AddExpenseActivity : BaseActivity() {
                             false
                         )
                     }
-
                 }
             }
         }
@@ -113,15 +112,10 @@ class AddExpenseActivity : BaseActivity() {
     }
 
     private suspend fun getGroupImage(groupName: String) {
-        val imageUrl: ArrayList<GroupNameClass> =
+        val imageUrl: String =
             FireStoreClass().getGroupImageFromFirestore(this, groupName)
-
-        mGroupList = imageUrl
-        for (i in mGroupList) {
-            val groupImageString = i.groupImage
-            lifecycleScope.launch {
-                registerExpenseAmountDetail(groupImageString)
-            }
+        lifecycleScope.launch {
+            registerExpenseAmountDetail(imageUrl)
         }
     }
 
@@ -151,7 +145,9 @@ class AddExpenseActivity : BaseActivity() {
                 expAmount.toInt(),
                 month,
                 detail,
-                groupImageString
+                groupImageString,
+                "",
+                currentYear()
             )
             FireStoreClass().registerExpenseDetail(this, monthExpenseAmount)
         }
@@ -240,29 +236,30 @@ class AddExpenseActivity : BaseActivity() {
     }
 
     suspend fun groupExpenseDetailSuccess(monthExpenseAmount: MonthExpense) {
-        cancelProgressDialog()
-        Toast.makeText(
-            this, "Expense Amount ${monthExpenseAmount.expenseAmount}", Toast.LENGTH_LONG
-        ).show()
-
         val previousExpenseCurrentMonth: Int =
             FireStoreClass().checkPreviousAmountForCurrentMonthInMaster(
                 monthExpenseAmount.groupName,
                 monthExpenseAmount.memberAdminEmail, monthExpenseAmount.month, currentYear()
             )
-        Log.e("check value", previousExpenseCurrentMonth.toString())
-
-
+        Log.e("check value", monthExpenseAmount.toString())
 
         updateExpenseAmountToMaster(
             monthExpenseAmount.groupName,
             monthExpenseAmount.memberAdminEmail,
             monthExpenseAmount.expenseAmount + previousExpenseCurrentMonth,
+
             monthExpenseAmount.month
         )
+        successCreationToMaster()
+    }
+
+    private fun successCreationToMaster() {
+        Toast.makeText(this, "Expense Amount added", Toast.LENGTH_SHORT).show()
         val intent = intent
+        intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
         getExpenseDataResult.launch(intent)
-        finish()
+
+        cancelProgressDialog()
     }
 
     private fun updateExpenseAmountToMaster(
@@ -273,7 +270,8 @@ class AddExpenseActivity : BaseActivity() {
         hashMapUp["monthExpense"] = month
         hashMapUp["expenseAmount"] = expenseAmount
         FireStoreClass().createExpenseAmountToMasterAccount(
-            groupName, memberAdminEmail, hashMapUp, month
+            this,
+            groupName, memberAdminEmail, hashMapUp, month, currentYear()
         )
 
     }
@@ -303,8 +301,6 @@ class AddExpenseActivity : BaseActivity() {
             recyclerView.setHasFixedSize(true)
             //mExpenseList.sortBy { it.month }
             mExpenseList.sortBy {
-                /* val myMonth: MutableList<Array<Month>> = Arrays.asList(Month.values())
-                 Collections.rotate(myMonth,myMonth.size)*/
                 val sdf = SimpleDateFormat("MMMM")
                 sdf.parse(it.month)
             }
@@ -317,6 +313,35 @@ class AddExpenseActivity : BaseActivity() {
 
         }
 
+    }
+
+    suspend fun expenseUpdateSuccess(monthExpenseList: ArrayList<MonthExpense>) {
+
+
+        for (i in monthExpenseList) {
+            mCurrentMonthTotal = FireStoreClass().getAllExpenseDetailForCurrentMonth(
+                i.memberAdminEmail,
+                i.month, i.groupName, i.year
+            )
+
+            if (mCurrentMonthTotal.sum() != 0) {
+                val finalAmount = mCurrentMonthTotal.sum()
+                val userHashMap: HashMap<String, Any> = HashMap()
+                userHashMap[Constants.EXPENSE_AMOUNT] = finalAmount
+                FireStoreClass().createExpenseAmountToMasterAccount(
+                    this,
+                    i.groupName, i.memberAdminEmail, userHashMap, i.month, currentYear()
+                )
+            }
+
+        }
+    }
+
+    fun successUpdateToMaster() {
+        cancelProgressDialog()
+        val intent = intent
+        getExpenseDataResult.launch(intent)
+        finish()
     }
 
 

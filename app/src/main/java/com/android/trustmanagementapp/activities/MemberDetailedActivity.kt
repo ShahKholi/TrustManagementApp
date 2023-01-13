@@ -173,14 +173,14 @@ class MemberDetailedActivity : BaseActivity() {
                 )
             Log.e("mCurrentMonthTotal", mCurrentMonthTotal.toString())
             val month = i.month
-                val totalAmount = mCurrentMonthTotal.sum()
-                val userHashMap = HashMap<String, Any>()
-                userHashMap[Constants.INCOME] = totalAmount
+            val totalAmount = mCurrentMonthTotal.sum()
+            val userHashMap = HashMap<String, Any>()
+            userHashMap[Constants.INCOME] = totalAmount
 
-                FireStoreClass().updateMasterAccount(
-                    this, i.adminEmail,
-                    i.groupName, month, currentYear(), userHashMap
-                )
+            FireStoreClass().updateMasterAccount(
+                this, i.adminEmail,
+                i.groupName, month, currentYear(), userHashMap
+            )
         }
 
     }
@@ -200,23 +200,23 @@ class MemberDetailedActivity : BaseActivity() {
     ) {
         mCurrentDeleteDocumentID = memberList
         for (i in mCurrentDeleteDocumentID) {
-            FireStoreClass().deleteMonthWiseMemberAccountDetail(this, i.id,currentAmount,month)
+            FireStoreClass().deleteMonthWiseMemberAccountDetail(this, i.id, currentAmount, month)
         }
     }
 
     suspend fun deletionSuccess(currentAmount: Int, month: String) {
 
-        for(i in mCurrentDeleteDocumentID) {
-                mCurrentAmount =
-                    FireStoreClass().checkAmountMasterAccountForSameMonth(
-                        i.groupName,
-                        i.adminEmail,
-                        month,
-                        currentYear().toString()
-                    )
+        for (i in mCurrentDeleteDocumentID) {
+            mCurrentAmount =
+                FireStoreClass().checkAmountMasterAccountForSameMonth(
+                    i.groupName,
+                    i.adminEmail,
+                    month,
+                    currentYear().toString()
+                )
 
 
-            if(mCurrentAmount.sum() == 0){
+            if (mCurrentAmount.sum() == 0) {
                 val userHashMap = HashMap<String, Any>()
                 userHashMap[Constants.INCOME] = mCurrentAmount.sum()
                 FireStoreClass().updateMasterAccount(
@@ -224,7 +224,7 @@ class MemberDetailedActivity : BaseActivity() {
                     i.groupName, month, currentYear(), userHashMap
                 )
 
-            }else{
+            } else {
                 val userHashMap = HashMap<String, Any>()
                 val totalAmount = mCurrentAmount.sum()
                 val finalAmount = currentAmount - totalAmount
@@ -236,7 +236,6 @@ class MemberDetailedActivity : BaseActivity() {
             }
 
 
-
-            }
+        }
     }
 }

@@ -4,7 +4,6 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class MonthExpense(
-
     var groupName : String = "",
     var memberAdminUID : String ="",
     var memberAdminEmail : String= "",
@@ -12,7 +11,8 @@ data class MonthExpense(
     var month : String = "",
     var detail : String = "",
     var groupImage : String = "",
-    var id : String = ""
+    var id : String = "",
+    var year: Int = 0,
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
@@ -21,7 +21,9 @@ data class MonthExpense(
         parcel.readInt(),
         parcel.readString()!!,
         parcel.readString()!!,
-        parcel.readString()!!
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readInt()
     ) {
     }
 
@@ -32,7 +34,9 @@ data class MonthExpense(
         parcel.writeInt(expenseAmount)
         parcel.writeString(month)
         parcel.writeString(detail)
+        parcel.writeString(groupImage)
         parcel.writeString(id)
+        parcel.writeInt(year)
     }
 
     override fun describeContents(): Int {

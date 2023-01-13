@@ -34,7 +34,8 @@
             android:name=".activities.AddExpenseActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.TrustManagementApp.NoActionBar" />
+            android:theme="@style/Theme.TrustManagementApp.NoActionBar"
+           />
         <activity
             android:name=".activities.PreViewAccountActivity"
             android:exported="true"
