@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.trustmanagementapp.R
 import com.android.trustmanagementapp.adapter.MemberDetailAdapter
 import com.android.trustmanagementapp.firestore.FireStoreClass
-import com.android.trustmanagementapp.model.MasterAccountDetail
 import com.android.trustmanagementapp.model.MemberAccountDetail
 import com.android.trustmanagementapp.utils.Constants
 import com.android.trustmanagementapp.utils.GlideLoaderClass
@@ -41,8 +40,11 @@ class MemberDetailedActivity : BaseActivity() {
     lateinit var mUserEmail: MSPTextViewBold
     lateinit var llBalanceScreen: LinearLayoutCompat
     lateinit var mTotalAmount: MSPTextViewBold
+    lateinit var mCurrentDeleteDocumentID: ArrayList<MemberAccountDetail>
 
     private lateinit var mCurrentMonthTotal: ArrayList<Int>
+    private lateinit var mCurrentAmount: ArrayList<Int>
+
 
     private val getMonthDataResult: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult())
@@ -52,6 +54,7 @@ class MemberDetailedActivity : BaseActivity() {
 
             }
         }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -181,9 +184,42 @@ class MemberDetailedActivity : BaseActivity() {
     }
 
     fun updateMasterAmountSuccess() {
+        cancelProgressDialog()
         val intent = intent
         getMonthDataResult.launch(intent)
         finish()
 
+    }
+
+    fun successGettingDocumentID(
+        memberList: ArrayList<MemberAccountDetail>,
+        currentAmount: Int,
+        month: String
+    ) {
+        mCurrentDeleteDocumentID = memberList
+        for (i in mCurrentDeleteDocumentID) {
+            FireStoreClass().deleteMonthWiseMemberAccountDetail(this, i.id,currentAmount,month)
+        }
+    }
+
+    suspend fun deletionSuccess(currentAmount: Int, month: String) {
+            for(i in mCurrentDeleteDocumentID) {
+                mCurrentAmount =
+                    FireStoreClass().checkAmountMasterAccountForSameMonth(
+                        i.groupName,
+                        i.adminEmail,
+                        month,
+                        currentYear().toString()
+                    )
+
+                val userHashMap = HashMap<String, Any>()
+                val totalAmount = mCurrentAmount.sum()
+                val finalAmount = currentAmount - totalAmount
+                userHashMap[Constants.INCOME] = finalAmount
+                FireStoreClass().updateMasterAccount(
+                    this, i.adminEmail,
+                    i.groupName, month, currentYear(), userHashMap
+                )
+            }
     }
 }

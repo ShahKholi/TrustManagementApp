@@ -8,7 +8,6 @@ import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.inflate
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.annotation.RequiresApi
@@ -18,7 +17,6 @@ import com.android.trustmanagementapp.R
 import com.android.trustmanagementapp.activities.MemberDetailedActivity
 import com.android.trustmanagementapp.firestore.FireStoreClass
 import com.android.trustmanagementapp.model.MemberAccountDetail
-import com.android.trustmanagementapp.model.MemberClass
 import com.android.trustmanagementapp.utils.Constants
 import com.android.trustmanagementapp.utils.MSPEditText
 import com.android.trustmanagementapp.utils.MSPTextViewBold
@@ -58,16 +56,24 @@ class MemberDetailAdapter(
                             .inflate(R.layout.custom_dilog_box_delete, null)
                     builder.setView(customerLayout)
                     builder.setTitle("DELETE")
-                    builder.setPositiveButton("YES") { dialogInterface, _ ->
-                        Log.e("delete flow", model.month + " " +model.currentAmount)
+                    when(activity){
+                        is MemberDetailedActivity -> {
+                            builder.setPositiveButton("YES") { dialogInterface, _ ->
+
+                                FireStoreClass().getDeleteItemDocumentID(activity,model.month,
+                                    model.groupName,model.adminEmail, model.memberEmail,model.year,model.currentAmount)
+
+                            }
+                            builder.setNegativeButton("NO") { dialogInterface, _ ->
+                                dialogInterface.dismiss()
+                            }
+                            val alertDialog: AlertDialog? = builder.create()
+                            // Set other dialog properties
+                            alertDialog!!.setCancelable(false)
+                            alertDialog.show()
+                        }
                     }
-                    builder.setNegativeButton("NO") { dialogInterface, _ ->
-                        dialogInterface.dismiss()
-                    }
-                    val alertDialog: AlertDialog? = builder.create()
-                    // Set other dialog properties
-                    alertDialog!!.setCancelable(false)
-                    alertDialog.show()
+
 
                 }
 
