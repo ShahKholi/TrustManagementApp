@@ -412,6 +412,9 @@ class FireStoreClass {
                         is MemberDetailedActivity -> {
                             activity.updateMasterAmountSuccess()
                         }
+                        is AddExpenseActivity -> {
+                            activity.updateMasterAmountSuccess()
+                        }
                     }
                 }
 
@@ -427,14 +430,14 @@ class FireStoreClass {
         Log.e("update current amount", currentAmount.toString())
         mFirestoreInstance.collection(Constants.GROUP_EXPENSE_DETAIL)
             .whereEqualTo("memberAdminEmail", adminEmail)
-            .whereEqualTo("groupName",groupName)
-            .whereEqualTo("year",currentYear)
-            .whereEqualTo("month",month)
+            .whereEqualTo("groupName", groupName)
+            .whereEqualTo("year", currentYear)
+            .whereEqualTo("month", month)
             .whereEqualTo("expenseAmount", currentAmount)
             .get()
-            .addOnSuccessListener {  document->
+            .addOnSuccessListener { document ->
                 val monthExpenseList: ArrayList<MonthExpense> = ArrayList()
-                for (i in document){
+                for (i in document) {
                     mFirestoreInstance.collection(Constants.GROUP_EXPENSE_DETAIL)
                         .document(i.id)
                         .set(userHashMap, SetOptions.merge())
@@ -443,7 +446,7 @@ class FireStoreClass {
                     monthExpenseList.add(monthExpense)
 
                 }
-                when(activity){
+                when (activity) {
                     is AddExpenseActivity -> {
                         activity.lifecycleScope.launch {
                             activity.expenseUpdateSuccess(monthExpenseList)
@@ -451,8 +454,8 @@ class FireStoreClass {
 
                     }
                 }
-            }.addOnFailureListener { exception->
-                when(activity){
+            }.addOnFailureListener { exception ->
+                when (activity) {
                     is AddExpenseActivity -> {
                         activity.cancelProgressDialog()
                         Log.e(
@@ -536,14 +539,14 @@ class FireStoreClass {
                         .document(i.id)
                         .set(hashMapUp, SetOptions.merge())
                 }
-                when(activity){
+                when (activity) {
                     is AddExpenseActivity -> {
                         activity.successUpdateToMaster()
                     }
                 }
 
-            }.addOnFailureListener {exception->
-                when(activity){
+            }.addOnFailureListener { exception ->
+                when (activity) {
                     is AddExpenseActivity -> {
                         activity.cancelProgressDialog()
                         Log.e(
@@ -655,7 +658,7 @@ class FireStoreClass {
     ): String {
         val groupList: ArrayList<String> = ArrayList()
         var group: GroupNameClass
-        var imageString : String = ""
+        var imageString: String = ""
         mFirestoreInstance.collection(Constants.GROUP)
             .whereEqualTo("id", getCurrentUserID())
             .whereEqualTo("groupName", currentGroupNameSelect)
@@ -846,26 +849,26 @@ class FireStoreClass {
         return masterAccountList
     }
 
-   suspend fun getAllExpenseDetailForCurrentMonth(
+    suspend fun getAllExpenseDetailForCurrentMonth(
         memberAdminEmail: String, month: String,
         groupName: String, year: Int
     ): ArrayList<Int> {
-       val expenseList: ArrayList<Int> = ArrayList()
-       var expenseClass: MonthExpense
-       mFirestoreInstance.collection(Constants.GROUP_EXPENSE_DETAIL)
-           .whereEqualTo("memberAdminEmail",memberAdminEmail)
-           .whereEqualTo("groupName", groupName)
-           .whereEqualTo("month", month)
-           .whereEqualTo("year",year)
-           .get()
-           .addOnSuccessListener { document ->
-               for (i in document.documents){
-                   expenseClass = i.toObject(MonthExpense::class.java)!!
-                   expenseClass.expenseAmount = i.get("expenseAmount").toString().toInt()
-                   expenseList.add(expenseClass.expenseAmount)
-               }
-           }.await()
-       return expenseList
+        val expenseList: ArrayList<Int> = ArrayList()
+        var expenseClass: MonthExpense
+        mFirestoreInstance.collection(Constants.GROUP_EXPENSE_DETAIL)
+            .whereEqualTo("memberAdminEmail", memberAdminEmail)
+            .whereEqualTo("groupName", groupName)
+            .whereEqualTo("month", month)
+            .whereEqualTo("year", year)
+            .get()
+            .addOnSuccessListener { document ->
+                for (i in document.documents) {
+                    expenseClass = i.toObject(MonthExpense::class.java)!!
+                    expenseClass.expenseAmount = i.get("expenseAmount").toString().toInt()
+                    expenseList.add(expenseClass.expenseAmount)
+                }
+            }.await()
+        return expenseList
     }
 
     suspend fun getTotalAmount(
@@ -1012,7 +1015,49 @@ class FireStoreClass {
             }
     }
 
-    fun getDeleteItemDocumentID(
+    fun getDeleteItemDocumentIDGroupExpenseDetail(
+        activity: Activity,
+        groupName: String,
+        memberAdminEmail: String,
+        month: String,
+        expenseAmount: Int,
+        year: Int
+    ) {
+        mFirestoreInstance.collection(Constants.GROUP_EXPENSE_DETAIL)
+            .whereEqualTo("expenseAmount", expenseAmount)
+            .whereEqualTo("groupName", groupName)
+            .whereEqualTo("memberAdminEmail", memberAdminEmail)
+            .whereEqualTo("month", month)
+            .whereEqualTo("year", year)
+            .get()
+            .addOnSuccessListener { document ->
+                val expenseList: ArrayList<MonthExpense> = ArrayList()
+                for (i in document.documents) {
+                    val monthExpense = i.toObject(MonthExpense::class.java)
+                    monthExpense!!.id = i.id
+                    expenseList.add(monthExpense)
+                }
+                when (activity) {
+                    is AddExpenseActivity -> {
+                        activity.showProgressDialog()
+                        activity.successGettingDocumentID(expenseList, expenseAmount, month)
+                    }
+                }
+
+            }.addOnFailureListener { exception ->
+                when (activity) {
+                    is AddExpenseActivity -> {
+                        Log.e(
+                            activity.javaClass.simpleName,
+                            "Error while deleting month.",
+                            exception
+                        )
+                    }
+                }
+            }
+    }
+
+    fun getDeleteItemDocumentIDMemberAccountDetail(
         activity: Activity,
         month: String,
         groupName: String,
@@ -1052,6 +1097,33 @@ class FireStoreClass {
                             "Error while deleting month.",
                             exception
                         )
+                    }
+                }
+            }
+    }
+
+    fun deleteExpenseMonthWise(
+        activity: Activity,
+        documentId: String,
+        expenseAmount: Int,
+        month: String
+    ) {
+        mFirestoreInstance.collection(Constants.GROUP_EXPENSE_DETAIL)
+            .document(documentId)
+            .delete()
+            .addOnSuccessListener {
+                when(activity){
+                    is AddExpenseActivity -> {
+                        activity.lifecycleScope.launch {
+                            activity.deletionSuccess(expenseAmount, month)
+                        }
+
+                    }
+                }
+            }.addOnFailureListener { exception->
+                when(activity){
+                    is AddExpenseActivity -> {
+                        activity.cancelProgressDialog()
                     }
                 }
             }
@@ -1123,8 +1195,6 @@ class FireStoreClass {
                 }
             }
     }
-
-
 
 
 }

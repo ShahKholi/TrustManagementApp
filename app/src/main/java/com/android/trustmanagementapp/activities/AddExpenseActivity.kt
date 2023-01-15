@@ -24,6 +24,7 @@ import com.android.trustmanagementapp.adapter.ExpenseDetailAdapter
 import com.android.trustmanagementapp.firestore.FireStoreClass
 import com.android.trustmanagementapp.model.GroupNameClass
 import com.android.trustmanagementapp.model.MasterAccountDetail
+import com.android.trustmanagementapp.model.MemberAccountDetail
 import com.android.trustmanagementapp.model.MonthExpense
 import com.android.trustmanagementapp.utils.Constants
 import com.android.trustmanagementapp.utils.MSPButton
@@ -46,9 +47,11 @@ class AddExpenseActivity : BaseActivity() {
     private lateinit var currentGroupNameSelect: String
     private val hashMapUp: HashMap<String, Any> = HashMap()
     private lateinit var mCurrentMonthTotal: ArrayList<Int>
+    lateinit var mCurrentDeleteDocumentID: ArrayList<MonthExpense>
 
     private lateinit var mExpenseList: ArrayList<MonthExpense>
     private lateinit var recyclerView: RecyclerView
+    private lateinit var mCurrentAmount: ArrayList<Int>
 
     private val getExpenseDataResult: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult())
@@ -341,6 +344,37 @@ class AddExpenseActivity : BaseActivity() {
         finish()
     }
 
+    fun successGettingDocumentID(expenseList: ArrayList<MonthExpense>,
+                                 expenseAmount: Int, month: String) {
+        mCurrentDeleteDocumentID = expenseList
+        for (i in mCurrentDeleteDocumentID){
+            FireStoreClass().deleteExpenseMonthWise(this, i.id, expenseAmount, month)
+        }
+
+    }
+
+    suspend fun deletionSuccess(expenseAmount: Int, month: String) {
+        for(i in mCurrentDeleteDocumentID){
+            mCurrentAmount = FireStoreClass().getAllExpenseDetailForCurrentMonth(
+                i.memberAdminEmail,month,i.groupName,currentYear()
+            )
+            val finalAmount = mCurrentAmount.sum()
+            val userHashMap = HashMap<String, Any>()
+            userHashMap[Constants.EXPENSE_AMOUNT] = finalAmount
+            FireStoreClass().updateMasterAccount(
+                this, i.memberAdminEmail,
+                i.groupName, month, currentYear(), userHashMap
+            )
+        }
+
+    }
+    fun updateMasterAmountSuccess() {
+        cancelProgressDialog()
+        val intent = intent
+        getExpenseDataResult.launch(intent)
+        finish()
+
+    }
 
 }
 

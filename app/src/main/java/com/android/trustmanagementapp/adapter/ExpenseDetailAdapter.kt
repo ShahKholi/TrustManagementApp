@@ -70,7 +70,37 @@ class ExpenseDetailAdapter(
 
                 }
 
-            holder.itemView.findViewById<ImageView>(R.id.iv_edit_expense_group).setOnClickListener {
+            holder.itemView.findViewById<ImageView>(R.id.iv_delete_expense_group)
+                .setOnClickListener {
+                    val builder = AlertDialog.Builder(context, R.style.AlertDialogTheme)
+                    builder.setIcon(android.R.drawable.ic_dialog_alert)
+                    val customerLayout: View =
+                        LayoutInflater.from(context)
+                            .inflate(R.layout.custom_dilog_box_delete, null)
+                    builder.setView(customerLayout)
+                    builder.setTitle("DELETE")
+                    when(activity){
+                        is AddExpenseActivity -> {
+                            builder.setPositiveButton("YES"){dialogInterface, _ ->
+                                FireStoreClass().getDeleteItemDocumentIDGroupExpenseDetail(activity,
+                                model.groupName, model.memberAdminEmail,
+                                    model.month, model.expenseAmount,model.year
+                                    )
+                            }
+                            builder.setNegativeButton("NO") { dialogInterface, _ ->
+                                dialogInterface.dismiss()
+                            }
+                            val alertDialog: AlertDialog? = builder.create()
+                            // Set other dialog properties
+                            alertDialog!!.setCancelable(false)
+                            alertDialog.show()
+                        }
+                    }
+
+                }
+
+            holder.itemView.findViewById<ImageView>(R.id.iv_edit_expense_group)
+                .setOnClickListener {
                 val builder = AlertDialog.Builder(
                     context,
                     R.style.AlertDialogTheme
@@ -87,11 +117,11 @@ class ExpenseDetailAdapter(
                 val editText: MSPEditText =
                     customerLayout.findViewById(R.id.et_user_amount_edit)
                 editText.setText(defaultAmount)
-                val currentAmount : Int = defaultAmount.toInt()
+                val currentAmount: Int = defaultAmount.toInt()
 
-                when(activity){
+                when (activity) {
                     is AddExpenseActivity -> {
-                        builder.setPositiveButton("SAVE"){dialogInterface, _ ->
+                        builder.setPositiveButton("SAVE") { dialogInterface, _ ->
                             val amount = editText.text.toString()
                             val adminEmail = model.memberAdminEmail
                             val groupName = model.groupName

@@ -60,7 +60,7 @@ class MemberDetailAdapter(
                         is MemberDetailedActivity -> {
                             builder.setPositiveButton("YES") { dialogInterface, _ ->
 
-                                FireStoreClass().getDeleteItemDocumentID(activity,model.month,
+                                FireStoreClass().getDeleteItemDocumentIDMemberAccountDetail(activity,model.month,
                                     model.groupName,model.adminEmail, model.memberEmail,model.year,model.currentAmount)
 
                             }
