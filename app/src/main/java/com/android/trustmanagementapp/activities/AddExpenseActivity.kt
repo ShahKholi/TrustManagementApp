@@ -44,7 +44,6 @@ class AddExpenseActivity : BaseActivity() {
     private lateinit var etExpenseDetail: MSPEditText
     private lateinit var btnExpense: MSPButton
     private lateinit var currentGroupNameSelect: String
-    private lateinit var mGroupList: ArrayList<GroupNameClass>
     private val hashMapUp: HashMap<String, Any> = HashMap()
     private lateinit var mCurrentMonthTotal: ArrayList<Int>
 
@@ -55,7 +54,6 @@ class AddExpenseActivity : BaseActivity() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult())
         { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-
                 finish()
             }
         }
@@ -111,12 +109,11 @@ class AddExpenseActivity : BaseActivity() {
 
     }
 
+
     private suspend fun getGroupImage(groupName: String) {
         val imageUrl: String =
             FireStoreClass().getGroupImageFromFirestore(this, groupName)
-        lifecycleScope.launch {
-            registerExpenseAmountDetail(imageUrl)
-        }
+        registerExpenseAmountDetail(imageUrl)
     }
 
     private fun loadExpenseDetailFromFireStore() {
@@ -149,6 +146,7 @@ class AddExpenseActivity : BaseActivity() {
                 "",
                 currentYear()
             )
+
             FireStoreClass().registerExpenseDetail(this, monthExpenseAmount)
         }
     }
@@ -256,9 +254,8 @@ class AddExpenseActivity : BaseActivity() {
     private fun successCreationToMaster() {
         Toast.makeText(this, "Expense Amount added", Toast.LENGTH_SHORT).show()
         val intent = intent
-        intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
         getExpenseDataResult.launch(intent)
-
+        intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
         cancelProgressDialog()
     }
 
@@ -273,7 +270,6 @@ class AddExpenseActivity : BaseActivity() {
             this,
             groupName, memberAdminEmail, hashMapUp, month, currentYear()
         )
-
     }
 
     private fun setUpSupportActionBar() {
@@ -317,13 +313,12 @@ class AddExpenseActivity : BaseActivity() {
 
     suspend fun expenseUpdateSuccess(monthExpenseList: ArrayList<MonthExpense>) {
 
-
         for (i in monthExpenseList) {
             mCurrentMonthTotal = FireStoreClass().getAllExpenseDetailForCurrentMonth(
                 i.memberAdminEmail,
                 i.month, i.groupName, i.year
             )
-
+            Log.e("mCurrentMonthTotal sum", mCurrentMonthTotal.toString())
             if (mCurrentMonthTotal.sum() != 0) {
                 val finalAmount = mCurrentMonthTotal.sum()
                 val userHashMap: HashMap<String, Any> = HashMap()
@@ -332,6 +327,8 @@ class AddExpenseActivity : BaseActivity() {
                     this,
                     i.groupName, i.memberAdminEmail, userHashMap, i.month, currentYear()
                 )
+            }else{
+                cancelProgressDialog()
             }
 
         }

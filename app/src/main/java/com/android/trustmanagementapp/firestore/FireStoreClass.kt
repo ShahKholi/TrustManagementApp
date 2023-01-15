@@ -424,6 +424,7 @@ class FireStoreClass {
         groupName: String, month: String, adminEmail: String, currentAmount: Int,
         currentYear: Int
     ) {
+        Log.e("update current amount", currentAmount.toString())
         mFirestoreInstance.collection(Constants.GROUP_EXPENSE_DETAIL)
             .whereEqualTo("memberAdminEmail", adminEmail)
             .whereEqualTo("groupName",groupName)
