@@ -9,7 +9,7 @@ data class MemberAccountDetail(
     var year: String = "",
     val groupName: String = "",
     val memberName: String = "",
-    val memberEmail : String = "",
+    var memberEmail : String = "",
     val adminEmail: String = "",
     val month : String = "",
     var currentAmount: Int = 0,

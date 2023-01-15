@@ -22,6 +22,7 @@ import com.android.trustmanagementapp.model.MasterAccountDetail
 import com.android.trustmanagementapp.model.MemberAccountDetail
 import com.android.trustmanagementapp.utils.Constants
 import com.android.trustmanagementapp.utils.GlideLoaderClass
+import com.android.trustmanagementapp.utils.MSPButton
 import com.android.trustmanagementapp.utils.MSPTextViewBold
 import de.hdodenhof.circleimageview.CircleImageView
 import java.text.SimpleDateFormat
@@ -42,6 +43,7 @@ class MemberDetailedActivity : BaseActivity() {
     lateinit var llBalanceScreen: LinearLayoutCompat
     lateinit var mTotalAmount: MSPTextViewBold
     lateinit var mCurrentDeleteDocumentID: ArrayList<MemberAccountDetail>
+    lateinit var btnEdit : MSPButton
 
     private lateinit var mCurrentMonthTotal: ArrayList<Int>
     private lateinit var mCurrentAmount: ArrayList<Int>
@@ -93,6 +95,11 @@ class MemberDetailedActivity : BaseActivity() {
         mUserEmail = findViewById(R.id.tv_email_member_detail)
         llBalanceScreen = findViewById(R.id.ll_total_balance_detail)
         mTotalAmount = findViewById(R.id.tv_total_amount_detail)
+        btnEdit = findViewById(R.id.btn_edit_member)
+
+        btnEdit.setOnClickListener {
+            goToEditScreenActivity()
+        }
 
         GlideLoaderClass(this).loadGroupPictures(
             mUserProfileImage,
@@ -105,6 +112,17 @@ class MemberDetailedActivity : BaseActivity() {
         setUpSupportActionBar()
         getMemberIncomeDetail()
 
+    }
+
+    private fun goToEditScreenActivity() {
+        val intent = Intent(this, AddMemberActivity::class.java)
+        intent.putExtra(Constants.GROUP_NAME, mUserGroupName)
+        intent.putExtra(Constants.MEMBER_ADMIN_EMAIL,mUserAdminEmail)
+        intent.putExtra(Constants.MEMBER_EMAIL,mUserMemberEmail )
+        intent.putExtra(Constants.MEMBER_NAME, mUserMemberName)
+        intent.putExtra(Constants.MEMBER_PHONE, mUserMemberPhone)
+        intent.putExtra(Constants.PROFILE_IMAGE, mUserProfileImage)
+        startActivity(intent)
     }
 
     private fun getMemberIncomeDetail() {

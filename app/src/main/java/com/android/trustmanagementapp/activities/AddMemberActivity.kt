@@ -1,12 +1,12 @@
 package com.android.trustmanagementapp.activities
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.TextUtils
@@ -18,15 +18,15 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.android.trustmanagementapp.R
 import com.android.trustmanagementapp.firestore.FireStoreClass
 import com.android.trustmanagementapp.model.GroupNameClass
+import com.android.trustmanagementapp.model.MemberAccountDetail
 import com.android.trustmanagementapp.model.MemberClass
-import com.android.trustmanagementapp.utils.Constants
-import com.android.trustmanagementapp.utils.GlideLoaderClass
-import com.android.trustmanagementapp.utils.MSPButton
-import com.android.trustmanagementapp.utils.MSPEditText
+import com.android.trustmanagementapp.utils.*
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
 import java.io.IOException
 
 class AddMemberActivity : BaseActivity() {
@@ -44,6 +44,16 @@ class AddMemberActivity : BaseActivity() {
     private var mSelectedProfileImageUri: Uri? = null
     private var mSelectedImageCloudUriString: String? = null
 
+    private lateinit var mUserGroupName: String
+    lateinit var mUserAdminEmail: String
+    lateinit var mUserMemberEmail: String
+    lateinit var mUserMemberName: String
+    lateinit var mUserMemberPhone: String
+    lateinit var mUserProfileImage: String
+    lateinit var toolbarLabel: MSPTextViewBold
+    lateinit var mMemberList: ArrayList<MemberClass>
+
+
     private val getPhotoActionResult: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult())
         { result ->
@@ -53,6 +63,15 @@ class AddMemberActivity : BaseActivity() {
             }
         }
 
+    private val getDataResult : ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult())
+        { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                finish()
+            }
+        }
+
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_member)
@@ -63,23 +82,77 @@ class AddMemberActivity : BaseActivity() {
         )
         setUpSupportActionBar()
 
-        getGroupNameFromFireStore()
-
         etMemberName = findViewById(R.id.et_member_name_add_mem)
         etMemberEmail = findViewById(R.id.et_member_email_add_mem)
         etMemberPhone = findViewById(R.id.et_member_phone_add_mem)
         btnSaveMember = findViewById(R.id.btn_add_mem)
         autoComplete = findViewById(R.id.auto_complete_text)
+        toolbarLabel = findViewById(R.id.edit_toolbar_member)
 
         ivUserIcon = findViewById(R.id.iv_user_profile_icon)
 
+        if (intent.hasExtra(Constants.GROUP_NAME)) {
+            mUserGroupName = intent.getStringExtra(Constants.GROUP_NAME)!!
+            toolbarLabel.text = "EDIT MEMBER PROFILE"
+            autoComplete.setText(mUserGroupName)
+        } else {
+            getGroupNameFromFireStore()
+        }
+        if (intent.hasExtra(Constants.MEMBER_ADMIN_EMAIL)) {
+            mUserAdminEmail = intent.getStringExtra(Constants.MEMBER_ADMIN_EMAIL)!!
+        }
+        if (intent.hasExtra(Constants.MEMBER_EMAIL)) {
+            mUserMemberEmail = intent.getStringExtra(Constants.MEMBER_EMAIL)!!
+            etMemberEmail.setText(mUserMemberEmail)
+        }
+        if (intent.hasExtra(Constants.MEMBER_NAME)) {
+            mUserMemberName = intent.getStringExtra(Constants.MEMBER_NAME)!!
+            etMemberName.setText(mUserMemberName)
+
+        }
+        if (intent.hasExtra(Constants.MEMBER_PHONE)) {
+            mUserMemberPhone = intent.getStringExtra(Constants.MEMBER_PHONE)!!
+            etMemberPhone.setText(mUserMemberPhone)
+        }
+        if (intent.hasExtra(Constants.PROFILE_IMAGE)) {
+            mUserProfileImage = intent.getStringExtra(Constants.PROFILE_IMAGE)!!
+            GlideLoaderClass(this).loadGroupIcon(mUserProfileImage, ivUserIcon)
+        }
+
+
+
         btnSaveMember.setOnClickListener {
-            val imageStringCheck: String = mSelectedProfileImageUri.toString()
-            if (imageStringCheck.isNotEmpty() && imageStringCheck != "null") {
-                uploadUserImage()
+            if (toolbarLabel.text.equals("EDIT MEMBER PROFILE")) {
+                Toast.makeText(this, "Edit profile act", Toast.LENGTH_LONG).show()
+                showProgressDialog()
+                val updateMember = MemberClass(
+                    mUserGroupName,
+                    etMemberName.text.toString(),
+                    etMemberEmail.text.toString(),
+                    etMemberPhone.text.toString(),
+                    currentFirebaseUser!!.uid,
+                    mUserAdminEmail,
+                    mSelectedProfileImageUri.toString()
+                )
+                lifecycleScope.launch {
+                    FireStoreClass().updateMemberProfile(
+                        this@AddMemberActivity,
+                        updateMember,
+                        mUserGroupName,
+                        mUserAdminEmail,
+                        mUserMemberEmail
+                    )
+                }
+
             } else {
-                registerMember()
+                val imageStringCheck: String = mSelectedProfileImageUri.toString()
+                if (imageStringCheck.isNotEmpty() && imageStringCheck != "null") {
+                    uploadUserImage()
+                } else {
+                    registerMember()
+                }
             }
+
         }
         ivUserIcon.setOnClickListener {
             permissionForPhoto()
@@ -262,6 +335,42 @@ class AddMemberActivity : BaseActivity() {
                     /* Toast.makeText(this, "Item is $item", Toast.LENGTH_LONG).show()*/
                 })
         }
+
+    }
+
+    suspend fun successUpdatedMemberList(
+        memberList: ArrayList<MemberClass>,
+        memberEmail: String, mUserAdminEmail: String, mUserGroupName: String
+    ) {
+        mMemberList = memberList
+        cancelProgressDialog()
+
+        val haspMap: HashMap<String, String> = HashMap()
+        haspMap[Constants.MEMBER_EMAIL] = etMemberEmail.text.toString()
+        val checkMasterAccountAvailable: ArrayList<String> =
+            FireStoreClass().getMemberAccountFromFirestore(
+                mUserAdminEmail,
+                mUserGroupName,
+                mUserMemberEmail
+            )
+
+        if(checkMasterAccountAvailable.size > 0){
+            FireStoreClass().updateMemberAccount(
+                this,
+                memberEmail,
+                mUserAdminEmail,
+                mUserGroupName,
+                haspMap
+            )
+        }
+
+    }
+
+    fun successUpdateMemberAccount() {
+        val intent = Intent(this,ViewMemberAccountActivity::class.java)
+        intent.putExtra(Constants.GROUP_NAME,mUserGroupName)
+        getDataResult.launch(intent)
+        finish()
 
     }
 

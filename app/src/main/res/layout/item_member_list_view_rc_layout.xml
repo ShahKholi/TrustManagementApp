@@ -44,26 +44,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:padding="3dp"
-
-                    >
-
-
-
+                    android:padding="3dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:gravity="center"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
                         android:orientation="horizontal">
 
                         <com.android.trustmanagementapp.utils.MSPTextViewBold
                             android:id="@+id/tv_user_name_member"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="54dp"
                             android:layout_marginStart="4dp"
-                            android:gravity="center_vertical"
+                            android:gravity="center"
                             android:textColor="@color/white"
                             android:textSize="18sp"
                             tools:text="Shahul" />
@@ -76,17 +70,26 @@
                         android:background="@color/colorDarkGrey"
                         app:layout_constraintBottom_toBottomOf="parent" />
 
-                    <com.android.trustmanagementapp.utils.MSPTextViewBold
-                        android:id="@+id/tv_contact_number_member"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="54dp"
-                        android:layout_marginStart="4dp"
-                        android:gravity="center_vertical"
-                        android:textColor="@color/white"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:orientation="horizontal">
 
-                        android:textSize="18sp"
-                        tools:text="8754771005" />
+                        <com.android.trustmanagementapp.utils.MSPTextViewBold
+                            android:id="@+id/tv_contact_number_member"
+                            android:layout_width="wrap_content"
+                            android:layout_height="54dp"
+                            android:layout_marginStart="4dp"
+                            android:gravity="center_vertical"
+                            android:textColor="@color/white"
 
+                            android:textSize="18sp"
+                            tools:text="8754771005" />
+
+
+
+                    </LinearLayout>
 
                 </LinearLayout>
 

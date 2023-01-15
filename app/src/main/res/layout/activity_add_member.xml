@@ -21,7 +21,8 @@
             android:text="@string/add_group_member"
             android:textColor="@color/white"
             android:layout_gravity="center"
-            android:textSize="20sp"/>
+            android:textSize="20sp"
+            android:id="@+id/edit_toolbar_member"/>
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.appcompat.widget.LinearLayoutCompat

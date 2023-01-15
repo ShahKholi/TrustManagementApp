@@ -14,15 +14,69 @@
         android:background="@color/bar_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:gravity="start"
+        >
 
-        <com.android.trustmanagementapp.utils.MSPTextViewBold
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/member_details"
-            android:textColor="@color/white"
-            android:textSize="20sp" />
+            android:orientation="horizontal"
+            >
+            <com.android.trustmanagementapp.utils.MSPTextViewBold
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/member_details"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:gravity="start"/>
+
+        </LinearLayout>
+
+
+
+        <LinearLayout
+
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_gravity="end"
+            android:layout_marginTop="6dp"
+
+            >
+
+            <com.android.trustmanagementapp.utils.MSPButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/button_shadow_background"
+                android:gravity="center"
+                android:minHeight="48dp"
+                android:text="@string/delete"
+                android:id="@+id/btn_delete_member"
+                />
+
+            <com.android.trustmanagementapp.utils.MSPButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="9dp"
+                android:background="@drawable/button_shadow_background"
+                android:gravity="center"
+                android:minHeight="48dp"
+                android:text="@string/edit"
+                android:id="@+id/btn_edit_member"/>
+
+        </LinearLayout>
+
+
+
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.appcompat.widget.LinearLayoutCompat
