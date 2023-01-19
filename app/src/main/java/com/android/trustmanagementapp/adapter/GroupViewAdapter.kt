@@ -2,6 +2,7 @@ package com.android.trustmanagementapp.adapter
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
@@ -10,7 +11,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.android.trustmanagementapp.R
+import com.android.trustmanagementapp.activities.AdminScreenActivity
 import com.android.trustmanagementapp.activities.CreateGroupActivity
+import com.android.trustmanagementapp.firestore.FireStoreClass
 import com.android.trustmanagementapp.model.GroupNameClass
 import com.android.trustmanagementapp.utils.Constants
 import com.android.trustmanagementapp.utils.GlideLoaderClass
@@ -54,6 +57,31 @@ class GroupViewAdapter(
                 intent.putExtra(Constants.GROUP_IMAGE, model.groupImage)
                 intent.putExtra(Constants.GROUP_PREVIOUS_BALANCE.toString(), model.groupPreviousBalance)
                 context.startActivity(intent)
+            }
+
+            holder.itemView.findViewById<ImageView>(R.id.iv_delete_group).setOnClickListener {
+                val builder = AlertDialog.Builder(context, R.style.AlertDialogTheme)
+                builder.setIcon(android.R.drawable.ic_dialog_alert)
+                val customerLayout: View =
+                    LayoutInflater.from(context)
+                        .inflate(R.layout.custom_dilog_box_group_delete, null)
+                builder.setView(customerLayout)
+                builder.setTitle("DELETE")
+                when(activity){
+                    is AdminScreenActivity -> {
+                        builder.setPositiveButton("YES") {dialogInterface, _ ->
+                            activity.showProgressDialog()
+                            FireStoreClass().deleteCurrentGroup(context, model.groupName,model.email)
+                        }
+                        builder.setNegativeButton("NO") { dialogInterface, _ ->
+                            dialogInterface.dismiss()
+                        }
+                        val alertDialog: AlertDialog? = builder.create()
+                        // Set other dialog properties
+                        alertDialog!!.setCancelable(false)
+                        alertDialog.show()
+                    }
+                }
             }
         }
     }

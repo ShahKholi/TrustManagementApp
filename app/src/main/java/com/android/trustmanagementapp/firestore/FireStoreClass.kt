@@ -1,6 +1,7 @@
 package com.android.trustmanagementapp.firestore
 
 import android.app.Activity
+import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.util.Log
@@ -1339,7 +1340,6 @@ class FireStoreClass {
 
     suspend fun checkMasterGroupAvailableInFirestore(
         emailId: String?,
-        mainGroupNewName: String,
         mainGroupOldName: String
     ): ArrayList<String> {
         val masterAccountList: ArrayList<String> = ArrayList()
@@ -1360,7 +1360,6 @@ class FireStoreClass {
 
     suspend fun checkExpenseGroupAvailableInFirestore(
         emailId: String?,
-        mainGroupNewName: String,
         mainGroupOldName: String
     ): ArrayList<String> {
         val expenseAccountList: ArrayList<String> = ArrayList()
@@ -1381,7 +1380,6 @@ class FireStoreClass {
 
     suspend fun checkGroupAvailableinMemberAccountFirestore(
         emailId: String?,
-        mainGroupNewName: String,
         mainGroupOldName: String
     ): ArrayList<String> {
         val memberAccountList: ArrayList<String> = ArrayList()
@@ -1402,7 +1400,6 @@ class FireStoreClass {
 
     suspend fun checkGroupAvailableinMemberFirestore(
         emailId: String?,
-        mainGroupNewName: String,
         mainGroupOldName: String
     ): ArrayList<String> {
         val memberList: ArrayList<String> = ArrayList()
@@ -1652,6 +1649,8 @@ class FireStoreClass {
             }
     }
 
+
+
     fun deleteExpenseMonthWise(
         activity: Activity,
         documentId: String,
@@ -1676,6 +1675,99 @@ class FireStoreClass {
                         activity.cancelProgressDialog()
                     }
                 }
+            }
+    }
+
+    suspend fun deleteMasterAccount(email: String, groupName: String) {
+        mFirestoreInstance.collection(Constants.MASTER_ACCOUNT_DETAIL)
+            .whereEqualTo("groupName",groupName)
+            .whereEqualTo("memberAdminEmail", email)
+            .get()
+            .addOnSuccessListener {document ->
+                for (i in document.documents){
+                    mFirestoreInstance.collection(Constants.MASTER_ACCOUNT_DETAIL)
+                        .document(i.id)
+                        .delete()
+                }
+
+            }.await()
+    }
+
+    suspend fun deleteExpenseAccount(email: String, groupName: String) {
+        mFirestoreInstance.collection(Constants.GROUP_EXPENSE_DETAIL)
+            .whereEqualTo("groupName",groupName)
+            .whereEqualTo("memberAdminEmail", email)
+            .get()
+            .addOnSuccessListener {document ->
+                for (i in document.documents){
+                    mFirestoreInstance.collection(Constants.GROUP_EXPENSE_DETAIL)
+                        .document(i.id)
+                        .delete()
+                }
+
+            }.await()
+    }
+
+    suspend fun deleteMemberAccount(email: String, groupName: String) {
+        mFirestoreInstance.collection(Constants.MEMBER_ACCOUNT_DETAIL)
+            .whereEqualTo("groupName",groupName )
+            .whereEqualTo("adminEmail", email)
+            .get()
+            .addOnSuccessListener {document ->
+                for (i in document.documents){
+                    mFirestoreInstance.collection(Constants.MEMBER_ACCOUNT_DETAIL)
+                        .document(i.id)
+                        .delete()
+                }
+
+            }.await()
+    }
+
+    suspend fun deleteMemberDetail(email: String, groupName: String) {
+        mFirestoreInstance.collection(Constants.MEMBER)
+            .whereEqualTo("groupName",groupName )
+            .whereEqualTo("memberAdminEmail", email)
+            .get()
+            .addOnSuccessListener {document ->
+                for (i in document.documents){
+                    mFirestoreInstance.collection(Constants.MEMBER)
+                        .document(i.id)
+                        .delete()
+                }
+
+            }.await()
+    }
+
+    fun deleteCurrentGroup(context: Context, groupName: String, email: String) {
+        mFirestoreInstance.collection(Constants.GROUP)
+            .whereEqualTo("groupName",groupName )
+            .whereEqualTo("email", email)
+            .get()
+            .addOnSuccessListener { document->
+               for(i in document.documents){
+                   mFirestoreInstance.collection(Constants.GROUP)
+                       .document(i.id)
+                       .delete()
+               }
+                when(context){
+                    is AdminScreenActivity -> {
+                        context.lifecycleScope.launch {
+                            context.successGroupDeleted(groupName,email)
+                        }
+
+                    }
+                }
+            }.addOnFailureListener {exception ->
+                when(context){
+                    is AdminScreenActivity -> {
+                    context.cancelProgressDialog()
+                }
+                }
+                Log.e(
+                    context.javaClass.simpleName,
+                    "Error while deleting group.",
+                    exception
+                )
             }
     }
 
@@ -1823,6 +1915,8 @@ class FireStoreClass {
                 }
             }
     }
+
+
 
 
 }

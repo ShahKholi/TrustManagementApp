@@ -329,7 +329,6 @@ class AddMemberActivity : BaseActivity() {
         etMemberEmail.setText("")
         etMemberPhone.setText("")
         ivUserIcon.setImageResource(R.drawable.ic_baseline_image_24)
-
     }
 
     fun successGroupListFromFirestore(groupList: ArrayList<GroupNameClass>) {

@@ -380,7 +380,6 @@ class CreateGroupActivity : BaseActivity() {
         val checkMemberGroupName: ArrayList<String> =
             FireStoreClass().checkGroupAvailableinMemberFirestore(
                 getEmailId,
-                mainGroupNewName,
                 mainGroupOldName
             )
         if(checkMemberGroupName.size > 0){
@@ -394,7 +393,6 @@ class CreateGroupActivity : BaseActivity() {
         val checkMemberAccountList : ArrayList<String> =
             FireStoreClass().checkGroupAvailableinMemberAccountFirestore(
                 getEmailId,
-                mainGroupNewName,
                 mainGroupOldName
             )
         if(checkMemberAccountList.size > 0){
@@ -407,7 +405,6 @@ class CreateGroupActivity : BaseActivity() {
         val expenseAccountList : ArrayList<String> =
             FireStoreClass().checkExpenseGroupAvailableInFirestore(
                 getEmailId,
-                mainGroupNewName,
                 mainGroupOldName
             )
         if(expenseAccountList.size > 0){
@@ -420,7 +417,6 @@ class CreateGroupActivity : BaseActivity() {
         val masterAccountList :  ArrayList<String> =
         FireStoreClass().checkMasterGroupAvailableInFirestore(
             getEmailId,
-            mainGroupNewName,
             mainGroupOldName
         )
         if(masterAccountList.size > 0){

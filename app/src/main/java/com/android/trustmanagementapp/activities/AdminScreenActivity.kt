@@ -1,8 +1,12 @@
 package com.android.trustmanagementapp.activities
 
+import android.app.Activity
 import android.content.Intent
 
 import android.os.Bundle
+import android.util.Log
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -10,7 +14,9 @@ import com.android.trustmanagementapp.R
 import com.android.trustmanagementapp.adapter.GroupViewAdapter
 import com.android.trustmanagementapp.firestore.FireStoreClass
 import com.android.trustmanagementapp.model.GroupNameClass
+import com.android.trustmanagementapp.utils.Constants
 import com.android.trustmanagementapp.utils.MSPButton
+import java.util.HashMap
 
 class AdminScreenActivity : BaseActivity() {
     lateinit var createGroupBtn: MSPButton
@@ -22,6 +28,14 @@ class AdminScreenActivity : BaseActivity() {
 
     private lateinit var mGroupList: ArrayList<GroupNameClass>
     private lateinit var recyclerView: RecyclerView
+
+    private val getGroupDataResult: ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult())
+        { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                finish()
+            }
+        }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -89,6 +103,49 @@ class AdminScreenActivity : BaseActivity() {
                 this@AdminScreenActivity)
             recyclerView.adapter = cartListAdapter
         }
+    }
+
+    suspend fun successGroupDeleted(groupName: String, email: String) {
+        Log.e("group","current group was deleted successfully")
+
+        val checkMemberGroupName: ArrayList<String> =
+            FireStoreClass().checkGroupAvailableinMemberFirestore(
+                email,
+                groupName
+            )
+        if(checkMemberGroupName.size > 0){
+            FireStoreClass().deleteMemberDetail(email,groupName)
+        }
+
+        val checkMemberAccountList : ArrayList<String> =
+            FireStoreClass().checkGroupAvailableinMemberAccountFirestore(
+                email,
+                groupName
+            )
+        if(checkMemberAccountList.size > 0){
+            FireStoreClass().deleteMemberAccount(email,groupName)
+        }
+        val expenseAccountList : ArrayList<String> =
+            FireStoreClass().checkExpenseGroupAvailableInFirestore(
+                email,
+                groupName
+            )
+        if(expenseAccountList.size > 0){
+            FireStoreClass().deleteExpenseAccount(email,groupName)
+        }
+        val masterAccountList :  ArrayList<String> =
+            FireStoreClass().checkMasterGroupAvailableInFirestore(
+                email,
+                groupName
+            )
+        if(masterAccountList.size > 0){
+            FireStoreClass().deleteMasterAccount(email,groupName)
+        }
+        Log.e("All Data","All the data deleted successfully")
+        cancelProgressDialog()
+        val intent = intent
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        getGroupDataResult.launch(intent)
     }
 
 }
