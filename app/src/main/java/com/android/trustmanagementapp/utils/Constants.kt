@@ -37,7 +37,18 @@ object Constants {
 
     const val GROUP_NAME: String = "groupName"
 
+    const val FINISH : String = "finish"
+
+    const val MEMBER_DELETE_SUCCESS : String = "memberDeleteSuccess"
+
     const val CURRENT_AMOUNT: String = "currentAmount"
+
+    const val ADMIN_EMAIL: String = "adminEmail"
+
+    const val CREATED_DATE : String = "createdDate"
+
+    //const val GROUP_PREVIOUS_BALANCE : String = "groupPreviousBalance"
+    const val GROUP_PREVIOUS_BALANCE : Int = 0
 
 
     fun getMimeType(context: Context, uri: Uri): String? {

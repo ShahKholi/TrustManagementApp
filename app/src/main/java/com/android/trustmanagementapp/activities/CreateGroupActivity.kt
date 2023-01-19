@@ -1,10 +1,12 @@
 package com.android.trustmanagementapp.activities
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
@@ -13,7 +15,6 @@ import android.text.TextUtils
 import android.util.Log
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
@@ -26,6 +27,7 @@ import com.android.trustmanagementapp.utils.*
 import com.google.firebase.auth.FirebaseAuth
 import java.util.*
 import java.io.IOException
+import kotlin.collections.ArrayList
 
 
 class CreateGroupActivity : BaseActivity() {
@@ -34,10 +36,21 @@ class CreateGroupActivity : BaseActivity() {
     lateinit var btnCreateGroup: MSPButton
     var currentFirebaseUser = FirebaseAuth.getInstance().currentUser
     lateinit var ivGroupIcon: ImageView
-    lateinit var etPreviousBalance : MSPEditText
+    lateinit var etPreviousBalance: MSPEditText
+    lateinit var mToolbarName: MSPTextViewBold
 
     private var mSelectedGroupImageUri: Uri? = null
     private var mSelectedImageCloudUriString: String? = null
+
+
+    private lateinit var mainGroupOldName: String
+    private lateinit var mainGroupNewName: String
+    lateinit var mGroupAdminEmail: String
+    lateinit var mGroupCreatedDate: String
+    lateinit var mFinish: String
+    lateinit var mPreviousBalance: String
+    lateinit var mGroupProfileImage: String
+
 
 
     private val getPhotoActionResult: ActivityResultLauncher<Intent> =
@@ -48,7 +61,7 @@ class CreateGroupActivity : BaseActivity() {
                 onPhotoResult(result.resultCode, data)
             }
         }
-    private val getGroupDataResult : ActivityResultLauncher<Intent> =
+    private val getGroupDataResult: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult())
         { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -56,6 +69,7 @@ class CreateGroupActivity : BaseActivity() {
             }
         }
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_group)
@@ -70,6 +84,7 @@ class CreateGroupActivity : BaseActivity() {
         btnCreateGroup = findViewById(R.id.btn_create_group)
         ivGroupIcon = findViewById(R.id.iv_group_icon)
         etPreviousBalance = findViewById(R.id.et_group_previous_balance)
+        mToolbarName = findViewById(R.id.toolbar_label_group_Name)
 
         originateDate.setOnClickListener {
             originDateSelect()
@@ -78,14 +93,98 @@ class CreateGroupActivity : BaseActivity() {
             permissionForPhoto()
 
         }
-        btnCreateGroup.setOnClickListener {
-            val imageStringCheck: String = mSelectedGroupImageUri.toString()
-            if (imageStringCheck.isNotEmpty() && imageStringCheck != "null") {
-                uploadUserImage()
-            } else {
-                registerGroupNoPhoto()
-            }
+
+        if (intent.hasExtra(Constants.GROUP_NAME)) {
+            mainGroupOldName = intent.getStringExtra(Constants.GROUP_NAME)!!
+            groupName.setText(mainGroupOldName)
         }
+
+        if (intent.hasExtra(Constants.CREATED_DATE)) {
+            mGroupCreatedDate = intent.getStringExtra(Constants.CREATED_DATE)!!
+            originateDate.text = mGroupCreatedDate
+        }
+        if (intent.hasExtra(Constants.GROUP_IMAGE)) {
+            mGroupProfileImage = intent.getStringExtra(Constants.GROUP_IMAGE)!!
+            GlideLoaderClass(this).loadGroupIcon(mGroupProfileImage, ivGroupIcon)
+        }
+
+        if (intent.hasExtra(Constants.FINISH)) {
+            mToolbarName.text = "EDIT GROUP DETAIL"
+            btnCreateGroup.text = "UPDATE"
+            val score = intent.getIntExtra(Constants.GROUP_PREVIOUS_BALANCE.toString(), 0)
+            etPreviousBalance.setText(score.toString())
+        }
+        btnCreateGroup.setOnClickListener {
+            if (intent.hasExtra(Constants.FINISH)) {
+                updateUploadUserImage()
+            } else {
+                val imageStringCheck: String = mSelectedGroupImageUri.toString()
+                if (imageStringCheck.isNotEmpty() && imageStringCheck != "null") {
+                    uploadUserImage()
+                } else {
+                    registerGroupNoPhoto()
+                }
+            }
+
+        }
+    }
+
+    private fun updateUploadUserImage() {
+        showProgressDialog()
+
+        if (validateGroupDetails()) {
+            if (mSelectedGroupImageUri.toString()
+                    .isNotEmpty() && mSelectedGroupImageUri.toString() != "null"
+            ) {
+                FireStoreClass().updateUploadImageToCloudStorage(
+                    this, mSelectedGroupImageUri!!,
+                    Constants.GROUP_IMAGE
+                )
+            } else {
+                val sharedPreferences = getSharedPreferences(
+                    Constants.STORE_EMAIL_ID, Context.MODE_PRIVATE
+                )
+                val getEmailId = sharedPreferences.getString(Constants.STORE_EMAIL_ID, "")
+                val mGroupName: String = groupName.text.toString().trim { it <= ' ' }
+                val mSelectedDate: String = originateDate.text.toString().trim { it <= ' ' }
+                val mPreviousBalance: String = etPreviousBalance.text.toString().trim { it <= ' ' }
+                val updateGroup = GroupNameClass(
+                    mGroupName,
+                    mPreviousBalance.toInt(),
+                    mSelectedDate,
+                    getEmailId!!,
+                    mGroupProfileImage,
+                    currentFirebaseUser!!.uid,
+                    0
+                )
+                FireStoreClass().updateGroupDetail(this, mainGroupOldName, getEmailId, updateGroup)
+            }
+
+        }
+    }
+
+    fun updateGroupProfile(uri: Uri) {
+
+        val groupImage = uri.toString()
+
+        val sharedPreferences = getSharedPreferences(
+            Constants.STORE_EMAIL_ID, Context.MODE_PRIVATE
+        )
+        val getEmailId = sharedPreferences.getString(Constants.STORE_EMAIL_ID, "")
+        val mGroupName: String = groupName.text.toString().trim { it <= ' ' }
+        val mSelectedDate: String = originateDate.text.toString().trim { it <= ' ' }
+        val mPreviousBalance: String = etPreviousBalance.text.toString().trim { it <= ' ' }
+        val updateGroup = GroupNameClass(
+            mGroupName,
+            mPreviousBalance.toInt(),
+            mSelectedDate,
+            getEmailId!!,
+            groupImage,
+            currentFirebaseUser!!.uid,
+            0
+        )
+        FireStoreClass().updateGroupDetail(this, mainGroupOldName, getEmailId, updateGroup)
+
     }
 
     private fun uploadUserImage() {
@@ -142,7 +241,7 @@ class CreateGroupActivity : BaseActivity() {
             Toast.LENGTH_LONG
         ).show()
         finish()
-        val intent = Intent(this,AdminScreenActivity::class.java)
+        val intent = Intent(this, AdminScreenActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         getGroupDataResult.launch(intent)
     }
@@ -178,7 +277,7 @@ class CreateGroupActivity : BaseActivity() {
             )
             val getEmailId = sharedPreferences.getString(Constants.STORE_EMAIL_ID, "")
             val mGroupName: String = groupName.text.toString().trim { it <= ' ' }
-            val mPreviousBalance : String = etPreviousBalance.text.toString().trim { it <= ' ' }
+            val mPreviousBalance: String = etPreviousBalance.text.toString().trim { it <= ' ' }
             val mSelectedDate: String = originateDate.text.toString().trim { it <= ' ' }
             val createGroup = GroupNameClass(
                 mGroupName,
@@ -202,7 +301,7 @@ class CreateGroupActivity : BaseActivity() {
         val getEmailId = sharedPreferences.getString(Constants.STORE_EMAIL_ID, "")
         val mGroupName: String = groupName.text.toString().trim { it <= ' ' }
         val mSelectedDate: String = originateDate.text.toString().trim { it <= ' ' }
-        val mPreviousBalance : String = etPreviousBalance.text.toString().trim { it <= ' ' }
+        val mPreviousBalance: String = etPreviousBalance.text.toString().trim { it <= ' ' }
         val createGroup = GroupNameClass(
             mGroupName,
             mPreviousBalance.toInt(),
@@ -268,6 +367,92 @@ class CreateGroupActivity : BaseActivity() {
         toolbar.setNavigationOnClickListener {
             onBackPressed()
         }
+    }
+
+    suspend fun groupUpdateSuccess() {
+        val mGroupName: String = groupName.text.toString().trim { it <= ' ' }
+        mainGroupNewName = mGroupName
+        val sharedPreferences = getSharedPreferences(
+            Constants.STORE_EMAIL_ID, Context.MODE_PRIVATE
+        )
+        val getEmailId = sharedPreferences.getString(Constants.STORE_EMAIL_ID, "")
+
+        val checkMemberGroupName: ArrayList<String> =
+            FireStoreClass().checkGroupAvailableinMemberFirestore(
+                getEmailId,
+                mainGroupNewName,
+                mainGroupOldName
+            )
+        if(checkMemberGroupName.size > 0){
+            val userHashMap = HashMap<String, Any>()
+            userHashMap[Constants.GROUP_NAME] =mainGroupNewName
+            FireStoreClass().updateMemberGroup(this, getEmailId,
+                userHashMap,
+                mainGroupOldName)
+        }
+
+        val checkMemberAccountList : ArrayList<String> =
+            FireStoreClass().checkGroupAvailableinMemberAccountFirestore(
+                getEmailId,
+                mainGroupNewName,
+                mainGroupOldName
+            )
+        if(checkMemberAccountList.size > 0){
+            val userHashMap = HashMap<String, Any>()
+            userHashMap[Constants.GROUP_NAME] =mainGroupNewName
+            FireStoreClass().updateMemberAccountGroup(this, getEmailId,
+                userHashMap,
+                mainGroupOldName)
+        }
+        val expenseAccountList : ArrayList<String> =
+            FireStoreClass().checkExpenseGroupAvailableInFirestore(
+                getEmailId,
+                mainGroupNewName,
+                mainGroupOldName
+            )
+        if(expenseAccountList.size > 0){
+            val userHashMap = HashMap<String, Any>()
+            userHashMap[Constants.GROUP_NAME] =mainGroupNewName
+            FireStoreClass().updateExpenseAccountGroup(this, getEmailId,
+                userHashMap,
+                mainGroupOldName)
+        }
+        val masterAccountList :  ArrayList<String> =
+        FireStoreClass().checkMasterGroupAvailableInFirestore(
+            getEmailId,
+            mainGroupNewName,
+            mainGroupOldName
+        )
+        if(masterAccountList.size > 0){
+            val userHashMap = HashMap<String, Any>()
+            userHashMap[Constants.GROUP_NAME] =mainGroupNewName
+            FireStoreClass().updateMasterAccountGroup(this, getEmailId,
+                userHashMap,
+                mainGroupOldName)
+        }
+
+        cancelProgressDialog()
+        finish()
+        val intent = Intent(this, AdminScreenActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        getGroupDataResult.launch(intent)
+
+    }
+
+    fun memberUpdateSuccess() {
+        Log.e("member update success", "group name changed into member list")
+    }
+
+    fun memberUpdateAccountSuccess() {
+        Log.e("member Account", "group name changed into member Account detail")
+    }
+
+    fun expenseUpdateAccountSuccess() {
+        Log.e("expense Account", "group name changed into expense Account detail")
+    }
+
+    fun masterUpdateAccountSuccess() {
+        Log.e("Master Account", "group name changed into Master Account detail")
     }
 
 }

@@ -7,11 +7,11 @@ import android.os.Parcelable
 
 data class MemberAccountDetail(
     var year: String = "",
-    val groupName: String = "",
+    var groupName: String = "",
     val memberName: String = "",
     var memberEmail : String = "",
     val adminEmail: String = "",
-    val month : String = "",
+    var month : String = "",
     var currentAmount: Int = 0,
     var id : String = ""
 ) : Parcelable {

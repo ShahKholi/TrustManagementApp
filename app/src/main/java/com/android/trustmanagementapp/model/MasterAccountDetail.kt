@@ -10,7 +10,7 @@ data class MasterAccountDetail(
     var groupName: String = "",
     var memberAdminEmail: String= "",
     var year : Int = 0,
-    val month : String = "",
+    var month : String = "",
     var income : Int= 0,
     var monthExpense : String = "",
     var expenseAmount : Int = 0

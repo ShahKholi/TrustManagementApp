@@ -2,10 +2,13 @@ package com.android.trustmanagementapp.activities
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
+import android.app.PendingIntent
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -13,6 +16,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.trustmanagementapp.R
@@ -25,6 +29,7 @@ import com.android.trustmanagementapp.utils.GlideLoaderClass
 import com.android.trustmanagementapp.utils.MSPButton
 import com.android.trustmanagementapp.utils.MSPTextViewBold
 import de.hdodenhof.circleimageview.CircleImageView
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 
 class MemberDetailedActivity : BaseActivity() {
@@ -43,21 +48,31 @@ class MemberDetailedActivity : BaseActivity() {
     lateinit var llBalanceScreen: LinearLayoutCompat
     lateinit var mTotalAmount: MSPTextViewBold
     lateinit var mCurrentDeleteDocumentID: ArrayList<MemberAccountDetail>
-    lateinit var btnEdit : MSPButton
+    lateinit var btnEdit: MSPButton
+    lateinit var btnDeleteMember: MSPButton
 
     private lateinit var mCurrentMonthTotal: ArrayList<Int>
     private lateinit var mCurrentAmount: ArrayList<Int>
+
+    private lateinit var mAvailableMonthList: ArrayList<MemberAccountDetail>
 
 
     private val getMonthDataResult: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult())
         { result ->
             if (result.resultCode == Activity.RESULT_OK) {
+                getMemberIncomeDetail()
                 finish()
-
             }
         }
 
+    private val getMemberUserDeleteResult: ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult())
+        { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                finish()
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,6 +111,11 @@ class MemberDetailedActivity : BaseActivity() {
         llBalanceScreen = findViewById(R.id.ll_total_balance_detail)
         mTotalAmount = findViewById(R.id.tv_total_amount_detail)
         btnEdit = findViewById(R.id.btn_edit_member)
+        btnDeleteMember = findViewById(R.id.btn_delete_member)
+
+        btnDeleteMember.setOnClickListener {
+            deleteMemberActivity()
+        }
 
         btnEdit.setOnClickListener {
             goToEditScreenActivity()
@@ -114,11 +134,62 @@ class MemberDetailedActivity : BaseActivity() {
 
     }
 
+    private fun deleteMemberActivity() {
+
+        val builder = AlertDialog.Builder(this, R.style.AlertDialogTheme)
+        builder.setIcon(android.R.drawable.ic_dialog_alert)
+        val customerLayout: View =
+            LayoutInflater.from(this)
+                .inflate(R.layout.custom_dilog_box_delete, null)
+        builder.setView(customerLayout)
+        builder.setTitle("DELETE")
+        builder.setPositiveButton("YES") { dialogInterface, _ ->
+            Log.e("dialog", "Accepted")
+            lifecycleScope.launch {
+                showProgressDialog()
+                startDeleteActivity()
+            }
+
+        }
+        builder.setNegativeButton("NO") { dialogInterface, _ ->
+            dialogInterface.dismiss()
+        }
+        val alertDialog: AlertDialog? = builder.create()
+        // Set other dialog properties
+        alertDialog!!.setCancelable(false)
+        alertDialog.show()
+
+
+    }
+
+    private suspend fun startDeleteActivity() {
+        val checkAccountAvailableInAccount : ArrayList<String> =
+            FireStoreClass().checkAccountAvailableFromFirestore(
+                this,
+                mUserAdminEmail,
+                mUserGroupName,
+                mUserMemberEmail
+            )
+        Log.e("Member Account Size",checkAccountAvailableInAccount.size.toString())
+
+        if(checkAccountAvailableInAccount.size > 0){
+            FireStoreClass().deleteMemberAccountDetail(
+                this,
+                mUserAdminEmail,
+                mUserGroupName,
+                mUserMemberEmail
+            )
+        }else {
+            successDeleteFromMemberAccount()
+        }
+
+    }
+
     private fun goToEditScreenActivity() {
         val intent = Intent(this, AddMemberActivity::class.java)
         intent.putExtra(Constants.GROUP_NAME, mUserGroupName)
-        intent.putExtra(Constants.MEMBER_ADMIN_EMAIL,mUserAdminEmail)
-        intent.putExtra(Constants.MEMBER_EMAIL,mUserMemberEmail )
+        intent.putExtra(Constants.MEMBER_ADMIN_EMAIL, mUserAdminEmail)
+        intent.putExtra(Constants.MEMBER_EMAIL, mUserMemberEmail)
         intent.putExtra(Constants.MEMBER_NAME, mUserMemberName)
         intent.putExtra(Constants.MEMBER_PHONE, mUserMemberPhone)
         intent.putExtra(Constants.PROFILE_IMAGE, mUserProfileImage)
@@ -203,11 +274,27 @@ class MemberDetailedActivity : BaseActivity() {
 
     }
 
+    fun updateMemberMasterAmountSuccess() {
+        val intent = Intent(this, ViewMemberAccountActivity::class.java)
+        intent.putExtra(Constants.GROUP_NAME, mUserGroupName)
+        intent.putExtra(Constants.MEMBER_DELETE_SUCCESS, "memberDeleteSuccess")
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK and Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
+        finish()
+        Log.e("updateMemberMaster", "updated completed")
+    }
+
     fun updateMasterAmountSuccess() {
         cancelProgressDialog()
         val intent = intent
+        intent.putExtra(Constants.GROUP_NAME, mUserGroupName)
+        intent.putExtra(Constants.FINISH, "finish")
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK and Intent.FLAG_ACTIVITY_NEW_TASK
         getMonthDataResult.launch(intent)
         finish()
+        Log.e("updateMasterAmount", "updated completed")
+
+
 
     }
 
@@ -256,4 +343,221 @@ class MemberDetailedActivity : BaseActivity() {
 
         }
     }
+
+    fun successDeleteFromMemberAccount() {
+        FireStoreClass().deleteMemberFromMemberList(
+            this,
+            mUserAdminEmail,
+            mUserGroupName,
+            mUserMemberEmail
+        )
+    }
+
+    suspend fun successDeleteFromMember() {
+    Log.e("successDeleteFromMember", "memberDeleted start updating Master")
+        val amountListJan: ArrayList<Int> = ArrayList()
+        val amountListFeb: ArrayList<Int> = ArrayList()
+        val amountListMar: ArrayList<Int> = ArrayList()
+        val amountListApr: ArrayList<Int> = ArrayList()
+        val amountListMay: ArrayList<Int> = ArrayList()
+        val amountListJun: ArrayList<Int> = ArrayList()
+        val amountListJul: ArrayList<Int> = ArrayList()
+        val amountListAug: ArrayList<Int> = ArrayList()
+        val amountListSep: ArrayList<Int> = ArrayList()
+        val amountListOct: ArrayList<Int> = ArrayList()
+        val amountListNov: ArrayList<Int> = ArrayList()
+        val amountListDec: ArrayList<Int> = ArrayList()
+        mAvailableMonthList = FireStoreClass().beforeDeleteGetMemberAccountDetailFromFirestore(
+            mUserAdminEmail, mUserGroupName
+        )
+        Log.e("mAvailableMonthList", mAvailableMonthList.toString())
+        if(mAvailableMonthList.size > 0){
+            for (i in mAvailableMonthList) {
+                if (i.month == "January") {
+                    amountListJan.add(i.currentAmount)
+                    val finalAmount: Int = amountListJan.sum()
+                    val userHashMap = HashMap<String, Any>()
+                    userHashMap[Constants.INCOME] = finalAmount
+                    FireStoreClass().memberDeleteUpdateMasterAccount(
+                        this,
+                        mUserAdminEmail,
+                        mUserGroupName,
+                        i.month,
+                        currentYear(),
+                        userHashMap
+                    )
+                }
+                if (i.month == "February") {
+                    amountListFeb.add(i.currentAmount)
+                    val finalAmount: Int = amountListFeb.sum()
+                    val userHashMap = HashMap<String, Any>()
+                    userHashMap[Constants.INCOME] = finalAmount
+                    FireStoreClass().memberDeleteUpdateMasterAccount(
+                        this,
+                        mUserAdminEmail,
+                        mUserGroupName,
+                        i.month,
+                        currentYear(),
+                        userHashMap
+                    )
+                }
+                if (i.month == "March") {
+
+                    amountListMar.add(i.currentAmount)
+                    val finalAmount: Int = amountListMar.sum()
+                    val userHashMap = HashMap<String, Any>()
+                    userHashMap[Constants.INCOME] = finalAmount
+                    FireStoreClass().memberDeleteUpdateMasterAccount(
+                        this,
+                        mUserAdminEmail,
+                        mUserGroupName,
+                        i.month,
+                        currentYear(),
+                        userHashMap
+                    )
+                }
+                if (i.month == "April") {
+
+                    amountListApr.add(i.currentAmount)
+                    val finalAmount: Int = amountListApr.sum()
+                    val userHashMap = HashMap<String, Any>()
+                    userHashMap[Constants.INCOME] = finalAmount
+                    FireStoreClass().memberDeleteUpdateMasterAccount(
+                        this,
+                        mUserAdminEmail,
+                        mUserGroupName,
+                        i.month,
+                        currentYear(),
+                        userHashMap
+                    )
+                }
+                if (i.month == "May") {
+
+                    amountListMay.add(i.currentAmount)
+                    val finalAmount: Int = amountListMay.sum()
+                    val userHashMap = HashMap<String, Any>()
+                    userHashMap[Constants.INCOME] = finalAmount
+                    FireStoreClass().memberDeleteUpdateMasterAccount(
+                        this,
+                        mUserAdminEmail,
+                        mUserGroupName,
+                        i.month,
+                        currentYear(),
+                        userHashMap
+                    )
+                }
+                if (i.month == "June") {
+
+                    amountListJun.add(i.currentAmount)
+                    val finalAmount: Int = amountListJun.sum()
+                    val userHashMap = HashMap<String, Any>()
+                    userHashMap[Constants.INCOME] = finalAmount
+                    FireStoreClass().memberDeleteUpdateMasterAccount(
+                        this,
+                        mUserAdminEmail,
+                        mUserGroupName,
+                        i.month,
+                        currentYear(),
+                        userHashMap
+                    )
+                }
+                if (i.month == "July") {
+
+                    amountListJul.add(i.currentAmount)
+                    val finalAmount: Int = amountListJul.sum()
+                    val userHashMap = HashMap<String, Any>()
+                    userHashMap[Constants.INCOME] = finalAmount
+                    FireStoreClass().memberDeleteUpdateMasterAccount(
+                        this,
+                        mUserAdminEmail,
+                        mUserGroupName,
+                        i.month,
+                        currentYear(),
+                        userHashMap
+                    )
+                }
+                if (i.month == "August") {
+
+                    amountListAug.add(i.currentAmount)
+                    val finalAmount: Int = amountListAug.sum()
+                    val userHashMap = HashMap<String, Any>()
+                    userHashMap[Constants.INCOME] = finalAmount
+                    FireStoreClass().memberDeleteUpdateMasterAccount(
+                        this,
+                        mUserAdminEmail,
+                        mUserGroupName,
+                        i.month,
+                        currentYear(),
+                        userHashMap
+                    )
+                }
+                if (i.month == "September") {
+
+                    amountListSep.add(i.currentAmount)
+                    val finalAmount: Int = amountListSep.sum()
+                    val userHashMap = HashMap<String, Any>()
+                    userHashMap[Constants.INCOME] = finalAmount
+                    FireStoreClass().memberDeleteUpdateMasterAccount(
+                        this,
+                        mUserAdminEmail,
+                        mUserGroupName,
+                        i.month,
+                        currentYear(),
+                        userHashMap
+                    )
+                }
+                if (i.month == "October") {
+
+                    amountListOct.add(i.currentAmount)
+                    val finalAmount: Int = amountListOct.sum()
+                    val userHashMap = HashMap<String, Any>()
+                    userHashMap[Constants.INCOME] = finalAmount
+                    FireStoreClass().memberDeleteUpdateMasterAccount(
+                        this,
+                        mUserAdminEmail,
+                        mUserGroupName,
+                        i.month,
+                        currentYear(),
+                        userHashMap
+                    )
+                }
+                if (i.month == "November") {
+
+                    amountListNov.add(i.currentAmount)
+                    val finalAmount: Int = amountListNov.sum()
+                    val userHashMap = HashMap<String, Any>()
+                    userHashMap[Constants.INCOME] = finalAmount
+                    FireStoreClass().memberDeleteUpdateMasterAccount(
+                        this,
+                        mUserAdminEmail,
+                        mUserGroupName,
+                        i.month,
+                        currentYear(),
+                        userHashMap
+                    )
+                }
+                if (i.month == "December") {
+
+                    amountListDec.add(i.currentAmount)
+                    val finalAmount: Int = amountListDec.sum()
+                    val userHashMap = HashMap<String, Any>()
+                    userHashMap[Constants.INCOME] = finalAmount
+                    FireStoreClass().memberDeleteUpdateMasterAccount(
+                        this,
+                        mUserAdminEmail,
+                        mUserGroupName,
+                        i.month,
+                        currentYear(),
+                        userHashMap
+                    )
+                }
+            }
+        }else {
+            updateMemberMasterAmountSuccess()
+        }
+
+        cancelProgressDialog()
+    }
+
+
 }

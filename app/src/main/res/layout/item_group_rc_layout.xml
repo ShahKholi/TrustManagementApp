@@ -34,10 +34,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
         android:gravity="center"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/ll_group_item_image"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -59,6 +59,34 @@
             android:textStyle="bold"
             tools:text="Originated Date : 25/10/2020" />
 
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="horizontal"
+          android:gravity="end"
+          >
+
+          <ImageView
+              android:layout_width="wrap_content"
+              android:layout_height="40dp"
+              android:layout_gravity="end"
+              android:src="@drawable/ic_baseline_delete_24"
+              android:id="@+id/iv_delete_group"
+              android:layout_marginBottom="6dp"
+              android:layout_marginEnd="15dp"/>
+
+          <ImageView
+              android:layout_width="wrap_content"
+              android:layout_height="40dp"
+              android:layout_gravity="end"
+              android:src="@drawable/ic_baseline_edit_24"
+              android:id="@+id/iv_edit_group"
+              android:layout_marginBottom="6dp"
+              />
+
+      </LinearLayout>
+
+
     </LinearLayout>
 
     <View
@@ -69,5 +97,7 @@
         android:background="@color/colorDarkGrey"
         app:layout_constraintBottom_toBottomOf="parent"
         />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -21,7 +21,9 @@
             android:text="@string/create_group"
             android:textColor="@color/white"
             android:layout_gravity="center"
-            android:textSize="20sp"/>
+            android:textSize="20sp"
+            android:id="@+id/toolbar_label_group_Name"
+            />
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.appcompat.widget.LinearLayoutCompat

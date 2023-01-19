@@ -1,5 +1,6 @@
 package com.android.trustmanagementapp.activities
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -7,6 +8,8 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import com.android.trustmanagementapp.R
@@ -20,6 +23,13 @@ class PreViewMemberActivity : AppCompatActivity() {
     private lateinit var adapterGroupItems: ArrayAdapter<String>
     private lateinit var btnPreAccount : MSPButton
 
+    private val getMonthDataResult: ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult())
+        { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                finish()
+            }
+        }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pre_view_member)
@@ -37,7 +47,10 @@ class PreViewMemberActivity : AppCompatActivity() {
         btnPreAccount.setOnClickListener {
             val intent = Intent(this, ViewMemberAccountActivity::class.java)
             intent.putExtra(Constants.GROUP_NAME,autoCompleteGroupName.text.toString())
-            startActivity(intent)
+           // startActivity(intent)
+           getMonthDataResult.launch(intent)
+
+
         }
 
     }
@@ -65,6 +78,11 @@ class PreViewMemberActivity : AppCompatActivity() {
 
                 })
         }
+    }
+
+    override fun onBackPressed() {
+        val intent = Intent(this,AdminScreenActivity::class.java)
+        startActivity(intent)
     }
 
     private fun setUpSupportActionBar() {

@@ -18,6 +18,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.lifecycleScope
 import com.android.trustmanagementapp.R
 import com.android.trustmanagementapp.firestore.FireStoreClass
@@ -63,7 +64,7 @@ class AddMemberActivity : BaseActivity() {
             }
         }
 
-    private val getDataResult : ActivityResultLauncher<Intent> =
+    private val getDataResult: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult())
         { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -119,30 +120,42 @@ class AddMemberActivity : BaseActivity() {
             GlideLoaderClass(this).loadGroupIcon(mUserProfileImage, ivUserIcon)
         }
 
-
-
         btnSaveMember.setOnClickListener {
             if (toolbarLabel.text.equals("EDIT MEMBER PROFILE")) {
-                Toast.makeText(this, "Edit profile act", Toast.LENGTH_LONG).show()
                 showProgressDialog()
-                val updateMember = MemberClass(
-                    mUserGroupName,
-                    etMemberName.text.toString(),
-                    etMemberEmail.text.toString(),
-                    etMemberPhone.text.toString(),
-                    currentFirebaseUser!!.uid,
-                    mUserAdminEmail,
-                    mSelectedProfileImageUri.toString()
-                )
-                lifecycleScope.launch {
-                    FireStoreClass().updateMemberProfile(
-                        this@AddMemberActivity,
-                        updateMember,
-                        mUserGroupName,
-                        mUserAdminEmail,
-                        mUserMemberEmail
+
+                Log.e("mSelectedGroupImageUri", mSelectedProfileImageUri.toString())
+                Log.e("ImageCloudUriString", mSelectedImageCloudUriString.toString())
+
+                if (mSelectedProfileImageUri.toString()
+                        .isNotEmpty() && mSelectedProfileImageUri.toString() != "null"
+                ) {
+                    FireStoreClass().updateUploadImageToCloudStorage(
+                        this, mSelectedProfileImageUri!!,
+                        Constants.GROUP_IMAGE
                     )
+
+                } else {
+                    val updateMember = MemberClass(
+                        mUserGroupName,
+                        etMemberName.text.toString(),
+                        etMemberEmail.text.toString(),
+                        etMemberPhone.text.toString(),
+                        currentFirebaseUser!!.uid,
+                        mUserAdminEmail,
+                        mUserProfileImage
+                    )
+                    lifecycleScope.launch {
+                        FireStoreClass().updateMemberProfile(
+                            this@AddMemberActivity,
+                            updateMember,
+                            mUserGroupName,
+                            mUserAdminEmail,
+                            mUserMemberEmail
+                        )
+                    }
                 }
+
 
             } else {
                 val imageStringCheck: String = mSelectedProfileImageUri.toString()
@@ -311,10 +324,12 @@ class AddMemberActivity : BaseActivity() {
             "your member $memberName created in your group",
             Toast.LENGTH_LONG
         ).show()
-        finish()
-        val intent = Intent(this, AdminScreenActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
+
+        etMemberName.setText("")
+        etMemberEmail.setText("")
+        etMemberPhone.setText("")
+        ivUserIcon.setImageResource(R.drawable.ic_baseline_image_24)
+
     }
 
     fun successGroupListFromFirestore(groupList: ArrayList<GroupNameClass>) {
@@ -354,7 +369,7 @@ class AddMemberActivity : BaseActivity() {
                 mUserMemberEmail
             )
 
-        if(checkMasterAccountAvailable.size > 0){
+        if (checkMasterAccountAvailable.size > 0) {
             FireStoreClass().updateMemberAccount(
                 this,
                 memberEmail,
@@ -362,15 +377,52 @@ class AddMemberActivity : BaseActivity() {
                 mUserGroupName,
                 haspMap
             )
+        } else {
+            val intent = Intent(this, ViewMemberAccountActivity::class.java)
+            intent.putExtra(Constants.GROUP_NAME, mUserGroupName)
+            getDataResult.launch(intent)
+            finish()
         }
 
     }
 
     fun successUpdateMemberAccount() {
-        val intent = Intent(this,ViewMemberAccountActivity::class.java)
-        intent.putExtra(Constants.GROUP_NAME,mUserGroupName)
+        val intent = Intent(this, ViewMemberAccountActivity::class.java)
+        intent.putExtra(Constants.GROUP_NAME, mUserGroupName)
         getDataResult.launch(intent)
         finish()
+
+    }
+
+    fun updateGroupProfile(uri: Uri?) {
+        val userImage = uri.toString()
+
+        val memberName = etMemberName.text.toString().trim { it <= ' ' }
+        val memberEmail = etMemberEmail.text.toString().trim { it <= ' ' }
+        val memberPhone = etMemberPhone.text.toString().trim { it <= ' ' }
+        val groupName = autoComplete.text.toString().trim { it <= ' ' }
+        val sharedPreferences = getSharedPreferences(
+            Constants.STORE_EMAIL_ID, Context.MODE_PRIVATE
+        )
+        val getAdminEmailId = sharedPreferences.getString(Constants.STORE_EMAIL_ID, "")
+        val updateMember = MemberClass(
+            groupName,
+            memberName,
+            memberEmail,
+            memberPhone,
+            currentFirebaseUser!!.uid,
+            getAdminEmailId!!,
+            userImage
+        )
+        lifecycleScope.launch {
+            FireStoreClass().updateMemberProfile(
+                this@AddMemberActivity,
+                updateMember,
+                mUserGroupName,
+                mUserAdminEmail,
+                mUserMemberEmail
+            )
+        }
 
     }
 

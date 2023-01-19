@@ -1,8 +1,13 @@
 package com.android.trustmanagementapp.activities
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,6 +20,10 @@ import com.android.trustmanagementapp.model.MemberClass
 import com.android.trustmanagementapp.model.UserClass
 import com.android.trustmanagementapp.utils.Constants
 import com.android.trustmanagementapp.utils.MSPTextViewBold
+import org.checkerframework.checker.units.qual.A
+
+
+
 
 class ViewMemberAccountActivity : BaseActivity() {
     lateinit var mGroupName: String
@@ -23,6 +32,19 @@ class ViewMemberAccountActivity : BaseActivity() {
     private lateinit var recyclerView: RecyclerView
     lateinit var groupNameText : MSPTextViewBold
     lateinit var groupAdminText : MSPTextViewBold
+
+    private val getMonthDataResult: ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult())
+        { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val sharedPreferences = getSharedPreferences(
+                    Constants.STORE_EMAIL_ID, Context.MODE_PRIVATE
+                )
+                val getAdminEmailId = sharedPreferences.getString(Constants.STORE_EMAIL_ID, "")
+                getAllMemberDetailForGroup(mGroupName, getAdminEmailId)
+                finish()
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,9 +66,19 @@ class ViewMemberAccountActivity : BaseActivity() {
         val sharedPreferences = getSharedPreferences(
             Constants.STORE_EMAIL_ID, Context.MODE_PRIVATE
         )
+        Log.e("check Result", Constants.MEMBER_DELETE_SUCCESS)
+       if(intent.hasExtra(Constants.MEMBER_DELETE_SUCCESS)){
+            // showProgressDialog()
+            val intent = intent
+             intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+           Log.e("check Result2", Constants.MEMBER_DELETE_SUCCESS)
+           getMonthDataResult.launch(intent)
+
+        }
+
+
         val getAdminEmailId = sharedPreferences.getString(Constants.STORE_EMAIL_ID, "")
         mAdminEmail = getAdminEmailId!!
-
         FireStoreClass().getGroupAdmin(this,mAdminEmail)
         getAllMemberDetailForGroup(mGroupName, getAdminEmailId)
     }
@@ -66,6 +98,7 @@ class ViewMemberAccountActivity : BaseActivity() {
 
     fun successMemberListFromFirestore(memberList: ArrayList<MemberClass>){
         mMemberList = memberList
+
         cancelProgressDialog()
         if(mMemberList.size>0){
             recyclerView.layoutManager = LinearLayoutManager(this)
@@ -77,6 +110,11 @@ class ViewMemberAccountActivity : BaseActivity() {
             )
             recyclerView.adapter = viewMemberListAdapter
         }
+    }
+
+    override fun onBackPressed() {
+        val i = Intent(this,PreViewMemberActivity::class.java)
+        startActivity(i)
     }
 
     private fun setUpSupportActionBar() {

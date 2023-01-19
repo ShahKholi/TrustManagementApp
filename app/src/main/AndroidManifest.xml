@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.android.trustmanagementapp">
+    package="com.android.trustmanagementapp"
+
+    >
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -19,12 +21,17 @@
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.TrustManagementApp.NoActionBar"
+
             />
         <activity
             android:name=".activities.ViewMemberAccountActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.TrustManagementApp.NoActionBar" />
+            <!--android:launchMode="singleTask"
+            android:taskAffinity=""
+            android:excludeFromRecents="true"-->
+
         <activity
             android:name=".activities.PreViewMemberActivity"
             android:exported="true"
