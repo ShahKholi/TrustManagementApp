@@ -3,8 +3,11 @@ package com.android.trustmanagementapp.activities
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.widget.HorizontalScrollView
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
@@ -422,7 +425,14 @@ class ViewAccountActivity : BaseActivity() {
                 this, mMasterAccountList, previousBalance, this, imageUrl
             )
             recyclerView.adapter = viewAccountListAdapter
-            checkTotalAmount()
+            showProgressDialog()
+            Handler(Looper.getMainLooper()).postDelayed({
+                lifecycleScope.launch {
+
+                    checkTotalAmount()
+                }
+            }, 1500)
+
         } else {
             linearLayout.visibility = View.GONE
         }
@@ -455,6 +465,7 @@ class ViewAccountActivity : BaseActivity() {
         expense = mTotalExpense.sum()
         result = income + previousBalance - expense
         mTotalAmount.text = result.toString()
+        cancelProgressDialog()
 
     }
 

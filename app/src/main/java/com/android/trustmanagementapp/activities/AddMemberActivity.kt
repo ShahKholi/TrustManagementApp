@@ -178,7 +178,7 @@ class AddMemberActivity : BaseActivity() {
             showProgressDialog()
             FireStoreClass().uploadImageToCloudStorage(
                 this, mSelectedProfileImageUri!!,
-                Constants.USER_IMAGE
+                Constants.USER_IMAGE,""
             )
         }
     }

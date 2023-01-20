@@ -1,20 +1,22 @@
 package com.android.trustmanagementapp.activities
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,13 +26,14 @@ import com.android.trustmanagementapp.adapter.ExpenseDetailAdapter
 import com.android.trustmanagementapp.firestore.FireStoreClass
 import com.android.trustmanagementapp.model.GroupNameClass
 import com.android.trustmanagementapp.model.MasterAccountDetail
-import com.android.trustmanagementapp.model.MemberAccountDetail
 import com.android.trustmanagementapp.model.MonthExpense
 import com.android.trustmanagementapp.utils.Constants
+import com.android.trustmanagementapp.utils.GlideLoaderClass
 import com.android.trustmanagementapp.utils.MSPButton
 import com.android.trustmanagementapp.utils.MSPEditText
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -52,12 +55,25 @@ class AddExpenseActivity : BaseActivity() {
     private lateinit var mExpenseList: ArrayList<MonthExpense>
     private lateinit var recyclerView: RecyclerView
     private lateinit var mCurrentAmount: ArrayList<Int>
+    private lateinit var imageExpenseView : ImageView
+
+    private var mSelectedGroupImageUri: Uri? = null
+    private var mSelectedImageCloudUriString: String? = null
 
     private val getExpenseDataResult: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult())
         { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 finish()
+            }
+        }
+
+    private val getPhotoActionResult: ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult())
+        { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data: Intent? = result.data
+                onPhotoResult(result.resultCode, data)
             }
         }
 
@@ -77,10 +93,15 @@ class AddExpenseActivity : BaseActivity() {
         etExpenseDetail = findViewById(R.id.et_expense_detail)
         btnExpense = findViewById(R.id.btn_expense_account)
         recyclerView = findViewById(R.id.rcv_expense_group_detail)
+        imageExpenseView = findViewById(R.id.iv_expense_image)
 
         getGroupNameFromFireStore()
         getDateList()
         loadExpenseDetailFromFireStore()
+
+        imageExpenseView.setOnClickListener {
+            permissionForPhoto()
+        }
 
 
         btnExpense.setOnClickListener {
@@ -113,10 +134,115 @@ class AddExpenseActivity : BaseActivity() {
     }
 
 
+    private fun permissionForPhoto() {
+        if (ContextCompat.checkSelfPermission(
+                this, Manifest.permission.READ_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+
+            val galleryIntent = Intent(
+                Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            )
+            getPhotoActionResult.launch(galleryIntent)
+        } else {
+            ActivityCompat.requestPermissions(
+                this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                Constants.READ_STORAGE_PERMISSION_CODE
+            )
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == Constants.READ_STORAGE_PERMISSION_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                val galleryIntent = Intent(
+                    Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                )
+                getPhotoActionResult.launch(galleryIntent)
+            } else {
+                Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private fun onPhotoResult(resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK) {
+            if (data != null) {
+                try {
+                    // The uri of selected image from phone storage.
+                    mSelectedGroupImageUri = data.data!!
+                    GlideLoaderClass(this).loadGroupIcon(mSelectedGroupImageUri!!, imageExpenseView)
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                    Toast.makeText(
+                        this@AddExpenseActivity,
+                        "Image selection failed",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                }
+            }
+        } else if (resultCode == Activity.RESULT_CANCELED) {
+            Log.e("Request Cancelled", "Image selection cancelled")
+        }
+    }
+
     private suspend fun getGroupImage(groupName: String) {
-        val imageUrl: String =
+        val groupImage: String =
             FireStoreClass().getGroupImageFromFirestore(this, groupName)
-        registerExpenseAmountDetail(imageUrl)
+        val imageStringCheck: String = mSelectedGroupImageUri.toString()
+        if (imageStringCheck.isNotEmpty() && imageStringCheck != "null"){
+            uploadUserImage(groupImage)
+        }else {
+            registerExpenseAmountDetail(groupImage)
+        }
+
+
+    }
+    private fun uploadUserImage(groupImage: String) {
+        if (validateRegisterExpenseAmountField()) {
+            showProgressDialog()
+            FireStoreClass().uploadImageToCloudStorage(
+                this, mSelectedGroupImageUri!!,
+                Constants.EXPENSE_IMAGE,groupImage
+            )
+        }
+    }
+
+    suspend fun successGroupIconUpload(uri: Uri, groupImage: String) {
+        mSelectedImageCloudUriString = uri.toString()
+
+        val sharedPreferences = getSharedPreferences(
+            Constants.STORE_EMAIL_ID, Context.MODE_PRIVATE
+        )
+        val getAdminEmailId = sharedPreferences.getString(Constants.STORE_EMAIL_ID, "")
+
+        val adminUid = currentFirebaseUser!!.uid
+        val groupName = autoCompleteGroupName.text.toString()
+        val month = autoCompleteMonthView.text.toString()
+        val expAmount: String = etExpenseAmount.text.toString().trim { it <= ' ' }
+        val detail: String = etExpenseDetail.text.toString().trim { it <= ' ' }
+        val monthExpenseAmount = MonthExpense(
+            groupName,
+            adminUid,
+            getAdminEmailId!!,
+            expAmount.toInt(),
+            month,
+            detail,
+            groupImage,
+            "",
+            currentYear(),
+            mSelectedImageCloudUriString!!
+        )
+        cancelProgressDialog()
+        FireStoreClass().registerExpenseDetail(this, monthExpenseAmount)
+
+
     }
 
     private fun loadExpenseDetailFromFireStore() {

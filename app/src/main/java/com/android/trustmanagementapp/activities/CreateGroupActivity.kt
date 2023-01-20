@@ -192,7 +192,7 @@ class CreateGroupActivity : BaseActivity() {
             showProgressDialog()
             FireStoreClass().uploadImageToCloudStorage(
                 this, mSelectedGroupImageUri!!,
-                Constants.GROUP_IMAGE
+                Constants.GROUP_IMAGE, ""
             )
         }
     }

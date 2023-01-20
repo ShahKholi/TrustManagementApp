@@ -134,12 +134,21 @@
                 android:id="@+id/et_expense_detail"
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
-                android:inputType="text"
+                android:inputType="textCapSentences|textMultiLine"
                 android:padding="16dp"
                 android:textColor="@color/white"
                 android:textSize="16sp"
+                android:scrollHorizontally="false"
                 tools:ignore="SpeakableTextPresentCheck" />
         </com.google.android.material.textfield.TextInputLayout>
+
+        <ImageView
+            android:id="@+id/iv_expense_image"
+            android:layout_width="120dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_baseline_image_24"
+            />
 
         <com.android.trustmanagementapp.utils.MSPButton
             android:id="@+id/btn_expense_account"

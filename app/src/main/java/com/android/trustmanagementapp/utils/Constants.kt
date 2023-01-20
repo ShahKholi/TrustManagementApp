@@ -12,6 +12,7 @@ import java.io.File
 object Constants {
     const val GROUP_IMAGE: String = "groupImage"
     const val USER_IMAGE: String = "userImage"
+    const val EXPENSE_IMAGE: String = "expenseImage"
 
     //pref detail
     const val STORE_EMAIL_ID: String = "store_email_id"

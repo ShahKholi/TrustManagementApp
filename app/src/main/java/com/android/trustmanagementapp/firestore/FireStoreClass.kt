@@ -288,7 +288,7 @@ class FireStoreClass {
 
     fun uploadImageToCloudStorage(
         activity: Activity,
-        mSelectedGroupImageUri: Uri, groupImage: String
+        mSelectedGroupImageUri: Uri, groupImage: String, groupImage2 : String
     ) {
         val storageReference: StorageReference = FirebaseStorage.getInstance().reference.child(
             groupImage + System.currentTimeMillis() + "." +
@@ -308,6 +308,13 @@ class FireStoreClass {
                     is AddMemberActivity -> {
                         activity.successGroupIconUpload(uri)
                     }
+                    is AddExpenseActivity -> {
+
+                        activity.lifecycleScope.launch {
+                            activity.successGroupIconUpload(uri, groupImage2)
+                        }
+
+                    }
                 }
             }.addOnFailureListener { exception ->
                 when (activity) {
@@ -315,6 +322,9 @@ class FireStoreClass {
                         activity.cancelProgressDialog()
                     }
                     is AddMemberActivity -> {
+                        activity.cancelProgressDialog()
+                    }
+                    is AddExpenseActivity -> {
                         activity.cancelProgressDialog()
                     }
                 }
