@@ -26,14 +26,23 @@
             android:textSize="20sp" />
     </androidx.appcompat.widget.Toolbar>
 
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nest_expense_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:scrollbars="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_add_member">
+
+
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/ll_add_member_screen"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_add_member">
+        >
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:id="@+id/coordinate_layout"
@@ -160,5 +169,7 @@
             tools:layout_editor_absoluteY="475dp" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
