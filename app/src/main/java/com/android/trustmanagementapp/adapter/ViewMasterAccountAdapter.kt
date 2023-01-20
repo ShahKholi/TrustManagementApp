@@ -62,12 +62,15 @@ class ViewMasterAccountAdapter(
                 previousBalance.toString()
 
             holder.itemView.findViewById<ImageView>(R.id.iv_expense_detail).setOnClickListener {
+
                 val intent = Intent(context, PreExpenseImageActivity::class.java)
                 intent.putExtra(Constants.GROUP_NAME, model.groupName)
                 intent.putExtra(Constants.MONTH, model.month)
                 intent.putExtra(Constants.MEMBER_ADMIN_EMAIL, model.memberAdminEmail)
                 intent.putExtra(Constants.INCOME, model.income)
                 context.startActivity(intent)
+                activity.finish()
+
             }
 
         }

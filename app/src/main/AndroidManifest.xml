@@ -16,10 +16,14 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".activities.PreExpenseImageActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.TrustManagementApp.NoActionBar" />
         <activity
             android:name=".activities.ExpanseImageViewActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.TrustManagementApp.NoActionBar" />
         <activity
             android:name=".activities.MemberDetailedActivity"
             android:exported="true"

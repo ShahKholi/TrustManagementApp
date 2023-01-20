@@ -1926,7 +1926,43 @@ class FireStoreClass {
             }
     }
 
+    fun getExpenseImageDetail(
+        activity: Activity,
+        mGroupName: String,
+        mMonthName: String,
+        mAdminEmail: String
+    ) {
+        mFirestoreInstance.collection(Constants.GROUP_EXPENSE_DETAIL)
+            .whereEqualTo("memberAdminEmail", mAdminEmail)
+            .whereEqualTo("month", mMonthName)
+            .whereEqualTo("groupName",mGroupName)
+            .get()
+            .addOnSuccessListener { document->
+                val expenseList: ArrayList<MonthExpense> = ArrayList()
+                for(i in document.documents){
+                    val month = i.toObject(MonthExpense::class.java)
+                    month!!.id = i!!.id
+                    expenseList.add(month)
+                }
+                when(activity){
+                    is PreExpenseImageActivity -> {
+                        activity.expenseImageSuccess(expenseList)
+                    }
+                }
 
+            }.addOnFailureListener { exception->
+                when(activity){
+                    is PreExpenseImageActivity -> {
+                        activity.cancelProgressDialog()
+                    }
+                }
+                Log.e(
+                    activity.javaClass.simpleName,
+                    "Error while checking expense detail.",
+                    exception
+                )
+            }
+    }
 
 
 }
