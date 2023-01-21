@@ -87,12 +87,11 @@
                         android:orientation="horizontal"
                         >
                         <com.android.trustmanagementapp.utils.MSPTextViewBold
-
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/this_month_expense"
                             android:textColor="@color/white"
-                            android:layout_marginEnd="20dp"
+                            android:layout_marginEnd="2dp"
                             />
                         <ImageView
                             android:id="@+id/iv_expense_detail"
@@ -104,7 +103,7 @@
 
                         <com.android.trustmanagementapp.utils.MSPTextViewBold
                             android:id="@+id/et_view_account_expense_amount"
-                            android:gravity="end"
+                           android:gravity="end"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             tools:text="0"

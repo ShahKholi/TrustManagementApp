@@ -217,7 +217,7 @@ class FireStoreClass {
     }
 
     fun validateUserAdminORNonAdmin(activity: Activity, email: String) {
-
+        Log.e("checkadmin initial", email)
         mFirestoreInstance.collection(Constants.USER)
             .whereEqualTo(Constants.EMAIL, email)
             .get()
@@ -228,8 +228,10 @@ class FireStoreClass {
                         if (document.documents.isNotEmpty()) {
                             userExit = true
                             activity.userValueReturn(userExit)
+
                         } else {
                             activity.userValueReturn(userExit)
+
                         }
                     }
                 }
@@ -1331,8 +1333,7 @@ class FireStoreClass {
     ): ArrayList<MemberAccountDetail> {
         val memberList: ArrayList<MemberAccountDetail> = ArrayList()
         var monthClass: MemberAccountDetail
-        Log.e("GetMemberAccount check1", mUserAdminEmail)
-        Log.e("GetMemberAccount check2", mUserGroupName)
+
         mFirestoreInstance.collection(Constants.MEMBER_ACCOUNT_DETAIL)
             .whereEqualTo("adminEmail", mUserAdminEmail)
             .whereEqualTo("groupName", mUserGroupName)
@@ -1852,12 +1853,13 @@ class FireStoreClass {
             }
     }
 
-    fun deleteMemberFromMemberList(
+   suspend fun deleteMemberFromMemberList(
         activity: Activity,
         mUserAdminEmail: String,
         mUserGroupName: String,
         mUserMemberEmail: String
     ) {
+
         mFirestoreInstance.collection(Constants.MEMBER)
             .whereEqualTo("memberAdminEmail", mUserAdminEmail)
             .whereEqualTo("groupName", mUserGroupName)
@@ -1868,28 +1870,19 @@ class FireStoreClass {
                     mFirestoreInstance.collection(Constants.MEMBER)
                         .document(i.id)
                         .delete()
-                }
-                when (activity) {
-                    is MemberDetailedActivity -> {
-                        activity.lifecycleScope.launch {
-                            activity.successDeleteFromMember()
+
+                    when (activity) {
+                        is MemberDetailedActivity -> {
+                            activity.lifecycleScope.launch {
+                                activity.successDeleteFromMember()
+                            }
+
                         }
-
                     }
                 }
 
-            }.addOnFailureListener { exception ->
-                when (activity) {
-                    is MemberDetailedActivity -> {
-                        activity.cancelProgressDialog()
-                    }
-                }
-                Log.e(
-                    activity.javaClass.simpleName,
-                    "Error while deleting member",
-                    exception
-                )
-            }
+
+            }.await()
     }
 
     fun getMemberList(activity: Activity, groupName: String, adminEmail: String) {

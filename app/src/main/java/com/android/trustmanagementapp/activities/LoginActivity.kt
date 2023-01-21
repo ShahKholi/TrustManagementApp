@@ -33,6 +33,7 @@ class LoginActivity : BaseActivity() {
     lateinit var btnLogin: MSPButton
     private lateinit var etPasswordText: MSPEditText
     private lateinit var etCodeLogin: MSPEditText
+    private lateinit var forgotPassword : MSPTextViewBold
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +57,12 @@ class LoginActivity : BaseActivity() {
         btnLogin = findViewById(R.id.btn_login)
         etPasswordText = findViewById(R.id.et_password_log)
         etCodeLogin = findViewById(R.id.et_code_log)
+        forgotPassword = findViewById(R.id.forgot_password_link)
+
+        forgotPassword.setOnClickListener {
+            val intent = Intent(this, ForgotPasswordAdminActivity::class.java)
+            startActivity(intent)
+        }
 
         registrationLink.setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
@@ -92,6 +99,7 @@ class LoginActivity : BaseActivity() {
 
     @SuppressLint("CommitPrefEdits")
     fun userValueReturn(adminUser: Boolean) {
+
         if (adminUser) {
             setUpSupportActionBar()
             llEmailScreen.visibility = View.GONE

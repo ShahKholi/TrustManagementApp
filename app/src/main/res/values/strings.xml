@@ -87,6 +87,10 @@
     <string name="delete">delete</string>
     <string name="expense_image_detail">Expense Image Detail</string>
     <string name="please_click_back_again_to_exit">Please click back again to exit.</string>
+    <string name="forgot_password"><u>Forgot Password</u></string>
+    <string name="forgot_password2">Forgot Password</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="reset">Reset</string>
 
 
 </resources>

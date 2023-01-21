@@ -195,6 +195,18 @@
         tools:layout_editor_absoluteY="475dp" />
 
     <com.android.trustmanagementapp.utils.MSPTextViewBold
+        android:id="@+id/forgot_password_link"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:text="@string/forgot_password"
+        android:textColor="@color/teal_700"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@+id/reg_text_link"
+        app:layout_constraintTop_toBottomOf="@+id/btn_login"
+        android:layout_marginEnd="8dp"/>
+
+    <com.android.trustmanagementapp.utils.MSPTextViewBold
         android:id="@+id/reg_text_link"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

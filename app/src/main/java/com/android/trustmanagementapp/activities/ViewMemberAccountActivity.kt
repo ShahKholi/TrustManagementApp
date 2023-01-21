@@ -33,10 +33,14 @@ class ViewMemberAccountActivity : BaseActivity() {
     lateinit var groupNameText : MSPTextViewBold
     lateinit var groupAdminText : MSPTextViewBold
 
+    lateinit var mResultTestName : String
+
     private val getMonthDataResult: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult())
         { result ->
             if (result.resultCode == Activity.RESULT_OK) {
+                intent.putExtra(Constants.MEMBER_DELETE_SUCCESS, "")
+
                 val sharedPreferences = getSharedPreferences(
                     Constants.STORE_EMAIL_ID, Context.MODE_PRIVATE
                 )
@@ -66,16 +70,6 @@ class ViewMemberAccountActivity : BaseActivity() {
         val sharedPreferences = getSharedPreferences(
             Constants.STORE_EMAIL_ID, Context.MODE_PRIVATE
         )
-        Log.e("check Result", Constants.MEMBER_DELETE_SUCCESS)
-       if(intent.hasExtra(Constants.MEMBER_DELETE_SUCCESS)){
-            // showProgressDialog()
-            val intent = intent
-             intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
-           Log.e("check Result2", Constants.MEMBER_DELETE_SUCCESS)
-           getMonthDataResult.launch(intent)
-
-        }
-
 
         val getAdminEmailId = sharedPreferences.getString(Constants.STORE_EMAIL_ID, "")
         mAdminEmail = getAdminEmailId!!

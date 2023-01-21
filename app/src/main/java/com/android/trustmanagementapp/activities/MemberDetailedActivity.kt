@@ -143,7 +143,7 @@ class MemberDetailedActivity : BaseActivity() {
                 .inflate(R.layout.custom_dilog_box_delete, null)
         builder.setView(customerLayout)
         builder.setTitle("DELETE")
-        builder.setPositiveButton("YES") { dialogInterface, _ ->
+        builder.setPositiveButton("YES") { _, _ ->
             Log.e("dialog", "Accepted")
             lifecycleScope.launch {
                 showProgressDialog()
@@ -163,23 +163,23 @@ class MemberDetailedActivity : BaseActivity() {
     }
 
     private suspend fun startDeleteActivity() {
-        val checkAccountAvailableInAccount : ArrayList<String> =
+        val checkAccountAvailableInAccount: ArrayList<String> =
             FireStoreClass().checkAccountAvailableFromFirestore(
                 this,
                 mUserAdminEmail,
                 mUserGroupName,
                 mUserMemberEmail
             )
-        Log.e("Member Account Size",checkAccountAvailableInAccount.size.toString())
+        Log.e("Member Account Size", checkAccountAvailableInAccount.size.toString())
 
-        if(checkAccountAvailableInAccount.size > 0){
+        if (checkAccountAvailableInAccount.size > 0) {
             FireStoreClass().deleteMemberAccountDetail(
                 this,
                 mUserAdminEmail,
                 mUserGroupName,
                 mUserMemberEmail
             )
-        }else {
+        } else {
             successDeleteFromMemberAccount()
         }
 
@@ -275,13 +275,13 @@ class MemberDetailedActivity : BaseActivity() {
     }
 
     fun updateMemberMasterAmountSuccess() {
-        val intent = Intent(this, ViewMemberAccountActivity::class.java)
+        val intent = Intent(this@MemberDetailedActivity,
+            ViewMemberAccountActivity::class.java)
         intent.putExtra(Constants.GROUP_NAME, mUserGroupName)
-        intent.putExtra(Constants.MEMBER_DELETE_SUCCESS, "memberDeleteSuccess")
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK and Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(intent)
         finish()
-        Log.e("updateMemberMaster", "updated completed")
+        Log.e("updateMemberMaster", "delete only")
     }
 
     fun updateMasterAmountSuccess() {
@@ -292,8 +292,7 @@ class MemberDetailedActivity : BaseActivity() {
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK and Intent.FLAG_ACTIVITY_NEW_TASK
         getMonthDataResult.launch(intent)
         finish()
-        Log.e("updateMasterAmount", "updated completed")
-
+        Log.e("updateMasterAmount", "updated only")
 
 
     }
@@ -345,16 +344,19 @@ class MemberDetailedActivity : BaseActivity() {
     }
 
     fun successDeleteFromMemberAccount() {
-        FireStoreClass().deleteMemberFromMemberList(
-            this,
-            mUserAdminEmail,
-            mUserGroupName,
-            mUserMemberEmail
-        )
+        lifecycleScope.launch {
+            FireStoreClass().deleteMemberFromMemberList(
+                this@MemberDetailedActivity,
+                mUserAdminEmail,
+                mUserGroupName,
+                mUserMemberEmail
+            )
+        }
+
     }
 
     suspend fun successDeleteFromMember() {
-    Log.e("successDeleteFromMember", "memberDeleted start updating Master")
+        Log.e("successDeleteFromMember", "memberDeleted start updating Master")
         val amountListJan: ArrayList<Int> = ArrayList()
         val amountListFeb: ArrayList<Int> = ArrayList()
         val amountListMar: ArrayList<Int> = ArrayList()
@@ -371,7 +373,7 @@ class MemberDetailedActivity : BaseActivity() {
             mUserAdminEmail, mUserGroupName
         )
         Log.e("mAvailableMonthList", mAvailableMonthList.toString())
-        if(mAvailableMonthList.size > 0){
+        if (mAvailableMonthList.size > 0) {
             for (i in mAvailableMonthList) {
                 if (i.month == "January") {
                     amountListJan.add(i.currentAmount)
@@ -552,7 +554,7 @@ class MemberDetailedActivity : BaseActivity() {
                     )
                 }
             }
-        }else {
+        } else {
             updateMemberMasterAmountSuccess()
         }
 

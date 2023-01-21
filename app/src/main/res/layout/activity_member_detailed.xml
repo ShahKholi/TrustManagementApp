@@ -10,12 +10,13 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_view_member_detail"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="wrap_content"
         android:background="@color/bar_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:gravity="start"
+        android:padding="3dp"
         >
 
         <LinearLayout
@@ -29,20 +30,16 @@
                 android:layout_gravity="center"
                 android:text="@string/member_details"
                 android:textColor="@color/white"
-                android:textSize="20sp"
+                android:textSize="16sp"
                 android:gravity="start"/>
 
         </LinearLayout>
 
-
-
         <LinearLayout
-
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_gravity="end"
-            android:layout_marginTop="6dp"
+            android:padding="2dp"
 
             >
 
@@ -58,6 +55,7 @@
                 android:minHeight="48dp"
                 android:text="@string/delete"
                 android:id="@+id/btn_delete_member"
+
                 />
 
             <com.android.trustmanagementapp.utils.MSPButton
@@ -112,7 +110,8 @@
                     android:layout_marginEnd="2dp"
                     android:src="@drawable/ic_user_placeholder"
                     app:civ_border_color="#00E5FF"
-                    app:civ_border_width="2dp" />
+                    app:civ_border_width="2dp"
+                    />
 
                 <LinearLayout
                     android:layout_width="match_parent"
