@@ -87,6 +87,10 @@ class AdminScreenActivity : BaseActivity() {
         getGroupListFromFireStore()
     }
 
+    override fun onBackPressed() {
+        doubleBackToExit()
+    }
+
     private fun getGroupListFromFireStore() {
         showProgressDialog()
         FireStoreClass().getGroupList(this)

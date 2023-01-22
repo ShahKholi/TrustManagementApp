@@ -1,5 +1,6 @@
 package com.android.trustmanagementapp.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
@@ -31,12 +32,17 @@ class ForgotPasswordAdminActivity : BaseActivity() {
         auth = FirebaseAuth.getInstance()
 
         btnResetPassword.setOnClickListener {
+            showProgressDialog()
             val sPassword = etPasswordText.text.toString().trim { it <= ' ' }
             auth.sendPasswordResetEmail(sPassword)
                 .addOnSuccessListener {
+                    cancelProgressDialog()
                     Toast.makeText(this,"Password sent to email, Please check"
                     ,Toast.LENGTH_LONG).show()
+                    val intent = Intent(this, LoginActivity::class.java)
+                    startActivity(intent)
                 }.addOnFailureListener {
+                    cancelProgressDialog()
                     Toast.makeText(this,it.toString()
                         ,Toast.LENGTH_LONG).show()
                 }

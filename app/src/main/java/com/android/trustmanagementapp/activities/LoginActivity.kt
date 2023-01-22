@@ -106,6 +106,7 @@ class LoginActivity : BaseActivity() {
             llPasswordScreen.visibility = View.VISIBLE
             btnPasswordLogin.visibility = View.VISIBLE
             btnLogin.visibility = View.GONE
+            forgotPassword.visibility = View.GONE
 
             val email = etEmail.text.toString().trim { it <= ' ' }
             btnPasswordLogin.setOnClickListener {
@@ -150,6 +151,7 @@ class LoginActivity : BaseActivity() {
             btnLogin.visibility = View.GONE
             btnPasswordLogin.visibility = View.GONE
             btnCodeLogin.visibility = View.VISIBLE
+            forgotPassword.visibility = View.GONE
 
             val email = etEmail.text.toString().trim { it <= ' ' }
             btnCodeLogin.setOnClickListener {
@@ -179,6 +181,7 @@ class LoginActivity : BaseActivity() {
             btnLogin.visibility = View.VISIBLE
             btnPasswordLogin.visibility = View.GONE
             btnCodeLogin.visibility = View.GONE
+            forgotPassword.visibility = View.VISIBLE
         }
     }
 
