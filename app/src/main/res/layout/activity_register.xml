@@ -245,7 +245,8 @@
             android:id="@+id/cb_terms_and_condition"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:checked="false" />
+            tools:checked="false"
+            android:backgroundTint="@color/white"/>
 
         <com.android.trustmanagementapp.utils.MSPTextViewBold
             android:id="@+id/tv_terms_condition"
