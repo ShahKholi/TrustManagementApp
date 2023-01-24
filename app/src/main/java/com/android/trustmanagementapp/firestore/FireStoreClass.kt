@@ -6,8 +6,10 @@ import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import com.android.trustmanagementapp.activities.*
+import com.android.trustmanagementapp.activities.fragments.GuestDashBoardFragment
 import com.android.trustmanagementapp.model.*
 import com.android.trustmanagementapp.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
@@ -185,7 +187,7 @@ class FireStoreClass {
         return userList
     }
 
-    fun codeValidateUserDetail(activity: Activity, code: String) {
+    fun codeValidateUserDetail(activity: Activity, code: String, email: String) {
         mFirestoreInstance.collection(Constants.USER)
             .whereEqualTo(Constants.CODE, code)
             .get()
@@ -201,7 +203,7 @@ class FireStoreClass {
                         if (document.documents.size == 0) {
                             activity.failureMemberLogin()
                         } else {
-                            activity.successMemberLogin(userEmailList)
+                            activity.successMemberLogin(userEmailList, email)
                         }
 
                     }
@@ -290,7 +292,7 @@ class FireStoreClass {
 
     fun uploadImageToCloudStorage(
         activity: Activity,
-        mSelectedGroupImageUri: Uri, groupImage: String, groupImage2 : String
+        mSelectedGroupImageUri: Uri, groupImage: String, groupImage2: String
     ) {
         val storageReference: StorageReference = FirebaseStorage.getInstance().reference.child(
             groupImage + System.currentTimeMillis() + "." +
@@ -503,8 +505,8 @@ class FireStoreClass {
             .whereEqualTo("memberAdminEmail", emailId.toString())
             .whereEqualTo("groupName", mainGroupOldName)
             .get()
-            .addOnSuccessListener{document ->
-                for (i in document.documents){
+            .addOnSuccessListener { document ->
+                for (i in document.documents) {
                     mFirestoreInstance.collection(Constants.MASTER_ACCOUNT_DETAIL)
                         .document(i.id)
                         .set(userHashMap, SetOptions.merge())
@@ -604,6 +606,64 @@ class FireStoreClass {
                 createGroupActivity.cancelProgressDialog()
                 Log.e(
                     createGroupActivity.javaClass.simpleName,
+                    "Error updating Member.",
+                    exception
+                )
+            }
+    }
+
+    fun compareFinalMasterAccountUpdate(
+        activity: Activity,
+        adminEmailId: String,
+        groupName: String,
+        month: String,
+        currentYear: Int,
+        userHashMap: HashMap<String, Any>
+
+    ) {
+        Log.e("miss match found", "updating master account")
+        mFirestoreInstance.collection(Constants.MASTER_ACCOUNT_DETAIL)
+            .whereEqualTo("groupName", groupName)
+            .whereEqualTo("memberAdminEmail", adminEmailId)
+            .whereEqualTo("month", month)
+            .whereEqualTo("year", currentYear)
+            .get()
+            .addOnSuccessListener { document ->
+                Log.e("userHashMap", userHashMap.toString())
+                for (i in document) {
+                    mFirestoreInstance.collection(Constants.MASTER_ACCOUNT_DETAIL)
+                        .document(i.id)
+                        .set(userHashMap, SetOptions.merge())
+                    when (activity) {
+                        is AddAccountActivity -> {
+                            activity.updateMasterAmountSuccess()
+                        }
+                        is MemberDetailedActivity -> {
+                            activity.updateMasterAmountSuccess()
+                        }
+                        is AddExpenseActivity -> {
+                            activity.updateMasterAmountSuccess()
+                        }
+                        is ViewAccountActivity -> {
+                            activity.updateMasterAmountSuccess()
+                        }
+                    }
+                }
+
+            }.addOnFailureListener { exception ->
+                when (activity) {
+                    is MemberDetailedActivity -> {
+                        activity.cancelProgressDialog()
+                    }
+                    is AddAccountActivity -> {
+                        activity.cancelProgressDialog()
+                    }
+                    is AddExpenseActivity -> {
+                        activity.cancelProgressDialog()
+                    }
+                }
+                Log.e(
+                    activity.javaClass.simpleName,
                     "Error updating Member.",
                     exception
                 )
@@ -939,6 +999,53 @@ class FireStoreClass {
         return memberAccountList
     }
 
+
+    fun checkCurrentEmailMemberAvailableFirestore(
+        activity: Activity,
+        email: String,
+        adminEmail: String
+    ) {
+        val memberList: ArrayList<MemberClass> = ArrayList()
+        var member: MemberClass
+        mFirestoreInstance.collection(Constants.MEMBER)
+            .whereEqualTo("memberAdminEmail", adminEmail)
+            .whereEqualTo("memberEmail", email)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.size() == 0) {
+                    when (activity) {
+                        is LoginActivity -> {
+                            activity.emailNotAvailable()
+                        }
+                    }
+                } else {
+                    for (i in document.documents) {
+                        member = i.toObject(MemberClass::class.java)!!
+                        member.id = i.id
+                        memberList.add(member)
+
+                        when (activity) {
+                            is LoginActivity -> {
+                                activity.userAvailableInMember(memberList)
+                            }
+                        }
+                    }
+                }
+
+            }.addOnFailureListener { exception ->
+                when (activity) {
+                    is LoginActivity -> {
+                        activity.cancelProgressDialog()
+                    }
+                }
+                Log.e(
+                    activity.javaClass.simpleName,
+                    "Error while checking Member.",
+                    exception
+                )
+            }
+    }
+
     @RequiresApi(Build.VERSION_CODES.N)
     fun checkMonthAvailableForThisMember(
         addAccountActivity: AddAccountActivity, groupName: String,
@@ -1033,15 +1140,16 @@ class FireStoreClass {
 
 
     suspend fun getGroupImageFromFirestore(
-        activity: Activity,
-        currentGroupNameSelect: String
+        currentGroupNameSelect: String,
+        adminEmail: String
     ): String {
         val groupList: ArrayList<String> = ArrayList()
         var group: GroupNameClass
         var imageString: String = ""
         mFirestoreInstance.collection(Constants.GROUP)
-            .whereEqualTo("id", getCurrentUserID())
+            //.whereEqualTo("id", getCurrentUserID())
             .whereEqualTo("groupName", currentGroupNameSelect)
+            .whereEqualTo("email", adminEmail)
             .get()
             .addOnSuccessListener { document ->
                 for (i in document.documents) {
@@ -1082,6 +1190,7 @@ class FireStoreClass {
         activity: Activity,
         groupName: String, adminEmailId: String?, currentYear: Int
     ) {
+
         val masterAccountList: ArrayList<MasterAccountDetail> = ArrayList()
         var masterAccount: MasterAccountDetail
         mFirestoreInstance.collection(Constants.MASTER_ACCOUNT_DETAIL)
@@ -1100,6 +1209,11 @@ class FireStoreClass {
                         activity.lifecycleScope.launch {
                             activity.successMasterList(masterAccountList)
                         }
+                    }
+                    is GuestViewAccountActivity -> {
+                        activity.lifecycleScope.launch {
+                            activity.successMasterList(masterAccountList)
+                        }
 
                     }
                 }
@@ -1107,6 +1221,14 @@ class FireStoreClass {
             }.addOnFailureListener { exception ->
                 when (activity) {
                     is ViewAccountActivity -> {
+                        activity.cancelProgressDialog()
+                        Log.e(
+                            activity.javaClass.simpleName,
+                            "Error while master detail.",
+                            exception
+                        )
+                    }
+                    is GuestViewAccountActivity -> {
                         activity.cancelProgressDialog()
                         Log.e(
                             activity.javaClass.simpleName,
@@ -1160,6 +1282,31 @@ class FireStoreClass {
                 }
             }.await()
         return monthList
+    }
+
+    suspend fun masterAccountAmountForCurrentMonthFireStore(
+        grpName: String,
+        adminEmailId: String?,
+        month: String,
+        currentYear: Int
+
+    ):
+            ArrayList<Int> {
+        val masterAccountList: ArrayList<Int> = ArrayList()
+        var masterAccount: MasterAccountDetail
+        mFirestoreInstance.collection(Constants.MASTER_ACCOUNT_DETAIL)
+            .whereEqualTo("groupName", grpName)
+            .whereEqualTo("memberAdminEmail", adminEmailId)
+            .whereEqualTo("month", month)
+            .get()
+            .addOnSuccessListener { document ->
+                for (i in document.documents) {
+                    masterAccount = i.toObject(MasterAccountDetail::class.java)!!
+                    masterAccount.income = i.get("income").toString().toInt()
+                    masterAccountList.add(masterAccount.income)
+                }
+            }.await()
+        return masterAccountList
     }
 
     suspend fun checkMasterAccountForSameMonth(
@@ -1229,8 +1376,36 @@ class FireStoreClass {
         return amountList
     }
 
+
+    suspend fun memberAccountAmountForCurrentMonthFirestore(
+        month: String,
+        mGroupName: String,
+        adminEmailId: String,
+        currentYear: Int
+    ): ArrayList<Int> {
+
+        val memberAccountList: ArrayList<Int> = ArrayList()
+        var memberAccount: MemberAccountDetail
+
+        mFirestoreInstance.collection(Constants.MEMBER_ACCOUNT_DETAIL)
+            .whereEqualTo("groupName", mGroupName)
+            .whereEqualTo("adminEmail", adminEmailId)
+            .whereEqualTo("month", month)
+            .whereEqualTo("year", currentYear.toString())
+            .get()
+            .addOnSuccessListener { document ->
+                for (it in document.documents) {
+                    memberAccount = it.toObject(MemberAccountDetail::class.java)!!
+                    memberAccount.currentAmount = it.get("currentAmount").toString().toInt()
+                    memberAccountList.add(memberAccount.currentAmount)
+
+                }
+            }.await()
+        return memberAccountList
+    }
+
     suspend fun memberAccountMonthCheckFromFirestore(
-        i: String,
+        month: String,
         mGroupName: String,
         adminEmailId: String,
         currentYear: Int
@@ -1242,7 +1417,7 @@ class FireStoreClass {
         mFirestoreInstance.collection(Constants.MEMBER_ACCOUNT_DETAIL)
             .whereEqualTo("groupName", mGroupName)
             .whereEqualTo("adminEmail", adminEmailId)
-            .whereEqualTo("month", i)
+            .whereEqualTo("month", month)
             .whereEqualTo("year", currentYear.toString())
             .get()
             .addOnSuccessListener { document ->
@@ -1449,6 +1624,47 @@ class FireStoreClass {
                 }
             }.await()
         return monthList
+    }
+
+    fun guestGetIncomeDetailFromFirestore(
+        requireActivity: Activity,
+        mGroupName: String,
+        mAdmin: String,
+        mMemberEmail: String,
+        currentYear: Int
+    ) {
+        val monthList: ArrayList<MemberAccountDetail> = ArrayList()
+        var monthClass: MemberAccountDetail
+        mFirestoreInstance.collection(Constants.MEMBER_ACCOUNT_DETAIL)
+            .whereEqualTo("groupName", mGroupName)
+            .whereEqualTo("adminEmail", mAdmin)
+            .whereEqualTo("memberEmail", mMemberEmail)
+            .whereEqualTo("year", currentYear.toString())
+            .get()
+            .addOnSuccessListener{document->
+                for (i in document.documents) {
+                    monthClass = i.toObject(MemberAccountDetail::class.java)!!
+                    monthClass.id = i.id
+                    monthList.add(monthClass)
+                }
+                when(requireActivity){
+                    is GuestMemberTransactionDetailActivity -> {
+                        requireActivity.successMemberAccount(monthList)
+                    }
+                }
+
+            }.addOnFailureListener {exception->
+                when(requireActivity){
+                    is GuestMemberTransactionDetailActivity -> {
+                        requireActivity.cancelProgressDialog()
+                    }
+                }
+                Log.e(
+                    requireActivity.javaClass.simpleName,
+                    "Error while getting income detail.",
+                    exception
+                )
+            }
     }
 
     fun getIncomeDetailFromFirestore(
@@ -1661,7 +1877,6 @@ class FireStoreClass {
     }
 
 
-
     fun deleteExpenseMonthWise(
         activity: Activity,
         documentId: String,
@@ -1691,11 +1906,11 @@ class FireStoreClass {
 
     suspend fun deleteMasterAccount(email: String, groupName: String) {
         mFirestoreInstance.collection(Constants.MASTER_ACCOUNT_DETAIL)
-            .whereEqualTo("groupName",groupName)
+            .whereEqualTo("groupName", groupName)
             .whereEqualTo("memberAdminEmail", email)
             .get()
-            .addOnSuccessListener {document ->
-                for (i in document.documents){
+            .addOnSuccessListener { document ->
+                for (i in document.documents) {
                     mFirestoreInstance.collection(Constants.MASTER_ACCOUNT_DETAIL)
                         .document(i.id)
                         .delete()
@@ -1706,11 +1921,11 @@ class FireStoreClass {
 
     suspend fun deleteExpenseAccount(email: String, groupName: String) {
         mFirestoreInstance.collection(Constants.GROUP_EXPENSE_DETAIL)
-            .whereEqualTo("groupName",groupName)
+            .whereEqualTo("groupName", groupName)
             .whereEqualTo("memberAdminEmail", email)
             .get()
-            .addOnSuccessListener {document ->
-                for (i in document.documents){
+            .addOnSuccessListener { document ->
+                for (i in document.documents) {
                     mFirestoreInstance.collection(Constants.GROUP_EXPENSE_DETAIL)
                         .document(i.id)
                         .delete()
@@ -1721,11 +1936,11 @@ class FireStoreClass {
 
     suspend fun deleteMemberAccount(email: String, groupName: String) {
         mFirestoreInstance.collection(Constants.MEMBER_ACCOUNT_DETAIL)
-            .whereEqualTo("groupName",groupName )
+            .whereEqualTo("groupName", groupName)
             .whereEqualTo("adminEmail", email)
             .get()
-            .addOnSuccessListener {document ->
-                for (i in document.documents){
+            .addOnSuccessListener { document ->
+                for (i in document.documents) {
                     mFirestoreInstance.collection(Constants.MEMBER_ACCOUNT_DETAIL)
                         .document(i.id)
                         .delete()
@@ -1736,11 +1951,11 @@ class FireStoreClass {
 
     suspend fun deleteMemberDetail(email: String, groupName: String) {
         mFirestoreInstance.collection(Constants.MEMBER)
-            .whereEqualTo("groupName",groupName )
+            .whereEqualTo("groupName", groupName)
             .whereEqualTo("memberAdminEmail", email)
             .get()
-            .addOnSuccessListener {document ->
-                for (i in document.documents){
+            .addOnSuccessListener { document ->
+                for (i in document.documents) {
                     mFirestoreInstance.collection(Constants.MEMBER)
                         .document(i.id)
                         .delete()
@@ -1751,28 +1966,28 @@ class FireStoreClass {
 
     fun deleteCurrentGroup(context: Context, groupName: String, email: String) {
         mFirestoreInstance.collection(Constants.GROUP)
-            .whereEqualTo("groupName",groupName )
+            .whereEqualTo("groupName", groupName)
             .whereEqualTo("email", email)
             .get()
-            .addOnSuccessListener { document->
-               for(i in document.documents){
-                   mFirestoreInstance.collection(Constants.GROUP)
-                       .document(i.id)
-                       .delete()
-               }
-                when(context){
+            .addOnSuccessListener { document ->
+                for (i in document.documents) {
+                    mFirestoreInstance.collection(Constants.GROUP)
+                        .document(i.id)
+                        .delete()
+                }
+                when (context) {
                     is AdminScreenActivity -> {
                         context.lifecycleScope.launch {
-                            context.successGroupDeleted(groupName,email)
+                            context.successGroupDeleted(groupName, email)
                         }
 
                     }
                 }
-            }.addOnFailureListener {exception ->
-                when(context){
+            }.addOnFailureListener { exception ->
+                when (context) {
                     is AdminScreenActivity -> {
-                    context.cancelProgressDialog()
-                }
+                        context.cancelProgressDialog()
+                    }
                 }
                 Log.e(
                     context.javaClass.simpleName,
@@ -1853,7 +2068,7 @@ class FireStoreClass {
             }
     }
 
-   suspend fun deleteMemberFromMemberList(
+    suspend fun deleteMemberFromMemberList(
         activity: Activity,
         mUserAdminEmail: String,
         mUserGroupName: String,
@@ -1928,23 +2143,23 @@ class FireStoreClass {
         mFirestoreInstance.collection(Constants.GROUP_EXPENSE_DETAIL)
             .whereEqualTo("memberAdminEmail", mAdminEmail)
             .whereEqualTo("month", mMonthName)
-            .whereEqualTo("groupName",mGroupName)
+            .whereEqualTo("groupName", mGroupName)
             .get()
-            .addOnSuccessListener { document->
+            .addOnSuccessListener { document ->
                 val expenseList: ArrayList<MonthExpense> = ArrayList()
-                for(i in document.documents){
+                for (i in document.documents) {
                     val month = i.toObject(MonthExpense::class.java)
                     month!!.id = i!!.id
                     expenseList.add(month)
                 }
-                when(activity){
+                when (activity) {
                     is PreExpenseImageActivity -> {
                         activity.expenseImageSuccess(expenseList)
                     }
                 }
 
-            }.addOnFailureListener { exception->
-                when(activity){
+            }.addOnFailureListener { exception ->
+                when (activity) {
                     is PreExpenseImageActivity -> {
                         activity.cancelProgressDialog()
                     }

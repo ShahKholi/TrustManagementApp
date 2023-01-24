@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -15,6 +14,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import com.android.trustmanagementapp.R
 import com.android.trustmanagementapp.firestore.FireStoreClass
+import com.android.trustmanagementapp.model.MemberClass
 import com.android.trustmanagementapp.model.UserClass
 import com.android.trustmanagementapp.utils.Constants
 import com.android.trustmanagementapp.utils.MSPButton
@@ -33,7 +33,7 @@ class LoginActivity : BaseActivity() {
     lateinit var btnLogin: MSPButton
     private lateinit var etPasswordText: MSPEditText
     private lateinit var etCodeLogin: MSPEditText
-    private lateinit var forgotPassword : MSPTextViewBold
+    private lateinit var forgotPassword: MSPTextViewBold
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -157,7 +157,11 @@ class LoginActivity : BaseActivity() {
             btnCodeLogin.setOnClickListener {
                 if (etCodeLogin.text.toString().isNotEmpty()) {
                     showProgressDialog()
-                    FireStoreClass().codeValidateUserDetail(this, etCodeLogin.text.toString())
+                    FireStoreClass().codeValidateUserDetail(
+                        this,
+                        etCodeLogin.text.toString(),
+                        email
+                    )
                 }
             }
         }
@@ -185,14 +189,11 @@ class LoginActivity : BaseActivity() {
         }
     }
 
-    fun successMemberLogin(userEmailList: ArrayList<UserClass>) {
-        cancelProgressDialog()
-        for (i in userEmailList) {
-            Toast.makeText(
-                this, "you belongs to ${i.firstName} admin",
-                Toast.LENGTH_LONG
-            ).show()
+    fun successMemberLogin(userEmailList: ArrayList<UserClass>, email: String) {
 
+        for (i in userEmailList) {
+
+            FireStoreClass().checkCurrentEmailMemberAvailableFirestore(this, email, i.email)
 
         }
     }
@@ -203,6 +204,29 @@ class LoginActivity : BaseActivity() {
             this, "Code doesn't match.. get correct code from Admin",
             Toast.LENGTH_LONG
         ).show()
+    }
+
+    fun emailNotAvailable() {
+        cancelProgressDialog()
+        Toast.makeText(
+            this, "your email is not added to group. please contact group admin",
+            Toast.LENGTH_LONG
+        ).show()
+    }
+
+    fun userAvailableInMember(memberList: ArrayList<MemberClass>) {
+        cancelProgressDialog()
+        for (i in memberList){
+            val intent = Intent(this,MainActivity::class.java)
+            intent.putExtra(Constants.MEMBER_NAME, i.memberName)
+            intent.putExtra(Constants.GROUP_NAME, i.groupName)
+            intent.putExtra(Constants.ADMIN_EMAIL, i.memberAdminEmail)
+            intent.putExtra(Constants.PROFILE_IMAGE, i.profileImage)
+            intent.putExtra(Constants.MEMBER_PHONE, i.memberPhone)
+            intent.putExtra(Constants.MEMBER_EMAIL, i.memberEmail)
+            startActivity(intent)
+
+        }
     }
 
 }

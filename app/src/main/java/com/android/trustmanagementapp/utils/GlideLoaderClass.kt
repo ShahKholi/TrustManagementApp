@@ -33,4 +33,16 @@ class GlideLoaderClass(val context : Context) {
             e.printStackTrace()
         }
     }
+
+    fun loadGuestProfilePictures(groupImage: Any, imageView: ImageView?) {
+        try{
+            Glide.with(context)
+                //.load(Uri.parse(imageUri.toString()))
+                .load(groupImage)
+                .fitCenter()
+                .into(imageView!!)
+        }catch (e:IOException){
+            e.printStackTrace()
+        }
+    }
 }

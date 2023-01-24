@@ -26,10 +26,19 @@
                 android:id="@+id/toolbar_text_guest_main"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="YOUR GROUP"
+                tools:text="YOUR GROUP"
                 android:textColor="@color/white"
                 android:layout_gravity="start"
                 android:textSize="20sp"/>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_user_placeholder"
+                android:layout_gravity="end"
+                android:id="@+id/iv_member_image_frag"
+
+                />
 
         </androidx.appcompat.widget.Toolbar>
 
@@ -81,7 +90,6 @@
         android:fillViewport="true"
         android:scrollbars="none"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
 
     </androidx.viewpager2.widget.ViewPager2>
 

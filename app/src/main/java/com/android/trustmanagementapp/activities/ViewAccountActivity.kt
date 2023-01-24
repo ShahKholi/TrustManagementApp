@@ -7,7 +7,6 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
-import android.widget.HorizontalScrollView
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
@@ -61,11 +60,12 @@ class ViewAccountActivity : BaseActivity() {
         }
 
 
-
-
     }
 
-    private suspend fun compareMasterAccountAndMemberAccount(mGroupName: String, getAdminEmailId: String) {
+    private suspend fun compareMasterAccountAndMemberAccount(
+        mGroupName: String,
+        getAdminEmailId: String
+    ) {
         showProgressDialog()
         val mMasterMonthList: ArrayList<String> =
             FireStoreClass().getMasterAccountMonth(this, mGroupName, getAdminEmailId, currentYear())
@@ -74,16 +74,16 @@ class ViewAccountActivity : BaseActivity() {
             Log.e("master month detail", mMasterMonthList.toString())
             for (month in mMasterMonthList) {
                 if (month == "January") {
-                    val memberAccountMonthCheck : ArrayList<String> =
+                    val memberAccountMonthCheck: ArrayList<String> =
                         FireStoreClass().memberAccountMonthCheckFromFirestore(
                             month,
                             mGroupName,
                             getAdminEmailId,
                             currentYear()
                         )
-                    if(memberAccountMonthCheck.size > 0){
-                     Log.e("Member month available", "no update needed")
-                    }else if ((memberAccountMonthCheck.size == 0)){
+                    if (memberAccountMonthCheck.size > 0) {
+                        Log.e("Member month available", "no update needed")
+                    } else if ((memberAccountMonthCheck.size == 0)) {
                         val finalAmount = 0
                         val userHashMap = HashMap<String, Any>()
                         userHashMap[Constants.INCOME] = finalAmount
@@ -94,21 +94,42 @@ class ViewAccountActivity : BaseActivity() {
                             month,
                             currentYear(),
                             userHashMap
+                        )
+                    }
+                    val memberAccountAmountForCurrentMonth: ArrayList<Int> =
+                        FireStoreClass().memberAccountAmountForCurrentMonthFirestore(
+                            month, mGroupName, getAdminEmailId, currentYear()
+                        )
+                    val masterAccountAmountForCurrentMonth: ArrayList<Int> =
+                        FireStoreClass().masterAccountAmountForCurrentMonthFireStore(
+                            mGroupName, getAdminEmailId, month, currentYear()
+                        )
+                    val memberAccountAmount: Int = memberAccountAmountForCurrentMonth.sum()
+                    val masterAccountAmount: Int = masterAccountAmountForCurrentMonth.sum()
+
+                    if (memberAccountAmount != masterAccountAmount) {
+
+                        val userHashMap = HashMap<String, Any>()
+                        userHashMap[Constants.INCOME] = memberAccountAmount
+
+                        FireStoreClass().compareFinalMasterAccountUpdate(
+                            this,
+                            getAdminEmailId, mGroupName, month, currentYear(), userHashMap
                         )
                     }
                 }
 
                 if (month == "February") {
-                    val memberAccountMonthCheck : ArrayList<String> =
+                    val memberAccountMonthCheck: ArrayList<String> =
                         FireStoreClass().memberAccountMonthCheckFromFirestore(
                             month,
                             mGroupName,
                             getAdminEmailId,
                             currentYear()
                         )
-                    if(memberAccountMonthCheck.size > 0){
+                    if (memberAccountMonthCheck.size > 0) {
                         Log.e("Member month available", "no update needed")
-                    }else if ((memberAccountMonthCheck.size == 0)){
+                    } else if ((memberAccountMonthCheck.size == 0)) {
 
                         val finalAmount = 0
                         val userHashMap = HashMap<String, Any>()
@@ -120,21 +141,42 @@ class ViewAccountActivity : BaseActivity() {
                             month,
                             currentYear(),
                             userHashMap
+                        )
+                    }
+                    val memberAccountAmountForCurrentMonth: ArrayList<Int> =
+                        FireStoreClass().memberAccountAmountForCurrentMonthFirestore(
+                            month, mGroupName, getAdminEmailId, currentYear()
+                        )
+                    val masterAccountAmountForCurrentMonth: ArrayList<Int> =
+                        FireStoreClass().masterAccountAmountForCurrentMonthFireStore(
+                            mGroupName, getAdminEmailId, month, currentYear()
+                        )
+                    val memberAccountAmount: Int = memberAccountAmountForCurrentMonth.sum()
+                    val masterAccountAmount: Int = masterAccountAmountForCurrentMonth.sum()
+
+                    if (memberAccountAmount != masterAccountAmount) {
+
+                        val userHashMap = HashMap<String, Any>()
+                        userHashMap[Constants.INCOME] = memberAccountAmount
+
+                        FireStoreClass().compareFinalMasterAccountUpdate(
+                            this,
+                            getAdminEmailId, mGroupName, month, currentYear(), userHashMap
                         )
                     }
                 }
 
                 if (month == "March") {
-                    val memberAccountMonthCheck : ArrayList<String> =
+                    val memberAccountMonthCheck: ArrayList<String> =
                         FireStoreClass().memberAccountMonthCheckFromFirestore(
                             month,
                             mGroupName,
                             getAdminEmailId,
                             currentYear()
                         )
-                    if(memberAccountMonthCheck.size > 0){
+                    if (memberAccountMonthCheck.size > 0) {
                         Log.e("Member month available", "no update needed")
-                    }else if ((memberAccountMonthCheck.size == 0)){
+                    } else if ((memberAccountMonthCheck.size == 0)) {
 
                         val finalAmount = 0
                         val userHashMap = HashMap<String, Any>()
@@ -146,21 +188,42 @@ class ViewAccountActivity : BaseActivity() {
                             month,
                             currentYear(),
                             userHashMap
+                        )
+                    }
+                    val memberAccountAmountForCurrentMonth: ArrayList<Int> =
+                        FireStoreClass().memberAccountAmountForCurrentMonthFirestore(
+                            month, mGroupName, getAdminEmailId, currentYear()
+                        )
+                    val masterAccountAmountForCurrentMonth: ArrayList<Int> =
+                        FireStoreClass().masterAccountAmountForCurrentMonthFireStore(
+                            mGroupName, getAdminEmailId, month, currentYear()
+                        )
+                    val memberAccountAmount: Int = memberAccountAmountForCurrentMonth.sum()
+                    val masterAccountAmount: Int = masterAccountAmountForCurrentMonth.sum()
+
+                    if (memberAccountAmount != masterAccountAmount) {
+
+                        val userHashMap = HashMap<String, Any>()
+                        userHashMap[Constants.INCOME] = memberAccountAmount
+
+                        FireStoreClass().compareFinalMasterAccountUpdate(
+                            this,
+                            getAdminEmailId, mGroupName, month, currentYear(), userHashMap
                         )
                     }
                 }
 
                 if (month == "April") {
-                    val memberAccountMonthCheck : ArrayList<String> =
+                    val memberAccountMonthCheck: ArrayList<String> =
                         FireStoreClass().memberAccountMonthCheckFromFirestore(
                             month,
                             mGroupName,
                             getAdminEmailId,
                             currentYear()
                         )
-                    if(memberAccountMonthCheck.size > 0){
+                    if (memberAccountMonthCheck.size > 0) {
                         Log.e("Member month available", "no update needed")
-                    }else if ((memberAccountMonthCheck.size == 0)){
+                    } else if ((memberAccountMonthCheck.size == 0)) {
 
                         val finalAmount = 0
                         val userHashMap = HashMap<String, Any>()
@@ -172,21 +235,42 @@ class ViewAccountActivity : BaseActivity() {
                             month,
                             currentYear(),
                             userHashMap
+                        )
+                    }
+                    val memberAccountAmountForCurrentMonth: ArrayList<Int> =
+                        FireStoreClass().memberAccountAmountForCurrentMonthFirestore(
+                            month, mGroupName, getAdminEmailId, currentYear()
+                        )
+                    val masterAccountAmountForCurrentMonth: ArrayList<Int> =
+                        FireStoreClass().masterAccountAmountForCurrentMonthFireStore(
+                            mGroupName, getAdminEmailId, month, currentYear()
+                        )
+                    val memberAccountAmount: Int = memberAccountAmountForCurrentMonth.sum()
+                    val masterAccountAmount: Int = masterAccountAmountForCurrentMonth.sum()
+
+                    if (memberAccountAmount != masterAccountAmount) {
+
+                        val userHashMap = HashMap<String, Any>()
+                        userHashMap[Constants.INCOME] = memberAccountAmount
+
+                        FireStoreClass().compareFinalMasterAccountUpdate(
+                            this,
+                            getAdminEmailId, mGroupName, month, currentYear(), userHashMap
                         )
                     }
                 }
 
                 if (month == "May") {
-                    val memberAccountMonthCheck : ArrayList<String> =
+                    val memberAccountMonthCheck: ArrayList<String> =
                         FireStoreClass().memberAccountMonthCheckFromFirestore(
                             month,
                             mGroupName,
                             getAdminEmailId,
                             currentYear()
                         )
-                    if(memberAccountMonthCheck.size > 0){
+                    if (memberAccountMonthCheck.size > 0) {
                         Log.e("Member month available", "no update needed")
-                    }else if ((memberAccountMonthCheck.size == 0)){
+                    } else if ((memberAccountMonthCheck.size == 0)) {
 
                         val finalAmount = 0
                         val userHashMap = HashMap<String, Any>()
@@ -198,21 +282,42 @@ class ViewAccountActivity : BaseActivity() {
                             month,
                             currentYear(),
                             userHashMap
+                        )
+                    }
+                    val memberAccountAmountForCurrentMonth: ArrayList<Int> =
+                        FireStoreClass().memberAccountAmountForCurrentMonthFirestore(
+                            month, mGroupName, getAdminEmailId, currentYear()
+                        )
+                    val masterAccountAmountForCurrentMonth: ArrayList<Int> =
+                        FireStoreClass().masterAccountAmountForCurrentMonthFireStore(
+                            mGroupName, getAdminEmailId, month, currentYear()
+                        )
+                    val memberAccountAmount: Int = memberAccountAmountForCurrentMonth.sum()
+                    val masterAccountAmount: Int = masterAccountAmountForCurrentMonth.sum()
+
+                    if (memberAccountAmount != masterAccountAmount) {
+
+                        val userHashMap = HashMap<String, Any>()
+                        userHashMap[Constants.INCOME] = memberAccountAmount
+
+                        FireStoreClass().compareFinalMasterAccountUpdate(
+                            this,
+                            getAdminEmailId, mGroupName, month, currentYear(), userHashMap
                         )
                     }
                 }
 
                 if (month == "June") {
-                    val memberAccountMonthCheck : ArrayList<String> =
+                    val memberAccountMonthCheck: ArrayList<String> =
                         FireStoreClass().memberAccountMonthCheckFromFirestore(
                             month,
                             mGroupName,
                             getAdminEmailId,
                             currentYear()
                         )
-                    if(memberAccountMonthCheck.size > 0){
+                    if (memberAccountMonthCheck.size > 0) {
                         Log.e("Member month available", "no update needed")
-                    }else if ((memberAccountMonthCheck.size == 0)){
+                    } else if ((memberAccountMonthCheck.size == 0)) {
 
                         val finalAmount = 0
                         val userHashMap = HashMap<String, Any>()
@@ -224,21 +329,42 @@ class ViewAccountActivity : BaseActivity() {
                             month,
                             currentYear(),
                             userHashMap
+                        )
+                    }
+                    val memberAccountAmountForCurrentMonth: ArrayList<Int> =
+                        FireStoreClass().memberAccountAmountForCurrentMonthFirestore(
+                            month, mGroupName, getAdminEmailId, currentYear()
+                        )
+                    val masterAccountAmountForCurrentMonth: ArrayList<Int> =
+                        FireStoreClass().masterAccountAmountForCurrentMonthFireStore(
+                            mGroupName, getAdminEmailId, month, currentYear()
+                        )
+                    val memberAccountAmount: Int = memberAccountAmountForCurrentMonth.sum()
+                    val masterAccountAmount: Int = masterAccountAmountForCurrentMonth.sum()
+
+                    if (memberAccountAmount != masterAccountAmount) {
+
+                        val userHashMap = HashMap<String, Any>()
+                        userHashMap[Constants.INCOME] = memberAccountAmount
+
+                        FireStoreClass().compareFinalMasterAccountUpdate(
+                            this,
+                            getAdminEmailId, mGroupName, month, currentYear(), userHashMap
                         )
                     }
                 }
 
                 if (month == "July") {
-                    val memberAccountMonthCheck : ArrayList<String> =
+                    val memberAccountMonthCheck: ArrayList<String> =
                         FireStoreClass().memberAccountMonthCheckFromFirestore(
                             month,
                             mGroupName,
                             getAdminEmailId,
                             currentYear()
                         )
-                    if(memberAccountMonthCheck.size > 0){
+                    if (memberAccountMonthCheck.size > 0) {
                         Log.e("Member month available", "no update needed")
-                    }else if ((memberAccountMonthCheck.size == 0)){
+                    } else if ((memberAccountMonthCheck.size == 0)) {
 
                         val finalAmount = 0
                         val userHashMap = HashMap<String, Any>()
@@ -250,21 +376,42 @@ class ViewAccountActivity : BaseActivity() {
                             month,
                             currentYear(),
                             userHashMap
+                        )
+                    }
+                    val memberAccountAmountForCurrentMonth: ArrayList<Int> =
+                        FireStoreClass().memberAccountAmountForCurrentMonthFirestore(
+                            month, mGroupName, getAdminEmailId, currentYear()
+                        )
+                    val masterAccountAmountForCurrentMonth: ArrayList<Int> =
+                        FireStoreClass().masterAccountAmountForCurrentMonthFireStore(
+                            mGroupName, getAdminEmailId, month, currentYear()
+                        )
+                    val memberAccountAmount: Int = memberAccountAmountForCurrentMonth.sum()
+                    val masterAccountAmount: Int = masterAccountAmountForCurrentMonth.sum()
+
+                    if (memberAccountAmount != masterAccountAmount) {
+
+                        val userHashMap = HashMap<String, Any>()
+                        userHashMap[Constants.INCOME] = memberAccountAmount
+
+                        FireStoreClass().compareFinalMasterAccountUpdate(
+                            this,
+                            getAdminEmailId, mGroupName, month, currentYear(), userHashMap
                         )
                     }
                 }
 
                 if (month == "August") {
-                    val memberAccountMonthCheck : ArrayList<String> =
+                    val memberAccountMonthCheck: ArrayList<String> =
                         FireStoreClass().memberAccountMonthCheckFromFirestore(
                             month,
                             mGroupName,
                             getAdminEmailId,
                             currentYear()
                         )
-                    if(memberAccountMonthCheck.size > 0){
+                    if (memberAccountMonthCheck.size > 0) {
                         Log.e("Member month available", "no update needed")
-                    }else if ((memberAccountMonthCheck.size == 0)){
+                    } else if ((memberAccountMonthCheck.size == 0)) {
 
                         val finalAmount = 0
                         val userHashMap = HashMap<String, Any>()
@@ -276,21 +423,42 @@ class ViewAccountActivity : BaseActivity() {
                             month,
                             currentYear(),
                             userHashMap
+                        )
+                    }
+                    val memberAccountAmountForCurrentMonth: ArrayList<Int> =
+                        FireStoreClass().memberAccountAmountForCurrentMonthFirestore(
+                            month, mGroupName, getAdminEmailId, currentYear()
+                        )
+                    val masterAccountAmountForCurrentMonth: ArrayList<Int> =
+                        FireStoreClass().masterAccountAmountForCurrentMonthFireStore(
+                            mGroupName, getAdminEmailId, month, currentYear()
+                        )
+                    val memberAccountAmount: Int = memberAccountAmountForCurrentMonth.sum()
+                    val masterAccountAmount: Int = masterAccountAmountForCurrentMonth.sum()
+
+                    if (memberAccountAmount != masterAccountAmount) {
+
+                        val userHashMap = HashMap<String, Any>()
+                        userHashMap[Constants.INCOME] = memberAccountAmount
+
+                        FireStoreClass().compareFinalMasterAccountUpdate(
+                            this,
+                            getAdminEmailId, mGroupName, month, currentYear(), userHashMap
                         )
                     }
                 }
 
                 if (month == "September") {
-                    val memberAccountMonthCheck : ArrayList<String> =
+                    val memberAccountMonthCheck: ArrayList<String> =
                         FireStoreClass().memberAccountMonthCheckFromFirestore(
                             month,
                             mGroupName,
                             getAdminEmailId,
                             currentYear()
                         )
-                    if(memberAccountMonthCheck.size > 0){
+                    if (memberAccountMonthCheck.size > 0) {
                         Log.e("Member month available", "no update needed")
-                    }else if ((memberAccountMonthCheck.size == 0)){
+                    } else if ((memberAccountMonthCheck.size == 0)) {
 
                         val finalAmount = 0
                         val userHashMap = HashMap<String, Any>()
@@ -302,21 +470,42 @@ class ViewAccountActivity : BaseActivity() {
                             month,
                             currentYear(),
                             userHashMap
+                        )
+                    }
+                    val memberAccountAmountForCurrentMonth: ArrayList<Int> =
+                        FireStoreClass().memberAccountAmountForCurrentMonthFirestore(
+                            month, mGroupName, getAdminEmailId, currentYear()
+                        )
+                    val masterAccountAmountForCurrentMonth: ArrayList<Int> =
+                        FireStoreClass().masterAccountAmountForCurrentMonthFireStore(
+                            mGroupName, getAdminEmailId, month, currentYear()
+                        )
+                    val memberAccountAmount: Int = memberAccountAmountForCurrentMonth.sum()
+                    val masterAccountAmount: Int = masterAccountAmountForCurrentMonth.sum()
+
+                    if (memberAccountAmount != masterAccountAmount) {
+
+                        val userHashMap = HashMap<String, Any>()
+                        userHashMap[Constants.INCOME] = memberAccountAmount
+
+                        FireStoreClass().compareFinalMasterAccountUpdate(
+                            this,
+                            getAdminEmailId, mGroupName, month, currentYear(), userHashMap
                         )
                     }
                 }
 
                 if (month == "October") {
-                    val memberAccountMonthCheck : ArrayList<String> =
+                    val memberAccountMonthCheck: ArrayList<String> =
                         FireStoreClass().memberAccountMonthCheckFromFirestore(
                             month,
                             mGroupName,
                             getAdminEmailId,
                             currentYear()
                         )
-                    if(memberAccountMonthCheck.size > 0){
+                    if (memberAccountMonthCheck.size > 0) {
                         Log.e("Member month available", "no update needed")
-                    }else if ((memberAccountMonthCheck.size == 0)){
+                    } else if ((memberAccountMonthCheck.size == 0)) {
 
                         val finalAmount = 0
                         val userHashMap = HashMap<String, Any>()
@@ -328,21 +517,89 @@ class ViewAccountActivity : BaseActivity() {
                             month,
                             currentYear(),
                             userHashMap
+                        )
+                    }
+                    val memberAccountAmountForCurrentMonth: ArrayList<Int> =
+                        FireStoreClass().memberAccountAmountForCurrentMonthFirestore(
+                            month, mGroupName, getAdminEmailId, currentYear()
+                        )
+                    val masterAccountAmountForCurrentMonth: ArrayList<Int> =
+                        FireStoreClass().masterAccountAmountForCurrentMonthFireStore(
+                            mGroupName, getAdminEmailId, month, currentYear()
+                        )
+                    val memberAccountAmount: Int = memberAccountAmountForCurrentMonth.sum()
+                    val masterAccountAmount: Int = masterAccountAmountForCurrentMonth.sum()
+
+                    if (memberAccountAmount != masterAccountAmount) {
+
+                        val userHashMap = HashMap<String, Any>()
+                        userHashMap[Constants.INCOME] = memberAccountAmount
+
+                        FireStoreClass().compareFinalMasterAccountUpdate(
+                            this,
+                            getAdminEmailId, mGroupName, month, currentYear(), userHashMap
                         )
                     }
                 }
 
                 if (month == "November") {
-                    val memberAccountMonthCheck : ArrayList<String> =
+                    val memberAccountMonthCheck: ArrayList<String> =
                         FireStoreClass().memberAccountMonthCheckFromFirestore(
                             month,
                             mGroupName,
                             getAdminEmailId,
                             currentYear()
                         )
-                    if(memberAccountMonthCheck.size > 0){
+                    if (memberAccountMonthCheck.size > 0) {
                         Log.e("Member month available", "no update needed")
-                    }else if ((memberAccountMonthCheck.size == 0)){
+                    } else if ((memberAccountMonthCheck.size == 0)) {
+
+                        val finalAmount = 0
+                        val userHashMap = HashMap<String, Any>()
+                        userHashMap[Constants.INCOME] = finalAmount
+                        FireStoreClass().memberDeleteUpdateMasterAccount(
+                            this,
+                            getAdminEmailId,
+                            mGroupName,
+                            month,
+                            currentYear(),
+                            userHashMap
+                        )
+                    }
+                    val memberAccountAmountForCurrentMonth: ArrayList<Int> =
+                        FireStoreClass().memberAccountAmountForCurrentMonthFirestore(
+                            month, mGroupName, getAdminEmailId, currentYear()
+                        )
+                    val masterAccountAmountForCurrentMonth: ArrayList<Int> =
+                        FireStoreClass().masterAccountAmountForCurrentMonthFireStore(
+                            mGroupName, getAdminEmailId, month, currentYear()
+                        )
+                    val memberAccountAmount: Int = memberAccountAmountForCurrentMonth.sum()
+                    val masterAccountAmount: Int = masterAccountAmountForCurrentMonth.sum()
+
+                    if (memberAccountAmount != masterAccountAmount) {
+
+                        val userHashMap = HashMap<String, Any>()
+                        userHashMap[Constants.INCOME] = memberAccountAmount
+
+                        FireStoreClass().compareFinalMasterAccountUpdate(
+                            this,
+                            getAdminEmailId, mGroupName, month, currentYear(), userHashMap
+                        )
+                    }
+                }
+
+                if (month == "December") {
+                    val memberAccountMonthCheck: ArrayList<String> =
+                        FireStoreClass().memberAccountMonthCheckFromFirestore(
+                            month,
+                            mGroupName,
+                            getAdminEmailId,
+                            currentYear()
+                        )
+                    if (memberAccountMonthCheck.size > 0) {
+                        Log.e("Member month available", "no update needed")
+                    } else if ((memberAccountMonthCheck.size == 0)) {
 
                         val finalAmount = 0
                         val userHashMap = HashMap<String, Any>()
@@ -357,31 +614,26 @@ class ViewAccountActivity : BaseActivity() {
                         )
                     }
                 }
+                val memberAccountAmountForCurrentMonth: ArrayList<Int> =
+                    FireStoreClass().memberAccountAmountForCurrentMonthFirestore(
+                        month, mGroupName, getAdminEmailId, currentYear()
+                    )
+                val masterAccountAmountForCurrentMonth: ArrayList<Int> =
+                    FireStoreClass().masterAccountAmountForCurrentMonthFireStore(
+                        mGroupName, getAdminEmailId, month, currentYear()
+                    )
+                val memberAccountAmount: Int = memberAccountAmountForCurrentMonth.sum()
+                val masterAccountAmount: Int = masterAccountAmountForCurrentMonth.sum()
 
-                if (month == "December") {
-                    val memberAccountMonthCheck : ArrayList<String> =
-                        FireStoreClass().memberAccountMonthCheckFromFirestore(
-                            month,
-                            mGroupName,
-                            getAdminEmailId,
-                            currentYear()
-                        )
-                    if(memberAccountMonthCheck.size > 0){
-                        Log.e("Member month available", "no update needed")
-                    }else if ((memberAccountMonthCheck.size == 0)){
+                if (memberAccountAmount != masterAccountAmount) {
 
-                        val finalAmount = 0
-                        val userHashMap = HashMap<String, Any>()
-                        userHashMap[Constants.INCOME] = finalAmount
-                        FireStoreClass().memberDeleteUpdateMasterAccount(
-                            this,
-                            getAdminEmailId,
-                            mGroupName,
-                            month,
-                            currentYear(),
-                            userHashMap
-                        )
-                    }
+                    val userHashMap = HashMap<String, Any>()
+                    userHashMap[Constants.INCOME] = memberAccountAmount
+
+                    FireStoreClass().compareFinalMasterAccountUpdate(
+                        this,
+                        getAdminEmailId, mGroupName, month, currentYear(), userHashMap
+                    )
                 }
             }
         }
@@ -425,22 +677,17 @@ class ViewAccountActivity : BaseActivity() {
                 this, mMasterAccountList, previousBalance, this, imageUrl
             )
             recyclerView.adapter = viewAccountListAdapter
-            showProgressDialog()
-            Handler(Looper.getMainLooper()).postDelayed({
-                lifecycleScope.launch {
 
-                    checkTotalAmount()
-                }
-            }, 1500)
+            checkTotalAmount()
 
         } else {
             linearLayout.visibility = View.GONE
         }
 
-
     }
 
     private suspend fun checkTotalAmount() {
+        showProgressDialog()
         var previousBalance: Int = 0
         var income: Int = 0
         var expense: Int = 0
@@ -461,11 +708,15 @@ class ViewAccountActivity : BaseActivity() {
             currentYear()
         )
 
-        income = mTotalMonth.sum()
-        expense = mTotalExpense.sum()
-        result = income + previousBalance - expense
-        mTotalAmount.text = result.toString()
-        cancelProgressDialog()
+        Handler(Looper.getMainLooper()).postDelayed({
+            lifecycleScope.launch {
+                income = mTotalMonth.sum()
+                expense = mTotalExpense.sum()
+                result = income + previousBalance - expense
+                mTotalAmount.text = result.toString()
+                cancelProgressDialog()
+            }
+        }, 2000)
 
     }
 
@@ -492,6 +743,10 @@ class ViewAccountActivity : BaseActivity() {
         )
         val getAdminEmailId = sharedPreferences.getString(Constants.STORE_EMAIL_ID, "")
         getAllMasterDetailForGroup(mGroupName, getAdminEmailId, currentYear())
+    }
+
+    fun updateMasterAmountSuccess() {
+        Log.e("update success", "update completed")
     }
 
 

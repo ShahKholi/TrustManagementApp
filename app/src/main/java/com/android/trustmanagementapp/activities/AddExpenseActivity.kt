@@ -193,8 +193,13 @@ class AddExpenseActivity : BaseActivity() {
     }
 
     private suspend fun getGroupImage(groupName: String) {
+        val sharedPreferences = getSharedPreferences(
+            Constants.STORE_EMAIL_ID, Context.MODE_PRIVATE
+        )
+        val getAdminEmailId = sharedPreferences.getString(Constants.STORE_EMAIL_ID, "")
+
         val groupImage: String =
-            FireStoreClass().getGroupImageFromFirestore(this, groupName)
+            FireStoreClass().getGroupImageFromFirestore( groupName,getAdminEmailId!!)
         val imageStringCheck: String = mSelectedGroupImageUri.toString()
         if (imageStringCheck.isNotEmpty() && imageStringCheck != "null"){
             uploadUserImage(groupImage)
