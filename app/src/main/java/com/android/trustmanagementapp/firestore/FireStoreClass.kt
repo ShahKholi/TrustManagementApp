@@ -6,10 +6,8 @@ import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import com.android.trustmanagementapp.activities.*
-import com.android.trustmanagementapp.activities.fragments.GuestDashBoardFragment
 import com.android.trustmanagementapp.model.*
 import com.android.trustmanagementapp.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
@@ -161,7 +159,7 @@ class FireStoreClass {
             }
     }
 
-    private fun getCurrentUserID(): String {
+     fun getCurrentUserID(): String {
         val current = FirebaseAuth.getInstance().currentUser
         var currentUserUID = ""
         if (current != null) {
@@ -170,8 +168,8 @@ class FireStoreClass {
         return currentUserUID
     }
 
-    suspend fun validateCode(activity: RegisterActivity, code: String): ArrayList<UserClass> {
-        val userList: ArrayList<UserClass> = ArrayList()
+    suspend fun validateCode(activity: RegisterActivity, code: String): ArrayList<String> {
+        val userList: ArrayList<String> = ArrayList()
         var user: UserClass
         mFirestoreInstance.collection(Constants.USER)
             .whereEqualTo("code", code)
@@ -180,8 +178,8 @@ class FireStoreClass {
                 for (i in document) {
                     user = i.toObject(UserClass::class.java)
                     //group.groupImage = i.get("groupImage").toString()
-                    user.id = i.id
-                    userList.add(user)
+                    user.code = i.get("code").toString()
+                    userList.add(user.code)
                 }
             }.await()
         return userList
@@ -393,6 +391,52 @@ class FireStoreClass {
             }.await()
 
         return previousAmount
+    }
+
+    fun getAssignedGroupList(activity: Activity, assignedAdminEmail: String,) {
+        mFirestoreInstance.collection(Constants.GROUP)
+            .whereEqualTo("email", assignedAdminEmail)
+            .get()
+            .addOnSuccessListener { document ->
+                val groupList: ArrayList<GroupNameClass> = ArrayList()
+                for (i in document.documents) {
+                    val group = i.toObject(GroupNameClass::class.java)
+                    group!!.id = i.id
+                    groupList.add(group)
+                }
+                when (activity) {
+                    is AdminScreenActivity -> {
+                        activity.successGroupListFromFirestore(groupList)
+                    }
+                    is AddMemberActivity -> {
+                        activity.successGroupListFromFirestore(groupList)
+                    }
+                    is AddAccountActivity -> {
+                        activity.successGroupListFromFirestore(groupList)
+                    }
+                    is PreViewAccountActivity -> {
+                        activity.successGroupListFromFirestore(groupList)
+                    }
+                    is AddExpenseActivity -> {
+                        activity.successGroupListFromFirestore(groupList)
+                    }
+                    is PreViewMemberActivity -> {
+                        activity.successGroupListFromFirestore(groupList)
+                    }
+                }
+            }.addOnFailureListener { exception ->
+                when (activity) {
+                    is AdminScreenActivity -> {
+                        activity.cancelProgressDialog()
+                        Log.e(
+                            activity.javaClass.simpleName,
+                            "Error while checking group.",
+                            exception
+                        )
+                    }
+                }
+            }
+
     }
 
     fun getGroupList(activity: Activity) {
@@ -1084,6 +1128,50 @@ class FireStoreClass {
             }
     }
 
+    suspend fun getAdminCodeFromUserFireStore(email: String): String {
+        var user : UserClass = UserClass()
+        mFirestoreInstance.collection(Constants.USER)
+            .whereEqualTo("email", email )
+            .get()
+            .addOnSuccessListener { document ->
+               for(i in document.documents){
+                   user = i.toObject(UserClass::class.java)!!
+                   user.code = i.get("code").toString()
+               }
+            }.await()
+        return user.code
+    }
+
+    suspend fun getAdminEnableMemberFirestore(email: String): Int {
+        var memberClass : MemberClass = MemberClass()
+        mFirestoreInstance.collection(Constants.MEMBER)
+            .whereEqualTo("memberEmail", email)
+            .get()
+            .addOnSuccessListener { document ->
+                for (i in document.documents) {
+                    memberClass = i.toObject(MemberClass::class.java)!!
+                    memberClass.adminEnableCode = i.get("adminEnableCode").toString().toInt()
+                }
+
+            }
+        return memberClass.adminEnableCode
+    }
+
+    suspend fun getAdminEmailFromMemberFireStore(email: String): String {
+        var memberClass : MemberClass = MemberClass()
+        mFirestoreInstance.collection(Constants.MEMBER)
+            .whereEqualTo("memberEmail", email)
+            .get()
+            .addOnSuccessListener{ document ->
+                for(i in document.documents){
+                    memberClass = i.toObject(MemberClass::class.java)!!
+                    memberClass.memberAdminEmail = i.get("memberAdminEmail").toString()
+
+                }
+
+            }.await()
+       return memberClass.memberAdminEmail
+    }
 
     @RequiresApi(Build.VERSION_CODES.N)
     fun getMemberEmailFromFireStore(
@@ -1692,6 +1780,9 @@ class FireStoreClass {
                     is MemberDetailedActivity -> {
                         activity.successIncomeDetail(monthList)
                     }
+                    is GuestAllMemberDetailedActivity -> {
+                        activity.successIncomeDetail(monthList)
+                    }
                 }
             }.addOnFailureListener { exception ->
                 when (activity) {
@@ -1759,8 +1850,37 @@ class FireStoreClass {
         return amount
     }
 
-    fun getGroupAdmin(activity: Activity, adminEmail: String) {
+    fun getAssignedGroupAdmin(activity: Activity, id: String) {
+        mFirestoreInstance.collection(Constants.USER)
+            .whereEqualTo("id", id)
+            .get()
+            .addOnSuccessListener { document ->
+               var adminEmail : String = ""
+                for (i in document.documents) {
+                    val group = i.toObject(UserClass::class.java)
+                    group!!.adminEmail = i.get("adminEmail").toString()
+                    adminEmail = group.adminEmail
+                }
+                when (activity) {
+                    is AdminScreenActivity -> {
+                        activity.successAdminList(adminEmail)
+                    }
 
+                }
+            }.addOnFailureListener { exception ->
+                when (activity) {
+                    is AdminScreenActivity -> {
+                        Log.e(
+                            activity.javaClass.simpleName,
+                            "Error while checking Member.",
+                            exception
+                        )
+                    }
+                }
+            }
+    }
+
+    fun getGroupAdmin(activity: Activity, adminEmail: String) {
         mFirestoreInstance.collection(Constants.USER)
             .whereEqualTo("email", adminEmail)
             .get()
@@ -1775,6 +1895,10 @@ class FireStoreClass {
                     is ViewMemberAccountActivity -> {
                         activity.successAdminList(groupList)
                     }
+                    is GuestAllMemberListDetailActivity -> {
+                        activity.successAdminList(groupList)
+                    }
+
                 }
             }.addOnFailureListener { exception ->
                 when (activity) {
@@ -2119,6 +2243,9 @@ class FireStoreClass {
                     is ViewMemberAccountActivity -> {
                         activity.successMemberListFromFirestore(memberList)
                     }
+                    is GuestAllMemberListDetailActivity -> {
+                        activity.successMemberListFromFirestore(memberList)
+                    }
                 }
             }.addOnFailureListener { exception ->
                 when (activity) {
@@ -2171,6 +2298,5 @@ class FireStoreClass {
                 )
             }
     }
-
 
 }

@@ -13,7 +13,8 @@ data class MemberAccountDetail(
     val adminEmail: String = "",
     var month : String = "",
     var currentAmount: Int = 0,
-    var id : String = ""
+    var id : String = "",
+    var code : String = ""
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
@@ -23,6 +24,7 @@ data class MemberAccountDetail(
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readInt(),
+        parcel.readString()!!,
         parcel.readString()!!
     ) {
     }
@@ -36,6 +38,7 @@ data class MemberAccountDetail(
         parcel.writeString(month)
         parcel.writeInt(currentAmount)
         parcel.writeString(id)
+        parcel.writeString(code)
     }
 
     override fun describeContents(): Int {

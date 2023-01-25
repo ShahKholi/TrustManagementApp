@@ -13,6 +13,7 @@ data class MasterAccountDetail(
     var month : String = "",
     var income : Int= 0,
     var monthExpense : String = "",
-    var expenseAmount : Int = 0
+    var expenseAmount : Int = 0,
+    var code : String = ""
 
 ) : Parcelable

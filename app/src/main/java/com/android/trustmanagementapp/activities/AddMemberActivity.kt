@@ -54,6 +54,8 @@ class AddMemberActivity : BaseActivity() {
     lateinit var toolbarLabel: MSPTextViewBold
     lateinit var mMemberList: ArrayList<MemberClass>
 
+    private lateinit var assignedAdminEmail : String
+
 
     private val getPhotoActionResult: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult())
@@ -136,24 +138,27 @@ class AddMemberActivity : BaseActivity() {
                     )
 
                 } else {
-                    val updateMember = MemberClass(
-                        mUserGroupName,
-                        etMemberName.text.toString(),
-                        etMemberEmail.text.toString(),
-                        etMemberPhone.text.toString(),
-                        currentFirebaseUser!!.uid,
-                        mUserAdminEmail,
-                        mUserProfileImage
-                    )
-                    lifecycleScope.launch {
-                        FireStoreClass().updateMemberProfile(
-                            this@AddMemberActivity,
-                            updateMember,
+
+                        val updateMember = MemberClass(
                             mUserGroupName,
+                            etMemberName.text.toString(),
+                            etMemberEmail.text.toString(),
+                            etMemberPhone.text.toString(),
+                            currentFirebaseUser!!.uid,
                             mUserAdminEmail,
-                            mUserMemberEmail
+                            mUserProfileImage
                         )
-                    }
+                        lifecycleScope.launch {
+                            FireStoreClass().updateMemberProfile(
+                                this@AddMemberActivity,
+                                updateMember,
+                                mUserGroupName,
+                                mUserAdminEmail,
+                                mUserMemberEmail
+                            )
+                        }
+
+
                 }
 
 
@@ -248,6 +253,7 @@ class AddMemberActivity : BaseActivity() {
 
     private fun getGroupNameFromFireStore() {
         FireStoreClass().getGroupList(this)
+
     }
 
     private fun registerMember() {
@@ -424,5 +430,7 @@ class AddMemberActivity : BaseActivity() {
         }
 
     }
+
+
 
 }

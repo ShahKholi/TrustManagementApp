@@ -13,7 +13,8 @@ data class MonthExpense(
     var groupImage : String = "",
     var id : String = "",
     var year: Int = 0,
-    var spendImage : String = ""
+    var spendImage : String = "",
+    var code : String = ""
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
@@ -25,6 +26,7 @@ data class MonthExpense(
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readInt(),
+        parcel.readString()!!,
         parcel.readString()!!
     ) {
     }
@@ -40,6 +42,7 @@ data class MonthExpense(
         parcel.writeString(id)
         parcel.writeInt(year)
         parcel.writeString(spendImage)
+        parcel.writeString(code)
     }
 
     override fun describeContents(): Int {

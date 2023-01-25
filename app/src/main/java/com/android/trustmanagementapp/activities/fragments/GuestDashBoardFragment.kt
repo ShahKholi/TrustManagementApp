@@ -14,6 +14,7 @@ import com.android.trustmanagementapp.utils.Constants
 import android.widget.ImageView
 
 import androidx.lifecycle.lifecycleScope
+import com.android.trustmanagementapp.activities.GuestAllMemberListDetailActivity
 import com.android.trustmanagementapp.firestore.FireStoreClass
 import com.android.trustmanagementapp.utils.GlideLoaderClass
 import com.android.trustmanagementapp.utils.MSPTextViewBold
@@ -35,6 +36,7 @@ class GuestDashBoardFragment : BlankFragment(), View.OnClickListener {
 
     private lateinit var mYourTransactionDetail: MSPTextViewBold
     private lateinit var mGroupTransactionDetail : MSPTextViewBold
+    private lateinit var mAllGroupMemberTransactionList : MSPTextViewBold
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -92,6 +94,9 @@ class GuestDashBoardFragment : BlankFragment(), View.OnClickListener {
         mGroupTransactionDetail = view.findViewById(R.id.tv_fragment_group_accounts)
         mGroupTransactionDetail.setOnClickListener(this)
 
+        mAllGroupMemberTransactionList = view.findViewById(R.id.tv_fragment_member_accounts)
+        mAllGroupMemberTransactionList.setOnClickListener(this)
+
         return view
     }
 
@@ -122,9 +127,20 @@ class GuestDashBoardFragment : BlankFragment(), View.OnClickListener {
             R.id.tv_fragment_group_accounts -> {
                 getAllMemberAccountList()
             }
+            R.id.tv_fragment_member_accounts-> {
+                getAllTransactionAccountList()
+            }
             else -> {
             }
         }
+    }
+
+    private fun getAllTransactionAccountList() {
+        val intent =
+            Intent(this.requireContext(), GuestAllMemberListDetailActivity::class.java)
+        intent.putExtra(Constants.GROUP_NAME, mGroupName)
+        intent.putExtra(Constants.ADMIN_EMAIL, mAdmin)
+        startActivity(intent)
     }
 
     private fun getAllMemberAccountList() {

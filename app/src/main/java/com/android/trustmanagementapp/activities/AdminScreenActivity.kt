@@ -1,7 +1,9 @@
 package com.android.trustmanagementapp.activities
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 
 import android.os.Bundle
 import android.util.Log
@@ -16,7 +18,6 @@ import com.android.trustmanagementapp.firestore.FireStoreClass
 import com.android.trustmanagementapp.model.GroupNameClass
 import com.android.trustmanagementapp.utils.Constants
 import com.android.trustmanagementapp.utils.MSPButton
-import java.util.HashMap
 
 class AdminScreenActivity : BaseActivity() {
     lateinit var createGroupBtn: MSPButton
@@ -28,6 +29,9 @@ class AdminScreenActivity : BaseActivity() {
 
     private lateinit var mGroupList: ArrayList<GroupNameClass>
     private lateinit var recyclerView: RecyclerView
+
+    private lateinit var mCode : String
+    private lateinit var assignedAdminEmail : String
 
     private val getGroupDataResult: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult())
@@ -53,6 +57,8 @@ class AdminScreenActivity : BaseActivity() {
         btnPreViewActivity = findViewById(R.id.btn_view_account_detail_admin_screen)
         btnAddExpenseActivity = findViewById(R.id.btn_add_expense_admin_screen)
         btnPreViewMemberDetail = findViewById(R.id.btn_view_member_admin_screen)
+
+        getAdminCode()
 
         btnPreViewMemberDetail.setOnClickListener {
             val intent = Intent(this, PreViewMemberActivity::class.java)
@@ -84,16 +90,42 @@ class AdminScreenActivity : BaseActivity() {
             startActivity(intent)
         }
 
-        getGroupListFromFireStore()
+    }
+
+    private fun getAdminCode() {
+        val currentUID = FireStoreClass().getCurrentUserID()
+        FireStoreClass().getAssignedGroupAdmin(this,currentUID)
     }
 
     override fun onBackPressed() {
         doubleBackToExit()
     }
 
+    fun successAdminList(adminEmail: String) {
+        assignedAdminEmail = adminEmail
+        Log.e("assignedAdminEmail", assignedAdminEmail)
+        getGroupListFromFireStore()
+    }
+
     private fun getGroupListFromFireStore() {
         showProgressDialog()
-        FireStoreClass().getGroupList(this)
+
+        if(assignedAdminEmail.isNotEmpty() && assignedAdminEmail != "null"){
+            val sharedPreferences = getSharedPreferences(
+                Constants.STORE_ASSIGNED_ADMIN_EMAIL_ID, Context.MODE_PRIVATE
+            )
+            val editor: SharedPreferences.Editor = sharedPreferences.edit()
+            editor.putString(
+                Constants.STORE_ASSIGNED_ADMIN_EMAIL_ID, assignedAdminEmail
+            )
+            editor.apply()
+
+            FireStoreClass().getAssignedGroupList(this,assignedAdminEmail)
+
+        }else{
+            FireStoreClass().getGroupList(this)
+        }
+
     }
 
     fun successGroupListFromFirestore(groupList: ArrayList<GroupNameClass>) {
@@ -151,5 +183,7 @@ class AdminScreenActivity : BaseActivity() {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         getGroupDataResult.launch(intent)
     }
+
+
 
 }

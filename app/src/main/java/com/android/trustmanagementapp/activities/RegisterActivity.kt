@@ -152,44 +152,100 @@ class RegisterActivity : BaseActivity() {
             val code: String = etCode.text.toString().trim { it <= ' ' }
 
             lifecycleScope.launch {
-                val masterAccountList: ArrayList<UserClass> =
+                val masterAccountList: ArrayList<String> =
                     FireStoreClass().validateCode(this@RegisterActivity, code)
                 Log.e("check code size", masterAccountList.size.toString())
-                if (masterAccountList.size > 0) {
+                //
+                if (code == "dummy" || code == "Dummy" || code == "DUMMY") {
+                    lifecycleScope.launch {
+                        val checkWhichGroupMemberAvailable: String =
+                            FireStoreClass().getAdminEmailFromMemberFireStore(
+                                email
+                            )
+                        val adminEnable: Int = FireStoreClass().getAdminEnableMemberFirestore(
+                            email
+                        )
+                        Log.e("checkMemberAvailable", checkWhichGroupMemberAvailable)
+                        Log.e("adminEnable", checkWhichGroupMemberAvailable)
+                        if (adminEnable == 1) {
+                            if (checkWhichGroupMemberAvailable.isNotEmpty()
+                                && checkWhichGroupMemberAvailable != "null"
+                            ) {
+                                FirebaseAuth.getInstance()
+                                    .createUserWithEmailAndPassword(email, password)
+                                    .addOnCompleteListener { task ->
+                                        if (task.isSuccessful) {
+                                            lifecycleScope.launch {
+                                                val getAdminCode: String =
+                                                    FireStoreClass().getAdminCodeFromUserFireStore(
+                                                        checkWhichGroupMemberAvailable
+                                                    )
+                                                val firebaseUser: FirebaseUser =
+                                                    task.result!!.user!!
+
+                                                val user = UserClass(
+                                                    firebaseUser.uid,
+                                                    firstName,
+                                                    lastName,
+                                                    email,
+                                                    mobile,
+                                                    getAdminCode,
+                                                    1,
+                                                    0,
+                                                    checkWhichGroupMemberAvailable
+                                                )
+                                                FireStoreClass().registerUser(
+                                                    this@RegisterActivity,
+                                                    user
+                                                )
+                                            }
+                                        }
+                                    }
+                            } else {
+                                cancelProgressDialog()
+                                showSnackBarMessage(
+                                    "Your email is not available in member list" +
+                                            " Please provide correct email or contact your group admin",
+                                    false
+                                )
+                            }
+                        } else {
+                            cancelProgressDialog()
+                            showSnackBarMessage(
+                                "Admin Not Enable for your email" +
+                                        " Please contact your group admin",
+                                false
+                            )
+                        }
+
+                    }
+
+                } else if (masterAccountList.size > 0) {
                     cancelProgressDialog()
                     showSnackBarMessage(
                         "Given code is already available in different code." +
                                 " Please provide unique code",
                         false
                     )
-                }else{
-                    FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
+
+                } else {
+                    FirebaseAuth.getInstance()
+                        .createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener { task ->
+                            val firebaseUser: FirebaseUser = task.result!!.user!!
 
-                            // If the registration is successfully done
-                            if (task.isSuccessful) {
-
-                                // Firebase registered user
-                                val firebaseUser: FirebaseUser = task.result!!.user!!
-
-                                val user = UserClass(
-                                    firebaseUser.uid,
-                                    firstName,
-                                    lastName,
-                                    email,
-                                    mobile,
-                                    code
-                                )
-                                FireStoreClass().registerUser(this@RegisterActivity, user)
-
-                                //  FirebaseAuth.getInstance().signOut()
-
-                            } else {
-                                // If the registering is not successful then show error message.
-                                cancelProgressDialog()
-                                showSnackBarMessage(task.exception!!.message.toString(), true)
-                                Log.e("check error msg ", task.exception.toString())
-                            }
+                            val user = UserClass(
+                                firebaseUser.uid,
+                                firstName,
+                                lastName,
+                                email,
+                                mobile,
+                                code
+                            )
+                            FireStoreClass().registerUser(
+                                this@RegisterActivity,
+                                user
+                            )
                         }.addOnFailureListener { e ->
                             Log.e("check error msg ", e.message.toString())
                             Toast.makeText(
@@ -200,7 +256,6 @@ class RegisterActivity : BaseActivity() {
                         }
                 }
             }
-            // Create an instance and create a register a user with email and password.
 
         }
     }

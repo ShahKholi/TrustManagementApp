@@ -16,6 +16,7 @@ object Constants {
 
     //pref detail
     const val STORE_EMAIL_ID: String = "store_email_id"
+    const val STORE_ASSIGNED_ADMIN_EMAIL_ID: String = "store_assigned_admin_email_id"
     const val STORE_MEMBER_EMAIL_ID: String = "store_member_email_id"
     const val STORE_MEMBER_NAME_ID: String = "store_member_name_id"
     const val STORE_MEMBER_PHONE_ID: String = "store_member_phone_id"
