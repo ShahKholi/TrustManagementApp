@@ -100,6 +100,8 @@
     <string name="group_accounts_n_detail">GROUP ACCOUNTS \n DETAIL</string>
     <string name="group_member_n_accounts_ndetail">GROUP MEMBER \n ACCOUNTS \nDETAIL</string>
     <string name="about_group">ABOUT GROUP</string>
+    <string name="group_expense_n_detail">GROUP EXPENSE \n DETAIL</string>
+    <string name="view_expense_detail">VIEW EXPENSE DETAIL</string>
 
 
 </resources>

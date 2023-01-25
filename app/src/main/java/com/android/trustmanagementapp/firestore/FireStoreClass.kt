@@ -356,6 +356,9 @@ class FireStoreClass {
                     is AddExpenseActivity -> {
                         activity.successExpenseListFromFirestore(expenseList)
                     }
+                    is GuestViewGroupExpenseActivity -> {
+                        activity.successExpenseListFromFirestore(expenseList)
+                    }
                 }
 
             }.addOnFailureListener { exception ->

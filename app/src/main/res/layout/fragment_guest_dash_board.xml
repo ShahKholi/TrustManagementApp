@@ -156,13 +156,14 @@
                     android:orientation="vertical">
 
                     <com.android.trustmanagementapp.utils.MSPTextViewBold
-                        android:id="@+id/tv_fragment_about_groups"
+                        android:id="@+id/tv_fragment_expense_detail"
                         android:layout_width="180dp"
                         android:layout_height="200dp"
                         android:gravity="center_horizontal|center"
-                        android:text="@string/about_group"
+                        android:text="@string/group_expense_n_detail"
                         android:textColor="@color/white"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        />
 
                 </LinearLayout>
 

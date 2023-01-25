@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cons_layout_view_account_expense"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/bar_color">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bar_color"
+        android:orientation="vertical"
+        android:padding="2dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="4dp"
+            android:padding="2dp"
+            app:cardCornerRadius="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#36454F"
+                android:orientation="horizontal">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/cv_trust_image_exp"
+                    android:layout_width="96dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="2dp"
+                    android:src="@drawable/ic_user_placeholder"
+                    app:civ_border_color="#00E5FF"
+                    app:civ_border_width="2dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="3dp">
+
+                    <com.android.trustmanagementapp.utils.MSPTextViewBold
+                        android:id="@+id/tv_view_account_group_name_exp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textColor="@color/white"
+                        tools:text="Lions PDV Group" />
+
+                    <View
+                        android:id="@+id/prod_view_divider_exp"
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@color/colorDarkGrey"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <com.android.trustmanagementapp.utils.MSPTextViewBold
+                            android:id="@+id/tv_view_month_name_exp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            tools:text="January Expense" />
+
+                        <com.android.trustmanagementapp.utils.MSPTextViewBold
+                            android:id="@+id/tv_view_month_amount_exp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:textColor="@color/white"
+                            tools:text="200" />
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:orientation="horizontal">
+
+                        <com.android.trustmanagementapp.utils.MSPTextViewBold
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/detail"
+                            android:textColor="@color/white" />
+
+                        <com.android.trustmanagementapp.utils.MSPTextViewBold
+                            android:id="@+id/tv_expense_detail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:text="@string/click_to_view_detail"
+
+                            android:textColor="@color/white" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@color/colorDarkGrey"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:padding="2dp"
+            app:cardBackgroundColor="#36454F"
+            app:cardCornerRadius="20dp">
+
+            <LinearLayout
+                android:id="@+id/ll_expense_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginBottom="4dp"
+                android:background="#36454F"
+                android:orientation="vertical"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <com.android.trustmanagementapp.utils.MSPTextViewBold
+                    android:id="@+id/tv_brief_expense"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textColor="@color/white"
+                    tools:text="we spend the money for deff people" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

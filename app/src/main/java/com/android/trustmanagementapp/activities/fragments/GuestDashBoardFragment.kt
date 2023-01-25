@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 
 import com.android.trustmanagementapp.activities.GuestMemberTransactionDetailActivity
 import com.android.trustmanagementapp.activities.GuestViewAccountActivity
+import com.android.trustmanagementapp.activities.GuestViewGroupExpenseActivity
 import com.android.trustmanagementapp.model.MemberAccountDetail
 
 
@@ -37,6 +38,7 @@ class GuestDashBoardFragment : BlankFragment(), View.OnClickListener {
     private lateinit var mYourTransactionDetail: MSPTextViewBold
     private lateinit var mGroupTransactionDetail : MSPTextViewBold
     private lateinit var mAllGroupMemberTransactionList : MSPTextViewBold
+    private lateinit var mGuestViewGroupExpenseDetail : MSPTextViewBold
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -97,6 +99,9 @@ class GuestDashBoardFragment : BlankFragment(), View.OnClickListener {
         mAllGroupMemberTransactionList = view.findViewById(R.id.tv_fragment_member_accounts)
         mAllGroupMemberTransactionList.setOnClickListener(this)
 
+        mGuestViewGroupExpenseDetail = view.findViewById(R.id.tv_fragment_expense_detail)
+        mGuestViewGroupExpenseDetail.setOnClickListener(this)
+
         return view
     }
 
@@ -130,9 +135,20 @@ class GuestDashBoardFragment : BlankFragment(), View.OnClickListener {
             R.id.tv_fragment_member_accounts-> {
                 getAllTransactionAccountList()
             }
+            R.id.tv_fragment_expense_detail-> {
+                getExpenseTransactionAccountList()
+            }
             else -> {
             }
         }
+    }
+
+    private fun getExpenseTransactionAccountList() {
+        val intent =
+            Intent(this.requireContext(), GuestViewGroupExpenseActivity::class.java)
+        intent.putExtra(Constants.GROUP_NAME, mGroupName)
+        intent.putExtra(Constants.ADMIN_EMAIL, mAdmin)
+        startActivity(intent)
     }
 
     private fun getAllTransactionAccountList() {

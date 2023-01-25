@@ -26,6 +26,7 @@
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_guest_member_transaction_detailed.xml" value="0.1796875" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_guest_user_member_dash_board.xml" value="0.1796875" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_guest_view_account.xml" value="0.1796875" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_guest_view_group_expense.xml" value="0.1796875" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_login.xml" value="0.4466666666666667" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_main.xml" value="0.22" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_member_detailed.xml" value="0.3333333333333333" />
@@ -48,6 +49,7 @@
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/item_expense_view_rc_layout.xml" value="0.3333333333333333" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/item_group_rc_layout.xml" value="0.22" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/item_guest_all_member_detail_view_rc_layout.xml" value="0.3333333333333333" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/item_guest_expense_view_rc_layout.xml" value="0.3333333333333333" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/item_guest_member_list_view_rc_layout.xml" value="0.1796875" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/item_guest_member_transaction_detail_view_rc_layout.xml" value="0.1796875" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/item_member_account_detail_view_rc_layout.xml" value="0.16666666666666666" />

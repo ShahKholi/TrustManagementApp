@@ -15,6 +15,12 @@
         android:theme="@style/Theme.TrustManagementApp"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activities.GuestViewGroupExpenseActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.TrustManagementApp.NoActionBar"
+            />
+        <activity
             android:name=".activities.GuestAllMemberDetailedActivity"
             android:exported="true"
             android:screenOrientation="portrait"
