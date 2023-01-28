@@ -27,7 +27,7 @@ class ExpenseDetailAdapter(
     private val activity: Activity
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return ExpenseDetailAdapter.MyViewHolder(
+        return MyViewHolder(
             LayoutInflater.from(context).inflate(
                 R.layout.item_expense_view_rc_layout,
                 parent,

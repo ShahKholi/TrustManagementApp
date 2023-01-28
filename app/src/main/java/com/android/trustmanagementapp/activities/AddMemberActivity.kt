@@ -138,7 +138,6 @@ class AddMemberActivity : BaseActivity() {
                     )
 
                 } else {
-
                         val updateMember = MemberClass(
                             mUserGroupName,
                             etMemberName.text.toString(),
@@ -252,7 +251,11 @@ class AddMemberActivity : BaseActivity() {
     }
 
     private fun getGroupNameFromFireStore() {
-        FireStoreClass().getGroupList(this)
+        val sharedPreferences = getSharedPreferences(
+            Constants.STORE_EMAIL_ID, Context.MODE_PRIVATE
+        )
+        val getAdminEmailId = sharedPreferences.getString(Constants.STORE_EMAIL_ID, "")
+        FireStoreClass().getGroupList(this,getAdminEmailId!!)
 
     }
 

@@ -1,6 +1,7 @@
 package com.android.trustmanagementapp.activities
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.appcompat.widget.Toolbar
@@ -12,6 +13,7 @@ import com.android.trustmanagementapp.adapter.ExpenseDetailAdapter
 import com.android.trustmanagementapp.adapter.GuestExpenseDetailAdapter
 import com.android.trustmanagementapp.firestore.FireStoreClass
 import com.android.trustmanagementapp.model.MonthExpense
+import com.android.trustmanagementapp.utils.Constants
 import java.text.SimpleDateFormat
 
 class GuestViewGroupExpenseActivity : BaseActivity() {
@@ -32,7 +34,11 @@ class GuestViewGroupExpenseActivity : BaseActivity() {
 
     private fun loadExpenseDetailFromFireStore() {
         showProgressDialog()
-        FireStoreClass().loadExpenseDetail(this)
+        val sharedPreferences = getSharedPreferences(
+            Constants.STORE_EMAIL_ID, Context.MODE_PRIVATE
+        )
+        val getAdminEmailId = sharedPreferences.getString(Constants.STORE_EMAIL_ID, "")
+        FireStoreClass().loadExpenseDetail(this,getAdminEmailId!!)
     }
 
     @SuppressLint("SimpleDateFormat")

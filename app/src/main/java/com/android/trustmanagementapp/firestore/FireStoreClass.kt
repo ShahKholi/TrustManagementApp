@@ -40,6 +40,33 @@ class FireStoreClass {
             }
     }
 
+
+    fun saveDocumentID(activity: Activity, timeline: Timeline) {
+        val document = mFirestoreInstance.collection(Constants.TIMELINE_DETAIL).document()
+        timeline.id = document.id
+        val set = document.set(timeline, SetOptions.merge())
+        set.addOnSuccessListener {
+            when (activity) {
+                is AddTimelineActivity -> {
+                    activity.successSavedDocumentID(timeline)
+                }
+            }
+        }
+        set.addOnFailureListener { exception ->
+            when (activity) {
+                is AddTimelineActivity -> {
+                    activity.cancelProgressDialog()
+                    Log.e(
+                        activity.javaClass.simpleName,
+                        "Error while saving documentID",
+                        exception
+                    )
+                }
+
+            }
+        }
+    }
+
     fun createGroup(createGroupActivity: CreateGroupActivity, createGroup: GroupNameClass) {
         mFirestoreInstance.collection(Constants.GROUP)
             .document()
@@ -159,7 +186,7 @@ class FireStoreClass {
             }
     }
 
-     fun getCurrentUserID(): String {
+    fun getCurrentUserID(): String {
         val current = FirebaseAuth.getInstance().currentUser
         var currentUserUID = ""
         if (current != null) {
@@ -207,10 +234,10 @@ class FireStoreClass {
                     }
                 }
             }
-            .addOnFailureListener {
+            .addOnFailureListener { e ->
                 when (activity) {
                     is LoginActivity -> {
-
+                        Log.e("Exception find user", e.message.toString())
                     }
                 }
             }
@@ -288,6 +315,7 @@ class FireStoreClass {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun uploadImageToCloudStorage(
         activity: Activity,
         mSelectedGroupImageUri: Uri, groupImage: String, groupImage2: String
@@ -309,6 +337,12 @@ class FireStoreClass {
                     }
                     is AddMemberActivity -> {
                         activity.successGroupIconUpload(uri)
+                    }
+                    is AddTimelineActivity -> {
+                        activity.lifecycleScope.launch {
+                            activity.successGroupIconUpload(uri)
+                        }
+
                     }
                     is AddExpenseActivity -> {
 
@@ -340,9 +374,77 @@ class FireStoreClass {
 
     }
 
-    fun loadExpenseDetail(activity: Activity) {
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun loadAllTimelineDetail(activity: Activity) {
+        mFirestoreInstance.collection(Constants.TIMELINE_DETAIL)
+            .get()
+            .addOnSuccessListener{document ->
+                val timelineList: ArrayList<Timeline> = ArrayList()
+                for (i in document.documents) {
+                    val timeline = i.toObject(Timeline::class.java)
+                    timeline!!.id = i.id
+                    timelineList.add(timeline)
+                }
+                when(activity){
+                    is ViewTimeLineActivity ->{
+                        activity.successTimelineListFromFirestore(timelineList)
+                    }
+                }
+
+            }.addOnFailureListener { exception->
+                when(activity){
+                    is ViewTimeLineActivity -> {
+                        activity.cancelProgressDialog()
+                        Log.e(
+                            activity.javaClass.simpleName,
+                            "Error load timeline detail.",
+                            exception
+                        )
+                    }
+                }
+            }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun loadTimelineDetail(activity: Activity, adminEmailId: String) {
+        mFirestoreInstance.collection(Constants.TIMELINE_DETAIL)
+            .whereEqualTo("adminEmail", adminEmailId)
+            .get()
+            .addOnSuccessListener { document ->
+                val timelineList: ArrayList<Timeline> = ArrayList()
+                for (i in document.documents) {
+                    val timeline = i.toObject(Timeline::class.java)
+                    timeline!!.id = i.id
+                    timelineList.add(timeline)
+                }
+                when (activity) {
+                    is AddTimelineActivity -> {
+                        activity.lifecycleScope.launch {
+                            activity.successTimelineListFromFirestore(timelineList)
+                        }
+
+                    }
+                }
+
+            }.addOnFailureListener { exception ->
+                when (activity) {
+                    is AddTimelineActivity -> {
+                        activity.cancelProgressDialog()
+                        Log.e(
+                            activity.javaClass.simpleName,
+                            "Error load expense group.",
+                            exception
+                        )
+                    }
+
+                }
+            }
+
+    }
+
+    fun loadExpenseDetail(activity: Activity, adminEmail: String) {
         mFirestoreInstance.collection(Constants.GROUP_EXPENSE_DETAIL)
-            .whereEqualTo("memberAdminUID", getCurrentUserID())
+            .whereEqualTo("memberAdminEmail", adminEmail)
             .get()
             .addOnSuccessListener { document ->
                 val expenseList: ArrayList<MonthExpense> = ArrayList()
@@ -396,7 +498,7 @@ class FireStoreClass {
         return previousAmount
     }
 
-    fun getAssignedGroupList(activity: Activity, assignedAdminEmail: String,) {
+    fun getAssignedGroupList(activity: Activity, assignedAdminEmail: String) {
         mFirestoreInstance.collection(Constants.GROUP)
             .whereEqualTo("email", assignedAdminEmail)
             .get()
@@ -442,9 +544,9 @@ class FireStoreClass {
 
     }
 
-    fun getGroupList(activity: Activity) {
+    fun getGroupList(activity: Activity, adminEmail: String) {
         mFirestoreInstance.collection(Constants.GROUP)
-            .whereEqualTo("id", getCurrentUserID())
+            .whereEqualTo("email", adminEmail)
             .get()
             .addOnSuccessListener { document ->
                 val groupList: ArrayList<GroupNameClass> = ArrayList()
@@ -472,6 +574,9 @@ class FireStoreClass {
                     is PreViewMemberActivity -> {
                         activity.successGroupListFromFirestore(groupList)
                     }
+                    is AddTimelineActivity -> {
+                        activity.successGroupListFromFirestore(groupList)
+                    }
                 }
             }.addOnFailureListener { exception ->
                 when (activity) {
@@ -487,6 +592,7 @@ class FireStoreClass {
             }
 
     }
+
 
     fun memberDeleteUpdateMasterAccount(
         activity: Activity,
@@ -1059,6 +1165,7 @@ class FireStoreClass {
             .whereEqualTo("memberEmail", email)
             .get()
             .addOnSuccessListener { document ->
+
                 if (document.size() == 0) {
                     when (activity) {
                         is LoginActivity -> {
@@ -1132,21 +1239,21 @@ class FireStoreClass {
     }
 
     suspend fun getAdminCodeFromUserFireStore(email: String): String {
-        var user : UserClass = UserClass()
+        var user: UserClass = UserClass()
         mFirestoreInstance.collection(Constants.USER)
-            .whereEqualTo("email", email )
+            .whereEqualTo("email", email)
             .get()
             .addOnSuccessListener { document ->
-               for(i in document.documents){
-                   user = i.toObject(UserClass::class.java)!!
-                   user.code = i.get("code").toString()
-               }
+                for (i in document.documents) {
+                    user = i.toObject(UserClass::class.java)!!
+                    user.code = i.get("code").toString()
+                }
             }.await()
         return user.code
     }
 
     suspend fun getAdminEnableMemberFirestore(email: String): Int {
-        var memberClass : MemberClass = MemberClass()
+        var memberClass: MemberClass = MemberClass()
         mFirestoreInstance.collection(Constants.MEMBER)
             .whereEqualTo("memberEmail", email)
             .get()
@@ -1161,19 +1268,19 @@ class FireStoreClass {
     }
 
     suspend fun getAdminEmailFromMemberFireStore(email: String): String {
-        var memberClass : MemberClass = MemberClass()
+        var memberClass: MemberClass = MemberClass()
         mFirestoreInstance.collection(Constants.MEMBER)
             .whereEqualTo("memberEmail", email)
             .get()
-            .addOnSuccessListener{ document ->
-                for(i in document.documents){
+            .addOnSuccessListener { document ->
+                for (i in document.documents) {
                     memberClass = i.toObject(MemberClass::class.java)!!
                     memberClass.memberAdminEmail = i.get("memberAdminEmail").toString()
 
                 }
 
             }.await()
-       return memberClass.memberAdminEmail
+        return memberClass.memberAdminEmail
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -1237,6 +1344,7 @@ class FireStoreClass {
         val groupList: ArrayList<String> = ArrayList()
         var group: GroupNameClass
         var imageString: String = ""
+
         mFirestoreInstance.collection(Constants.GROUP)
             //.whereEqualTo("id", getCurrentUserID())
             .whereEqualTo("groupName", currentGroupNameSelect)
@@ -1732,20 +1840,20 @@ class FireStoreClass {
             .whereEqualTo("memberEmail", mMemberEmail)
             .whereEqualTo("year", currentYear.toString())
             .get()
-            .addOnSuccessListener{document->
+            .addOnSuccessListener { document ->
                 for (i in document.documents) {
                     monthClass = i.toObject(MemberAccountDetail::class.java)!!
                     monthClass.id = i.id
                     monthList.add(monthClass)
                 }
-                when(requireActivity){
+                when (requireActivity) {
                     is GuestMemberTransactionDetailActivity -> {
                         requireActivity.successMemberAccount(monthList)
                     }
                 }
 
-            }.addOnFailureListener {exception->
-                when(requireActivity){
+            }.addOnFailureListener { exception ->
+                when (requireActivity) {
                     is GuestMemberTransactionDetailActivity -> {
                         requireActivity.cancelProgressDialog()
                     }
@@ -1858,7 +1966,7 @@ class FireStoreClass {
             .whereEqualTo("id", id)
             .get()
             .addOnSuccessListener { document ->
-               var adminEmail : String = ""
+                var adminEmail: String = ""
                 for (i in document.documents) {
                     val group = i.toObject(UserClass::class.java)
                     group!!.adminEmail = i.get("adminEmail").toString()
@@ -2001,6 +2109,32 @@ class FireStoreClass {
                     }
                 }
             }
+    }
+
+    fun deleteCurrentTimeline(activity: Activity, id: String) {
+        mFirestoreInstance.collection(Constants.TIMELINE_DETAIL)
+            .document(id)
+            .delete()
+            .addOnSuccessListener {
+                when (activity) {
+                    is AddTimelineActivity -> {
+                        activity.deletionSuccess()
+                    }
+                }
+
+            }.addOnFailureListener { exception ->
+                when (activity) {
+                    is AddTimelineActivity -> {
+                        activity.cancelProgressDialog()
+                        Log.e(
+                            activity.javaClass.simpleName,
+                            "Error while deleting timeline.",
+                            exception
+                        )
+                    }
+                }
+            }
+
     }
 
 
@@ -2301,5 +2435,19 @@ class FireStoreClass {
                 )
             }
     }
+
+     suspend fun getLikeCount(id: String): Int {
+         var count = 0
+         mFirestoreInstance.collection(Constants.TIMELINE_DETAIL)
+                .whereEqualTo("id",id)
+                .get()
+                .addOnSuccessListener { document->
+                    for (i in document.documents){
+                        count = i.get("like").toString().toInt()
+                    }
+                }.await()
+         return count
+    }
+
 
 }

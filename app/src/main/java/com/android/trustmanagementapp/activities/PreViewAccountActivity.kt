@@ -1,5 +1,6 @@
 package com.android.trustmanagementapp.activities
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -44,7 +45,11 @@ class PreViewAccountActivity : BaseActivity() {
     }
 
     private fun getGroupNameFromFireStore() {
-        FireStoreClass().getGroupList(this)
+        val sharedPreferences = getSharedPreferences(
+            Constants.STORE_EMAIL_ID, Context.MODE_PRIVATE
+        )
+        val getAdminEmailId = sharedPreferences.getString(Constants.STORE_EMAIL_ID, "")
+        FireStoreClass().getGroupList(this,getAdminEmailId!!)
     }
 
     fun successGroupListFromFirestore(groupList: ArrayList<GroupNameClass>) {

@@ -16,6 +16,7 @@ import com.android.trustmanagementapp.R
 import com.android.trustmanagementapp.adapter.GroupViewAdapter
 import com.android.trustmanagementapp.firestore.FireStoreClass
 import com.android.trustmanagementapp.model.GroupNameClass
+import com.android.trustmanagementapp.model.Timeline
 import com.android.trustmanagementapp.utils.Constants
 import com.android.trustmanagementapp.utils.MSPButton
 
@@ -26,11 +27,12 @@ class AdminScreenActivity : BaseActivity() {
     lateinit var btnPreViewActivity : MSPButton
     lateinit var btnAddExpenseActivity : MSPButton
     lateinit var btnPreViewMemberDetail : MSPButton
+    lateinit var btnAddTimeline : MSPButton
+    lateinit var btnViewTimeLine : MSPButton
 
     private lateinit var mGroupList: ArrayList<GroupNameClass>
     private lateinit var recyclerView: RecyclerView
 
-    private lateinit var mCode : String
     private lateinit var assignedAdminEmail : String
 
     private val getGroupDataResult: ActivityResultLauncher<Intent> =
@@ -57,8 +59,20 @@ class AdminScreenActivity : BaseActivity() {
         btnPreViewActivity = findViewById(R.id.btn_view_account_detail_admin_screen)
         btnAddExpenseActivity = findViewById(R.id.btn_add_expense_admin_screen)
         btnPreViewMemberDetail = findViewById(R.id.btn_view_member_admin_screen)
+        btnAddTimeline = findViewById(R.id.btn_add_timeline)
+        btnViewTimeLine = findViewById(R.id.btn_view_timeline)
 
         getAdminCode()
+
+        btnViewTimeLine.setOnClickListener {
+            val intent = Intent(this, ViewTimeLineActivity::class.java)
+            startActivity(intent)
+        }
+
+        btnAddTimeline.setOnClickListener {
+            val intent = Intent(this, AddTimelineActivity::class.java)
+            startActivity(intent)
+        }
 
         btnPreViewMemberDetail.setOnClickListener {
             val intent = Intent(this, PreViewMemberActivity::class.java)
@@ -123,7 +137,11 @@ class AdminScreenActivity : BaseActivity() {
             FireStoreClass().getAssignedGroupList(this,assignedAdminEmail)
 
         }else{
-            FireStoreClass().getGroupList(this)
+            val sharedPreferences = getSharedPreferences(
+                Constants.STORE_EMAIL_ID, Context.MODE_PRIVATE
+            )
+            val getAdminEmailId = sharedPreferences.getString(Constants.STORE_EMAIL_ID, "")
+            FireStoreClass().getGroupList(this,getAdminEmailId!!)
         }
 
     }

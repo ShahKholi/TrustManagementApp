@@ -190,8 +190,8 @@ class LoginActivity : BaseActivity() {
     }
 
     fun successMemberLogin(userEmailList: ArrayList<UserClass>, email: String) {
-
         for (i in userEmailList) {
+
             FireStoreClass().checkCurrentEmailMemberAvailableFirestore(this, email, i.email)
 
         }
@@ -207,10 +207,10 @@ class LoginActivity : BaseActivity() {
 
     fun emailNotAvailable() {
         cancelProgressDialog()
-        /*Toast.makeText(
+        Toast.makeText(
             this, "your email is not added to group. please contact group admin",
             Toast.LENGTH_LONG
-        ).show()*/
+        ).show()
     }
 
     fun userAvailableInMember(memberList: ArrayList<MemberClass>) {

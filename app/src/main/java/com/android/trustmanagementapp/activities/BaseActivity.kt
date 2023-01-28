@@ -1,15 +1,21 @@
 package com.android.trustmanagementapp.activities
 
 import android.app.Dialog
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import com.android.trustmanagementapp.R
 import com.google.android.material.snackbar.Snackbar
 import java.util.*
+
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 open class BaseActivity : AppCompatActivity() {
     lateinit var mProgressDialog : Dialog
@@ -75,6 +81,13 @@ open class BaseActivity : AppCompatActivity() {
     }
     fun cancelProgressDialog(){
         mProgressDialog.dismiss()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun currentDateAndTime(): String {
+        val current = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
+        return current.format(formatter)
     }
 
     fun doubleBackToExit() {

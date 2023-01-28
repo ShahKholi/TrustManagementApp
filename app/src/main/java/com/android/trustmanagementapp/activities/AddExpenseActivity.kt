@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.TextUtils
@@ -15,6 +16,7 @@ import android.view.View
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -77,6 +79,7 @@ class AddExpenseActivity : BaseActivity() {
             }
         }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_expense)
@@ -192,6 +195,7 @@ class AddExpenseActivity : BaseActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private suspend fun getGroupImage(groupName: String) {
         val sharedPreferences = getSharedPreferences(
             Constants.STORE_EMAIL_ID, Context.MODE_PRIVATE
@@ -209,6 +213,7 @@ class AddExpenseActivity : BaseActivity() {
 
 
     }
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun uploadUserImage(groupImage: String) {
         if (validateRegisterExpenseAmountField()) {
             showProgressDialog()
@@ -252,7 +257,11 @@ class AddExpenseActivity : BaseActivity() {
 
     private fun loadExpenseDetailFromFireStore() {
         showProgressDialog()
-        FireStoreClass().loadExpenseDetail(this)
+        val sharedPreferences = getSharedPreferences(
+            Constants.STORE_EMAIL_ID, Context.MODE_PRIVATE
+        )
+        val getAdminEmailId = sharedPreferences.getString(Constants.STORE_EMAIL_ID, "")
+        FireStoreClass().loadExpenseDetail(this,getAdminEmailId!!)
     }
 
     private suspend fun registerExpenseAmountDetail(groupImageString: String) {
@@ -324,7 +333,11 @@ class AddExpenseActivity : BaseActivity() {
     }
 
     private fun getGroupNameFromFireStore() {
-        FireStoreClass().getGroupList(this)
+        val sharedPreferences = getSharedPreferences(
+            Constants.STORE_EMAIL_ID, Context.MODE_PRIVATE
+        )
+        val getAdminEmailId = sharedPreferences.getString(Constants.STORE_EMAIL_ID, "")
+        FireStoreClass().getGroupList(this,getAdminEmailId!!)
     }
 
     private fun getDateList() {
