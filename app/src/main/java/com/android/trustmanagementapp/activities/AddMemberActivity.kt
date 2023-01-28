@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.TextUtils
@@ -15,6 +16,7 @@ import android.view.View
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -54,9 +56,6 @@ class AddMemberActivity : BaseActivity() {
     lateinit var toolbarLabel: MSPTextViewBold
     lateinit var mMemberList: ArrayList<MemberClass>
 
-    private lateinit var assignedAdminEmail : String
-
-
     private val getPhotoActionResult: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult())
         { result ->
@@ -74,6 +73,7 @@ class AddMemberActivity : BaseActivity() {
             }
         }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -138,35 +138,58 @@ class AddMemberActivity : BaseActivity() {
                     )
 
                 } else {
-                        val updateMember = MemberClass(
+                    val updateMember = MemberClass(
+                        mUserGroupName,
+                        etMemberName.text.toString(),
+                        etMemberEmail.text.toString(),
+                        etMemberPhone.text.toString(),
+                        currentFirebaseUser!!.uid,
+                        mUserAdminEmail,
+                        mUserProfileImage
+                    )
+                    lifecycleScope.launch {
+                        FireStoreClass().updateMemberProfile(
+                            this@AddMemberActivity,
+                            updateMember,
                             mUserGroupName,
-                            etMemberName.text.toString(),
-                            etMemberEmail.text.toString(),
-                            etMemberPhone.text.toString(),
-                            currentFirebaseUser!!.uid,
                             mUserAdminEmail,
-                            mUserProfileImage
+                            mUserMemberEmail
                         )
-                        lifecycleScope.launch {
-                            FireStoreClass().updateMemberProfile(
-                                this@AddMemberActivity,
-                                updateMember,
-                                mUserGroupName,
-                                mUserAdminEmail,
-                                mUserMemberEmail
-                            )
-                        }
+                    }
 
 
                 }
 
 
             } else {
-                val imageStringCheck: String = mSelectedProfileImageUri.toString()
-                if (imageStringCheck.isNotEmpty() && imageStringCheck != "null") {
-                    uploadUserImage()
-                } else {
-                    registerMember()
+                val memberEmail = etMemberEmail.text.toString().trim { it <= ' ' }
+                val groupName = autoComplete.text.toString().trim { it <= ' ' }
+                val sharedPreferences = getSharedPreferences(
+                    Constants.STORE_EMAIL_ID, Context.MODE_PRIVATE
+                )
+                val getAdminEmailId = sharedPreferences.getString(Constants.STORE_EMAIL_ID, "")
+
+                lifecycleScope.launch {
+                    val memberEmailAvailableForSameGroup: ArrayList<MemberClass> =
+                        FireStoreClass().checkMemberEmailAvailableFirestore(
+                            memberEmail,
+                            getAdminEmailId!!, groupName
+                        )
+                    if (memberEmailAvailableForSameGroup.size > 0) {
+                        Toast.makeText(
+                            this@AddMemberActivity,
+                            "Member email is already available, please use different email",
+                            Toast.LENGTH_LONG
+                        ).show()
+
+                    } else {
+                        val imageStringCheck: String = mSelectedProfileImageUri.toString()
+                        if (imageStringCheck.isNotEmpty() && imageStringCheck != "null") {
+                            uploadUserImage()
+                        } else {
+                            registerMember()
+                        }
+                    }
                 }
             }
 
@@ -177,12 +200,13 @@ class AddMemberActivity : BaseActivity() {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun uploadUserImage() {
         if (validateRegisterMemberField()) {
             showProgressDialog()
             FireStoreClass().uploadImageToCloudStorage(
                 this, mSelectedProfileImageUri!!,
-                Constants.USER_IMAGE,""
+                Constants.USER_IMAGE, ""
             )
         }
     }
@@ -255,7 +279,7 @@ class AddMemberActivity : BaseActivity() {
             Constants.STORE_EMAIL_ID, Context.MODE_PRIVATE
         )
         val getAdminEmailId = sharedPreferences.getString(Constants.STORE_EMAIL_ID, "")
-        FireStoreClass().getGroupList(this,getAdminEmailId!!)
+        FireStoreClass().getGroupList(this, getAdminEmailId!!)
 
     }
 
@@ -433,7 +457,6 @@ class AddMemberActivity : BaseActivity() {
         }
 
     }
-
 
 
 }

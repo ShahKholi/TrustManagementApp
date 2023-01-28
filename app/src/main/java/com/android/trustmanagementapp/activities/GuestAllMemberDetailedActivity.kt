@@ -37,14 +37,7 @@ class GuestAllMemberDetailedActivity : BaseActivity() {
     lateinit var mUserEmail: MSPTextViewBold
     lateinit var llBalanceScreen: LinearLayoutCompat
     lateinit var mTotalAmount: MSPTextViewBold
-    lateinit var mCurrentDeleteDocumentID: ArrayList<MemberAccountDetail>
 
-
-
-    private lateinit var mCurrentMonthTotal: ArrayList<Int>
-    private lateinit var mCurrentAmount: ArrayList<Int>
-
-    private lateinit var mAvailableMonthList: ArrayList<MemberAccountDetail>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

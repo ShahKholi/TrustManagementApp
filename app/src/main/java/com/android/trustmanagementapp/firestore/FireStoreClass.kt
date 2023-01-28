@@ -1152,6 +1152,29 @@ class FireStoreClass {
         return memberAccountList
     }
 
+    suspend fun checkMemberEmailAvailableFirestore(
+        email: String,
+        adminEmail: String,
+        mGroupName : String
+    ) : ArrayList<MemberClass> {
+        val memberList: ArrayList<MemberClass> = ArrayList()
+        var member: MemberClass
+        mFirestoreInstance.collection(Constants.MEMBER)
+            .whereEqualTo("memberAdminEmail", adminEmail)
+            .whereEqualTo("memberEmail", email)
+            .whereEqualTo("groupName",mGroupName)
+            .get()
+            .addOnSuccessListener { document ->
+                for (i in document.documents){
+                    member = i.toObject(MemberClass::class.java)!!
+                    member.id = i.id
+                    memberList.add(member)
+                }
+
+            }.await()
+
+        return memberList
+    }
 
     fun checkCurrentEmailMemberAvailableFirestore(
         activity: Activity,
@@ -2517,6 +2540,8 @@ class FireStoreClass {
                 }.await()
          return count
     }
+
+
 
 
 }

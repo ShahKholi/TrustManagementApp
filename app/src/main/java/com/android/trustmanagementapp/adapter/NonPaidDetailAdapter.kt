@@ -25,7 +25,6 @@ class NonPaidDetailAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-
         for (memberName in memberList) {
             val model = memberList[position]
             if (holder is MyViewHolder) {
