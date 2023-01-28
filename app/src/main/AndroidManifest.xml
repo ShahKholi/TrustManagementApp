@@ -15,10 +15,16 @@
         android:theme="@style/Theme.TrustManagementApp"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activities.MemberNotPaidListActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.TrustManagementApp.NoActionBar"
+            />
+        <activity
             android:name=".activities.AccountMonthWiseDetailedActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.TrustManagementApp.NoActionBar"/>
+            android:theme="@style/Theme.TrustManagementApp.NoActionBar" />
         <activity
             android:name=".activities.ViewTimeLineActivity"
             android:exported="true"

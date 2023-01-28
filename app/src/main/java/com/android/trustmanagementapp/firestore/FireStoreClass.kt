@@ -1603,6 +1603,61 @@ class FireStoreClass {
         return memberAccountList
     }
 
+    fun monthWiseMemberAccountDetail(
+        activity: Activity,
+        mGroupName: String,
+        mMonthName: String,
+        mAdminEmail: String,
+        currentYear: Int
+    ) {
+        val memberAccountList: ArrayList<MemberAccountDetail> = ArrayList()
+        var memberAccount: MemberAccountDetail
+        mFirestoreInstance.collection(Constants.MEMBER_ACCOUNT_DETAIL)
+            .whereEqualTo("groupName", mGroupName)
+            .whereEqualTo("adminEmail", mAdminEmail)
+            .whereEqualTo("month", mMonthName)
+            .whereEqualTo("year", currentYear.toString())
+            .get()
+            .addOnSuccessListener { document->
+                for(i in document.documents){
+                    memberAccount = i.toObject(MemberAccountDetail::class.java)!!
+                    memberAccount.id = i.id
+                    memberAccountList.add(memberAccount)
+                }
+                when(activity){
+                    is AccountMonthWiseDetailedActivity -> {
+                        activity.lifecycleScope.launch {
+                            activity.successMemberList(memberAccountList)
+                        }
+                    }
+                    is MemberNotPaidListActivity -> {
+                        activity.successMemberList(memberAccountList)
+                    }
+                }
+
+            }.addOnFailureListener { exception->
+                when(activity){
+                    is AccountMonthWiseDetailedActivity -> {
+                        activity.cancelProgressDialog()
+                        Log.e(
+                            activity.javaClass.simpleName,
+                            "Error while month wise detail.",
+                            exception
+                        )
+                    }
+                    is MemberNotPaidListActivity -> {
+                        activity.cancelProgressDialog()
+                        Log.e(
+                            activity.javaClass.simpleName,
+                            "Error while month wise detail.",
+                            exception
+                        )
+                    }
+                }
+            }
+
+    }
+
     suspend fun memberAccountMonthCheckFromFirestore(
         month: String,
         mGroupName: String,
@@ -2383,9 +2438,13 @@ class FireStoreClass {
                     is GuestAllMemberListDetailActivity -> {
                         activity.successMemberListFromFirestore(memberList)
                     }
+                    is MemberNotPaidListActivity -> {
+                        activity.successMemberListFromFirestore(memberList)
+                    }
                 }
             }.addOnFailureListener { exception ->
                 when (activity) {
+
                     is AddAccountActivity -> {
                         activity.cancelProgressDialog()
                         Log.e(
@@ -2394,6 +2453,16 @@ class FireStoreClass {
                             exception
                         )
                     }
+                    is ViewMemberAccountActivity -> {
+                        activity.cancelProgressDialog()
+                    }
+                    is GuestAllMemberListDetailActivity -> {
+                        activity.cancelProgressDialog()
+                    }
+                    is MemberNotPaidListActivity -> {
+                        activity.cancelProgressDialog()
+                    }
+
                 }
             }
     }

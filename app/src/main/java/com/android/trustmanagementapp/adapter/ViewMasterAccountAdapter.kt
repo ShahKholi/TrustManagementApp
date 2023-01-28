@@ -16,6 +16,7 @@ import com.android.trustmanagementapp.model.MasterAccountDetail
 import com.android.trustmanagementapp.utils.GlideLoaderClass
 import com.android.trustmanagementapp.utils.MSPTextViewBold
 import androidx.lifecycle.lifecycleScope
+import com.android.trustmanagementapp.activities.AccountMonthWiseDetailedActivity
 import com.android.trustmanagementapp.activities.ExpanseImageViewActivity
 import com.android.trustmanagementapp.activities.PreExpenseImageActivity
 import com.android.trustmanagementapp.utils.Constants
@@ -56,6 +57,7 @@ class ViewMasterAccountAdapter(
                 model.month + " Income"
             holder.itemView.findViewById<MSPTextViewBold>(R.id.tv_view_month_amount).text =
                 model.income.toString()
+
             holder.itemView.findViewById<MSPTextViewBold>(R.id.et_view_account_expense_amount).text=
                 model.expenseAmount.toString()
             holder.itemView.findViewById<MSPTextViewBold>(R.id.tv_view_account_previous_balance).text =
@@ -71,6 +73,16 @@ class ViewMasterAccountAdapter(
                 context.startActivity(intent)
                 activity.finish()
 
+            }
+
+            holder.itemView.setOnClickListener {
+
+                val intent = Intent(context, AccountMonthWiseDetailedActivity::class.java)
+                intent.putExtra(Constants.GROUP_NAME, model.groupName)
+                intent.putExtra(Constants.MONTH, model.month)
+                intent.putExtra(Constants.MEMBER_ADMIN_EMAIL, model.memberAdminEmail)
+                intent.putExtra(Constants.INCOME, model.income.toString())
+                context.startActivity(intent)
             }
 
         }

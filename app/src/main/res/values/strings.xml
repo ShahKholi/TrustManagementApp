@@ -108,7 +108,8 @@
     <string name="describe_your_helping_though_to_trust">Describe your helping though to trust</string>
     <string name="post">POST</string>
     <string name="month_view_detail">Month View Detail</string>
-    <string name="member_not_received_amount">Member not paying amount</string>
+    <string name="member_not_received_amount">View Member not paid current month</string>
+    <string name="member_not_paid_list">MEMBER NOT PAID LIST</string>
 
 
 </resources>
