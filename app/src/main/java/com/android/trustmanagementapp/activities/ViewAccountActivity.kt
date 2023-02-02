@@ -688,12 +688,12 @@ class ViewAccountActivity : BaseActivity() {
 
     private suspend fun checkTotalAmount() {
         showProgressDialog()
-        var previousBalance: Int = 0
+       // var previousBalance: Int = 0
         var income: Int = 0
         var expense: Int = 0
         var result: Int = 0
 
-        previousBalance = FireStoreClass().checkPreviousAmountBalanceFromGroup(
+        val previousBalance : Int = FireStoreClass().checkPreviousAmountBalanceFromGroup(
             mGroupName,
             mAdminEmail,
             currentYear()

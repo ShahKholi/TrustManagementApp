@@ -2,8 +2,9 @@ package com.android.trustmanagementapp.adapter
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,14 +13,15 @@ import android.widget.ImageView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.android.trustmanagementapp.R
-import com.android.trustmanagementapp.activities.AddTimelineActivity
 import com.android.trustmanagementapp.activities.ViewTimeLineActivity
 import com.android.trustmanagementapp.firestore.FireStoreClass
-import com.android.trustmanagementapp.model.MonthExpense
 import com.android.trustmanagementapp.model.Timeline
+import com.android.trustmanagementapp.utils.Constants
 import com.android.trustmanagementapp.utils.GlideLoaderClass
 import com.android.trustmanagementapp.utils.MSPTextViewBold
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlin.collections.ArrayList
 
 class AllTimelineAdapter(
     private val context: Context,
@@ -41,7 +43,23 @@ class AllTimelineAdapter(
     @SuppressLint("InflateParams")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val model = timelineList[position]
-        val liked : Boolean
+
+        val sharedPreferencesEmail = activity.getSharedPreferences(
+            Constants.TIMELINE_USER_EMAIL, Context.MODE_PRIVATE
+        )
+        val getTimelineEmail = sharedPreferencesEmail.getString(
+            Constants.TIMELINE_USER_EMAIL,
+            ""
+        )
+
+        val sharedPreferencesUserName = activity.getSharedPreferences(
+            Constants.STORE_TIMELINE_MEMBER_NAME, Context.MODE_PRIVATE
+        )
+        val getUserName = sharedPreferencesUserName.getString(
+            Constants.STORE_TIMELINE_MEMBER_NAME,
+            ""
+        )
+
         if (holder is MyViewHolder) {
 
 
@@ -59,25 +77,6 @@ class AllTimelineAdapter(
                 model.timeLineImage,
                 holder.itemView.findViewById(R.id.iv_timeline_detail_image_view)
             )
-            holder.itemView.findViewById<MSPTextViewBold>(R.id.tv_like_count_view).text =
-                model.like.toString()
-
-            holder.itemView.findViewById<ImageView>(R.id.iv_like_image_view)
-                .setOnClickListener {
-                    when (activity) {
-                        is ViewTimeLineActivity -> {
-                            activity.lifecycleScope.launch {
-                                val getLikeCount: Int = FireStoreClass().getLikeCount(model.id)
-
-                                val finalCount = getLikeCount + 1
-                                holder.itemView.findViewById<MSPTextViewBold>(R.id.tv_like_count_view).text =
-                                    finalCount.toString()
-                            }
-
-                        }
-                    }
-
-                }
 
         }
     }
@@ -85,6 +84,7 @@ class AllTimelineAdapter(
     override fun getItemCount(): Int {
         return timelineList.size
     }
+
 
     class MyViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView!!) {
 

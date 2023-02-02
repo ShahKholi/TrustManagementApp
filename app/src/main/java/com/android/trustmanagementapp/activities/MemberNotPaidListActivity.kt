@@ -2,6 +2,8 @@ package com.android.trustmanagementapp.activities
 
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.trustmanagementapp.R
@@ -31,6 +33,11 @@ class MemberNotPaidListActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_member_not_paid_list)
+        window.statusBarColor = ContextCompat.getColor(
+            this,
+            R.color.bar_color
+        )
+        setUpSupportActionBar()
 
         if (intent.hasExtra(Constants.GROUP_NAME)) {
             mGroupName = intent.getStringExtra(Constants.GROUP_NAME)!!
@@ -51,6 +58,22 @@ class MemberNotPaidListActivity : BaseActivity() {
         fGroupName = findViewById(R.id.tv_group_name)
         fMonth = findViewById(R.id.tv_month)
         recyclerView = findViewById(R.id.rcv_month_wise_detail)
+    }
+
+    private fun setUpSupportActionBar() {
+        val toolbar: Toolbar = findViewById(R.id.toolbar_month_wise_detail)
+        setSupportActionBar(toolbar)
+
+        val actionBar = supportActionBar
+        if (actionBar != null) {
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_ios_24)
+            actionBar.setDisplayHomeAsUpEnabled(true)
+            actionBar.setDisplayShowHomeEnabled(true)
+            actionBar.setDisplayShowTitleEnabled(false)
+        }
+        toolbar.setNavigationOnClickListener {
+            onBackPressed()
+        }
     }
 
     private fun getMemberList() {

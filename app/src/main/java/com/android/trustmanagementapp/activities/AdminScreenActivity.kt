@@ -17,6 +17,7 @@ import com.android.trustmanagementapp.adapter.GroupViewAdapter
 import com.android.trustmanagementapp.firestore.FireStoreClass
 import com.android.trustmanagementapp.model.GroupNameClass
 import com.android.trustmanagementapp.model.Timeline
+import com.android.trustmanagementapp.model.UserClass
 import com.android.trustmanagementapp.utils.Constants
 import com.android.trustmanagementapp.utils.MSPButton
 
@@ -34,6 +35,8 @@ class AdminScreenActivity : BaseActivity() {
     private lateinit var recyclerView: RecyclerView
 
     private lateinit var assignedAdminEmail : String
+
+    private lateinit var mAdminUserList : ArrayList<UserClass>
 
     private val getGroupDataResult: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult())
@@ -108,6 +111,7 @@ class AdminScreenActivity : BaseActivity() {
 
     private fun getAdminCode() {
         val currentUID = FireStoreClass().getCurrentUserID()
+        FireStoreClass().getAdminDetail(this, currentUID)
         FireStoreClass().getAssignedGroupAdmin(this,currentUID)
     }
 
@@ -118,6 +122,7 @@ class AdminScreenActivity : BaseActivity() {
     fun successAdminList(adminEmail: String) {
         assignedAdminEmail = adminEmail
         Log.e("assignedAdminEmail", assignedAdminEmail)
+
         getGroupListFromFireStore()
     }
 
@@ -141,7 +146,9 @@ class AdminScreenActivity : BaseActivity() {
                 Constants.STORE_EMAIL_ID, Context.MODE_PRIVATE
             )
             val getAdminEmailId = sharedPreferences.getString(Constants.STORE_EMAIL_ID, "")
+
             FireStoreClass().getGroupList(this,getAdminEmailId!!)
+
         }
 
     }
@@ -149,6 +156,7 @@ class AdminScreenActivity : BaseActivity() {
     fun successGroupListFromFirestore(groupList: ArrayList<GroupNameClass>) {
         cancelProgressDialog()
         mGroupList = groupList
+
         if (mGroupList.size > 0) {
             recyclerView.layoutManager = LinearLayoutManager(this)
             recyclerView.setHasFixedSize(true)
@@ -202,6 +210,19 @@ class AdminScreenActivity : BaseActivity() {
         getGroupDataResult.launch(intent)
     }
 
+    fun successAdminUserList(userList: ArrayList<UserClass>) {
+        mAdminUserList = userList
+        for(i in mAdminUserList){
+            val sharedPreferences = getSharedPreferences(
+                Constants.STORE_TIMELINE_MEMBER_NAME, Context.MODE_PRIVATE
+            )
+            val editor: SharedPreferences.Editor = sharedPreferences.edit()
+            editor.putString(
+                Constants.STORE_TIMELINE_MEMBER_NAME, i.firstName + " "+i.lastName
+            )
+            editor.apply()
+        }
+    }
 
 
 }

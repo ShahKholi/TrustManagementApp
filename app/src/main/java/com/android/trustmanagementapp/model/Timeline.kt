@@ -11,6 +11,6 @@ data class Timeline(
     val timeLineImage : String = "",
     val dateTime: String = "",
     val groupImage : String = "",
-    var id : String = "",
-    var like : Int = 0
+    var id : String = ""
+
 ) : Parcelable

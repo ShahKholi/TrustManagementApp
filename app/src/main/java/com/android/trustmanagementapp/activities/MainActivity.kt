@@ -32,6 +32,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mMemberProfileImage : String
     private lateinit var mToolbarText : MSPTextViewBold
 
+    private var mTimeLineUserEmail : String = ""
+
     private lateinit var mSetMemberPhoto : CircleImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,7 +67,6 @@ class MainActivity : AppCompatActivity() {
                )
            }
 
-
             val sharedPreferences = getSharedPreferences(
                 Constants.STORE_MEMBER_PROFILE_ID, Context.MODE_PRIVATE
             )
@@ -74,6 +75,15 @@ class MainActivity : AppCompatActivity() {
                 Constants.STORE_MEMBER_PROFILE_ID, mMemberProfileImage
             )
             editor.apply()
+
+            val sharedPrefTimeLineEmail = getSharedPreferences(
+                Constants.TIMELINE_USER_EMAIL, Context.MODE_PRIVATE
+            )
+            val editorTimelineEmail: SharedPreferences.Editor = sharedPrefTimeLineEmail.edit()
+            editorTimelineEmail.putString(
+                Constants.MEMBER_EMAIL, mTimeLineUserEmail
+            )
+            editorTimelineEmail.apply()
         }
 
         if(intent.hasExtra(Constants.MEMBER_PHONE)){

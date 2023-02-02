@@ -15,15 +15,21 @@ object Constants {
     const val USER_IMAGE: String = "userImage"
     const val EXPENSE_IMAGE: String = "expenseImage"
     const val TIMELINE_DETAIL = "timelineDetail"
+    const val TIMELINE_LIKED_DETAIL = "timelineLikedDetail"
+    const val LIKE_ID = "likedEmailList"
 
     //pref detail
     const val STORE_EMAIL_ID: String = "store_email_id"
     const val STORE_ASSIGNED_ADMIN_EMAIL_ID: String = "store_assigned_admin_email_id"
     const val STORE_MEMBER_EMAIL_ID: String = "store_member_email_id"
-    const val STORE_MEMBER_NAME_ID: String = "store_member_name_id"
+    const val STORE_TIMELINE_MEMBER_NAME: String = "store_member_name"
     const val STORE_MEMBER_PHONE_ID: String = "store_member_phone_id"
     const val STORE_GROUP_NAME_ID: String = "store_group_name_id"
     const val STORE_MEMBER_PROFILE_ID: String = "store_profile_image_id"
+    const val TIMELINE_USER_EMAIL: String = "time_line_user_email"
+
+
+
 
 
     const val READ_STORAGE_PERMISSION_CODE: Int = 1

@@ -130,6 +130,15 @@ class LoginActivity : BaseActivity() {
                                     Constants.STORE_EMAIL_ID, email
                                 )
                                 editor.apply()
+                                val sharedPrefTimeLineEmail = getSharedPreferences(
+                                    Constants.TIMELINE_USER_EMAIL, Context.MODE_PRIVATE
+                                )
+                                val editorTimelineEmail: SharedPreferences.Editor = sharedPrefTimeLineEmail.edit()
+                                editorTimelineEmail.putString(
+                                    Constants.TIMELINE_USER_EMAIL, email
+                                )
+                                editorTimelineEmail.apply()
+
                                 val intent = Intent(this, AdminScreenActivity::class.java)
                                 startActivity(intent)
                             }
@@ -191,9 +200,7 @@ class LoginActivity : BaseActivity() {
 
     fun successMemberLogin(userEmailList: ArrayList<UserClass>, email: String) {
         for (i in userEmailList) {
-
             FireStoreClass().checkCurrentEmailMemberAvailableFirestore(this, email, i.email)
-
         }
     }
 
@@ -217,6 +224,16 @@ class LoginActivity : BaseActivity() {
         cancelProgressDialog()
         for (i in memberList){
             val intent = Intent(this,MainActivity::class.java)
+
+            val sharedPreferences = getSharedPreferences(
+                Constants.STORE_TIMELINE_MEMBER_NAME, Context.MODE_PRIVATE
+            )
+            val editor: SharedPreferences.Editor = sharedPreferences.edit()
+            editor.putString(
+                Constants.STORE_TIMELINE_MEMBER_NAME, i.memberName
+            )
+            editor.apply()
+
             intent.putExtra(Constants.MEMBER_NAME, i.memberName)
             intent.putExtra(Constants.GROUP_NAME, i.groupName)
             intent.putExtra(Constants.ADMIN_EMAIL, i.memberAdminEmail)
