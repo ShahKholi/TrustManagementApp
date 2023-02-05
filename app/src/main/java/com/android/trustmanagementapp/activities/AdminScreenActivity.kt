@@ -30,6 +30,7 @@ class AdminScreenActivity : BaseActivity() {
     lateinit var btnPreViewMemberDetail : MSPButton
     lateinit var btnAddTimeline : MSPButton
     lateinit var btnViewTimeLine : MSPButton
+    lateinit var btnLogout  : MSPButton
 
     private lateinit var mGroupList: ArrayList<GroupNameClass>
     private lateinit var recyclerView: RecyclerView
@@ -64,8 +65,16 @@ class AdminScreenActivity : BaseActivity() {
         btnPreViewMemberDetail = findViewById(R.id.btn_view_member_admin_screen)
         btnAddTimeline = findViewById(R.id.btn_add_timeline)
         btnViewTimeLine = findViewById(R.id.btn_view_timeline)
+        btnLogout = findViewById(R.id.logout_admin)
 
         getAdminCode()
+
+        btnLogout.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+        }
 
         btnViewTimeLine.setOnClickListener {
             val intent = Intent(this, ViewTimeLineActivity::class.java)

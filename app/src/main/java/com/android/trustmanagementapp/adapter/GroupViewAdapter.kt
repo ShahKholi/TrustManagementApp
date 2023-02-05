@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.trustmanagementapp.R
 import com.android.trustmanagementapp.activities.AdminScreenActivity
 import com.android.trustmanagementapp.activities.CreateGroupActivity
+import com.android.trustmanagementapp.activities.ViewAccountActivity
 import com.android.trustmanagementapp.firestore.FireStoreClass
 import com.android.trustmanagementapp.model.GroupNameClass
 import com.android.trustmanagementapp.utils.Constants
@@ -56,6 +57,12 @@ class GroupViewAdapter(
                 intent.putExtra(Constants.CREATED_DATE , model.groupCreatedDate)
                 intent.putExtra(Constants.GROUP_IMAGE, model.groupImage)
                 intent.putExtra(Constants.GROUP_PREVIOUS_BALANCE.toString(), model.groupPreviousBalance)
+                context.startActivity(intent)
+            }
+
+            holder.itemView.setOnClickListener {
+                val intent = Intent(context,ViewAccountActivity::class.java)
+                intent.putExtra(Constants.GROUP_NAME, model.groupName)
                 context.startActivity(intent)
             }
 

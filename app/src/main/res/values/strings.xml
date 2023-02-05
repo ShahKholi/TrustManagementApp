@@ -110,6 +110,7 @@
     <string name="month_view_detail">Month View Detail</string>
     <string name="member_not_received_amount">View Member not paid current month</string>
     <string name="member_not_paid_list">MEMBER NOT PAID LIST</string>
+    <string name="logout">LOGOUT</string>
 
 
 </resources>

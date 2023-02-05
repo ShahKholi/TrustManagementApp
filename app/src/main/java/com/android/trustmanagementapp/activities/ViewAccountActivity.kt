@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.android.trustmanagementapp.R
 import com.android.trustmanagementapp.adapter.ViewMasterAccountAdapter
 import com.android.trustmanagementapp.firestore.FireStoreClass
@@ -29,6 +30,7 @@ class ViewAccountActivity : BaseActivity() {
     private lateinit var recyclerView: RecyclerView
     lateinit var linearLayout: LinearLayoutCompat
     lateinit var mTotalAmount: MSPTextViewBold
+    lateinit var swipeRefresh : SwipeRefreshLayout
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,8 +47,23 @@ class ViewAccountActivity : BaseActivity() {
         recyclerView = findViewById(R.id.rcv_view_account_detail)
         linearLayout = findViewById(R.id.ll_total_balance)
         mTotalAmount = findViewById(R.id.tv_available_balance)
+        swipeRefresh = findViewById(R.id.swipe_refresh)
 
         setUpSupportActionBar()
+
+        swipeRefresh.setOnRefreshListener {
+            val sharedPreferences = getSharedPreferences(
+                Constants.STORE_EMAIL_ID, Context.MODE_PRIVATE
+            )
+            val getAdminEmailId = sharedPreferences.getString(Constants.STORE_EMAIL_ID, "")
+            mAdminEmail = getAdminEmailId!!
+            lifecycleScope.launch {
+                compareMasterAccountAndMemberAccount(mGroupName, getAdminEmailId)
+
+                swipeRefresh.isRefreshing = false
+
+            }
+        }
 
 
         val sharedPreferences = getSharedPreferences(

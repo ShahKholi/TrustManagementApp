@@ -8,6 +8,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.lifecycleScope
 import com.android.trustmanagementapp.activities.*
+import com.android.trustmanagementapp.activities.fragments.TimelineFragment
 import com.android.trustmanagementapp.adapter.AllTimelineAdapter
 import com.android.trustmanagementapp.model.*
 import com.android.trustmanagementapp.utils.Constants
@@ -375,6 +376,21 @@ class FireStoreClass {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
+    fun loadAllTimelineDetailFragment(timelineFragment: TimelineFragment) {
+        mFirestoreInstance.collection(Constants.TIMELINE_DETAIL)
+            .get()
+            .addOnSuccessListener{document ->
+                val timelineList: ArrayList<Timeline> = ArrayList()
+                for (i in document.documents){
+                    val timeline = i.toObject(Timeline::class.java)
+                    timeline!!.id = i.id
+                    timelineList.add(timeline)
+                }
+                timelineFragment.successTimelineListFromFirestore(timelineList)
+            }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
     fun loadAllTimelineDetail(activity: Activity) {
         mFirestoreInstance.collection(Constants.TIMELINE_DETAIL)
             .get()
@@ -389,6 +405,7 @@ class FireStoreClass {
                     is ViewTimeLineActivity -> {
                         activity.successTimelineListFromFirestore(timelineList)
                     }
+
                 }
 
             }.addOnFailureListener { exception ->
@@ -2571,8 +2588,6 @@ class FireStoreClass {
                 )
             }
     }
-
-
 
 
 
