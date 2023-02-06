@@ -989,7 +989,6 @@ class FireStoreClass {
     }
 
 
-
     suspend fun updateMemberProfile(
         activity: Activity,
         updateMember: MemberClass,
@@ -1349,15 +1348,15 @@ class FireStoreClass {
         return memberClass.memberAdminEmail
     }
 
-   suspend fun getCurrentUpdatedMemberDetail(memberEmail: String, mGroupName: String):
+    suspend fun getCurrentUpdatedMemberDetail(memberEmail: String, mGroupName: String):
             ArrayList<MemberClass> {
-       val memberList: ArrayList<MemberClass> = ArrayList()
-       var memberAccount: MemberClass
+        val memberList: ArrayList<MemberClass> = ArrayList()
+        var memberAccount: MemberClass
         mFirestoreInstance.collection(Constants.MEMBER)
             .whereEqualTo("groupName", mGroupName)
             .whereEqualTo("memberEmail", memberEmail)
             .get()
-            .addOnSuccessListener{ document->
+            .addOnSuccessListener { document ->
                 for (i in document.documents) {
                     memberAccount = i.toObject(MemberClass::class.java)!!
                     memberAccount.id = i.id
@@ -1366,7 +1365,7 @@ class FireStoreClass {
 
             }.await()
 
-       return  memberList
+        return memberList
     }
 
     fun getCurrentGuestMemberDetailFromFirestore(
@@ -1378,21 +1377,21 @@ class FireStoreClass {
             .whereEqualTo("groupName", mCurrentGroupName)
             .whereEqualTo("memberEmail", memberEmail)
             .get()
-            .addOnSuccessListener { document->
+            .addOnSuccessListener { document ->
                 val memberList: ArrayList<MemberClass> = ArrayList()
-                for (i in document.documents){
+                for (i in document.documents) {
                     val member = i.toObject(MemberClass::class.java)
                     member!!.id = i.id
                     memberList.add(member)
                 }
-                when(activity){
+                when (activity) {
                     is GuestProfileActivity -> {
                         activity.successGettingMemberList(memberList)
                     }
                 }
 
-            }.addOnFailureListener { exception->
-                when(activity){
+            }.addOnFailureListener { exception ->
+                when (activity) {
                     is GuestProfileActivity -> {
                         activity.cancelProgressDialog()
                         Log.e(
@@ -1456,6 +1455,22 @@ class FireStoreClass {
                 }
             }.await()
         return imageUrl
+    }
+
+    suspend fun getGroupDate(mAdmin: String, mGroupName: String): String {
+        var groupOrgDate : String = ""
+
+        mFirestoreInstance.collection(Constants.GROUP)
+            .whereEqualTo("groupName", mGroupName)
+            .whereEqualTo("email", mAdmin)
+            .get()
+            .addOnSuccessListener{document->
+                for (i in document.documents) {
+                    groupOrgDate = i.get("groupCreatedDate").toString()
+                }
+
+            }.await()
+        return groupOrgDate
     }
 
 
@@ -1697,6 +1712,28 @@ class FireStoreClass {
         return amountList
     }
 
+    suspend fun memberAccountTotalAmountFirestore(
+        mGroupName: String,
+        mAdmin: String,
+        mMemberEmail: String
+    ): ArrayList<Int> {
+        val memberAccountList: ArrayList<Int> = ArrayList()
+        var memberAccount: MemberAccountDetail
+
+        mFirestoreInstance.collection(Constants.MEMBER_ACCOUNT_DETAIL)
+            .whereEqualTo("groupName", mGroupName)
+            .whereEqualTo("adminEmail", mAdmin)
+            .whereEqualTo("memberEmail", mMemberEmail)
+            .get()
+            .addOnSuccessListener { document ->
+                for (it in document.documents) {
+                    memberAccount = it.toObject(MemberAccountDetail::class.java)!!
+                    memberAccount.currentAmount = it.get("currentAmount").toString().toInt()
+                    memberAccountList.add(memberAccount.currentAmount)
+                }
+            }.await()
+        return memberAccountList
+    }
 
     suspend fun memberAccountAmountForCurrentMonthFirestore(
         month: String,
@@ -2652,8 +2689,6 @@ class FireStoreClass {
                 )
             }
     }
-
-
 
 
 }

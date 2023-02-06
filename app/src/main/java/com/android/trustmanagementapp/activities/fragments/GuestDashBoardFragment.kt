@@ -88,6 +88,7 @@ class GuestDashBoardFragment : BlankFragment(), View.OnClickListener {
         lifecycleScope.launch {
             showProgressDialog()
             getGroupImage()
+
         }
 
         mYourTransactionDetail = view.findViewById(R.id.tv_fragment_transaction)
@@ -108,13 +109,12 @@ class GuestDashBoardFragment : BlankFragment(), View.OnClickListener {
 
     private suspend fun getGroupImage() {
         val imageString = FireStoreClass().getGroupImageFromFirestore(mGroupName, mAdmin)
-        cancelProgressDialog()
         ivProfileIcon = requireActivity().findViewById(R.id.iv_fragment_group_image)
         GlideLoaderClass(requireContext()).loadGroupPictures(
             imageString,
             ivProfileIcon
         )
-
+        cancelProgressDialog()
     }
 
     override fun onClick(id: View?) {

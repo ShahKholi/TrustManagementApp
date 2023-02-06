@@ -24,6 +24,7 @@
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_forgot_password_admin.xml" value="0.4466666666666667" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_guest_all_member_detailed.xml" value="0.1796875" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_guest_all_member_list_detail.xml" value="0.1796875" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_guest_information.xml" value="0.165625" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_guest_member_transaction_detail.xml" value="0.1796875" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_guest_member_transaction_detailed.xml" value="0.1796875" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_guest_profile.xml" value="0.22" />
@@ -48,7 +49,7 @@
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/dropdown_list_layout.xml" value="0.1796875" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/fragment_blank.xml" value="0.1796875" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/fragment_guest_dash_board.xml" value="0.3333333333333333" />
-        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/fragment_setting.xml" value="0.1796875" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/fragment_setting.xml" value="0.22" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/fragment_timeline.xml" value="0.1796875" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/item_account_view_rc_layout.xml" value="0.22" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/item_expense_view_rc_layout.xml" value="0.3333333333333333" />

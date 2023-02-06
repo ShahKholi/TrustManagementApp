@@ -112,6 +112,15 @@
     <string name="member_not_paid_list">MEMBER NOT PAID LIST</string>
     <string name="logout">LOGOUT</string>
     <string name="edit_profile">EDIT PROFILE</string>
+    <string name="your_profile">YOUR PROFILE</string>
+    <string name="about_your_n_group">ABOUT YOUR\n GROUP</string>
+    <string name="rate_us">RATE US</string>
+    <string name="contact_customer_n_support">CONTACT CUSTOMER\n SUPPORT</string>
+    <string name="your_information">YOUR INFORMATION</string>
+    <string name="your_code">YOUR CODE</string>
+    <string name="your_admin">YOUR ADMIN</string>
+    <string name="till_now_you_paid">TILL NOW YOU PAID</string>
+    <string name="your_group">YOUR GROUP NAME</string>
 
 
 </resources>
