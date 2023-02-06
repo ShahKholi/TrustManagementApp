@@ -52,9 +52,12 @@ class AddMemberActivity : BaseActivity() {
     lateinit var mUserMemberEmail: String
     lateinit var mUserMemberName: String
     lateinit var mUserMemberPhone: String
-    lateinit var mUserProfileImage: String
+    private lateinit var mUserProfileImage: String
     lateinit var toolbarLabel: MSPTextViewBold
     lateinit var mMemberList: ArrayList<MemberClass>
+
+
+
 
     private val getPhotoActionResult: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult())
@@ -157,9 +160,7 @@ class AddMemberActivity : BaseActivity() {
                         )
                     }
 
-
                 }
-
 
             } else {
                 val memberEmail = etMemberEmail.text.toString().trim { it <= ' ' }
@@ -391,6 +392,7 @@ class AddMemberActivity : BaseActivity() {
     ) {
         mMemberList = memberList
         cancelProgressDialog()
+
 
         val haspMap: HashMap<String, String> = HashMap()
         haspMap[Constants.MEMBER_EMAIL] = etMemberEmail.text.toString()

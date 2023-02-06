@@ -111,6 +111,7 @@
     <string name="member_not_received_amount">View Member not paid current month</string>
     <string name="member_not_paid_list">MEMBER NOT PAID LIST</string>
     <string name="logout">LOGOUT</string>
+    <string name="edit_profile">EDIT PROFILE</string>
 
 
 </resources>

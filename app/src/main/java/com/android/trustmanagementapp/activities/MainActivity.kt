@@ -1,6 +1,7 @@
 package com.android.trustmanagementapp.activities
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -54,6 +55,8 @@ class MainActivity : AppCompatActivity() {
         mSetMemberPhoto = findViewById(R.id.iv_member_image_frag)
         mToolbarText = findViewById(R.id.toolbar_text_guest_main)
 
+
+
         if(intent.hasExtra(Constants.PROFILE_IMAGE)){
             mMemberProfileImage = intent.getStringExtra(Constants.PROFILE_IMAGE)!!
            if(mMemberProfileImage.isNotEmpty() && mMemberProfileImage !="null"){
@@ -86,6 +89,14 @@ class MainActivity : AppCompatActivity() {
             editorTimelineEmail.apply()
         }
 
+        mSetMemberPhoto.setOnClickListener {
+            val intent = Intent(this, GuestProfileActivity::class.java)
+            intent.putExtra(Constants.GROUP_NAME,mGroupName)
+            intent.putExtra(Constants.STORE_MEMBER_PROFILE_ID,mMemberProfileImage)
+            intent.putExtra(Constants.STORE_MEMBER_EMAIL_ID,mMemberEmail)
+            startActivity(intent)
+        }
+
         if(intent.hasExtra(Constants.MEMBER_PHONE)){
             mMemberPhone = intent.getStringExtra(Constants.MEMBER_PHONE)!!
             val sharedPreferences = getSharedPreferences(
@@ -100,6 +111,7 @@ class MainActivity : AppCompatActivity() {
 
         if(intent.hasExtra(Constants.MEMBER_EMAIL)){
             mMemberEmail = intent.getStringExtra(Constants.MEMBER_EMAIL)!!
+            Log.e("main act ", mMemberEmail)
             val sharedPreferences = getSharedPreferences(
                 Constants.STORE_MEMBER_EMAIL_ID, Context.MODE_PRIVATE
             )

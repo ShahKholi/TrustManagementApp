@@ -339,6 +339,14 @@ class FireStoreClass {
                     is AddMemberActivity -> {
                         activity.successGroupIconUpload(uri)
                     }
+
+                    is GuestProfileActivity -> {
+                        activity.lifecycleScope.launch {
+                            activity.successGroupIconUpload(uri)
+                        }
+
+                    }
+
                     is AddTimelineActivity -> {
                         activity.lifecycleScope.launch {
                             activity.successGroupIconUpload(uri)
@@ -379,9 +387,9 @@ class FireStoreClass {
     fun loadAllTimelineDetailFragment(timelineFragment: TimelineFragment) {
         mFirestoreInstance.collection(Constants.TIMELINE_DETAIL)
             .get()
-            .addOnSuccessListener{document ->
+            .addOnSuccessListener { document ->
                 val timelineList: ArrayList<Timeline> = ArrayList()
-                for (i in document.documents){
+                for (i in document.documents) {
                     val timeline = i.toObject(Timeline::class.java)
                     timeline!!.id = i.id
                     timelineList.add(timeline)
@@ -609,24 +617,6 @@ class FireStoreClass {
             }
 
     }
-
-    /* suspend fun getLikedListFromFireStore(ids: String): ArrayList<String> {
-         val likedList: ArrayList<String> = ArrayList()
-         var timeline: Timeline
-         mFirestoreInstance.collection(Constants.TIMELINE_DETAIL)
-             .whereEqualTo("id", ids)
-             .get()
-             .addOnSuccessListener { document ->
-                 for (i in document.documents) {
-
-                     timeline = i.toObject(Timeline::class.java)!!
-                     timeline.likedEmailList = i.get("likedEmailList") as ArrayList<String>
-                     Log.e("firebase", timeline.likedEmailList.toString())
-                     likedList.add(timeline.likedEmailList.toString())
-                 }
-             }.await()
-         return likedList
-     }*/
 
 
     fun memberDeleteUpdateMasterAccount(
@@ -998,6 +988,8 @@ class FireStoreClass {
             }
     }
 
+
+
     suspend fun updateMemberProfile(
         activity: Activity,
         updateMember: MemberClass,
@@ -1006,7 +998,7 @@ class FireStoreClass {
         memberEmail: String
 
     ) {
-        Log.e("MemberClass", updateMember.toString())
+
         val memberList: ArrayList<MemberClass> = ArrayList()
         var member = MemberClass()
         mFirestoreInstance.collection(Constants.MEMBER)
@@ -1015,7 +1007,6 @@ class FireStoreClass {
             .whereEqualTo("memberEmail", memberEmail)
             .get()
             .addOnSuccessListener { document ->
-
                 for (i in document.documents) {
                     mFirestoreInstance.collection(Constants.MEMBER)
                         .document(i.id)
@@ -1027,6 +1018,17 @@ class FireStoreClass {
                 memberList.add(member)
                 when (activity) {
                     is AddMemberActivity -> {
+                        activity.lifecycleScope.launch {
+                            activity.successUpdatedMemberList(
+                                memberList,
+                                memberEmail,
+                                mUserAdminEmail,
+                                mUserGroupName
+                            )
+                        }
+
+                    }
+                    is GuestProfileActivity -> {
                         activity.lifecycleScope.launch {
                             activity.successUpdatedMemberList(
                                 memberList,
@@ -1069,6 +1071,12 @@ class FireStoreClass {
                 when (activity) {
                     is AddMemberActivity -> {
                         activity.successUpdateMemberAccount()
+                    }
+                    is GuestProfileActivity -> {
+                        activity.lifecycleScope.launch {
+                            activity.successUpdateMemberAccount()
+                        }
+
                     }
                 }
 
@@ -1339,6 +1347,62 @@ class FireStoreClass {
 
             }.await()
         return memberClass.memberAdminEmail
+    }
+
+   suspend fun getCurrentUpdatedMemberDetail(memberEmail: String, mGroupName: String):
+            ArrayList<MemberClass> {
+       val memberList: ArrayList<MemberClass> = ArrayList()
+       var memberAccount: MemberClass
+        mFirestoreInstance.collection(Constants.MEMBER)
+            .whereEqualTo("groupName", mGroupName)
+            .whereEqualTo("memberEmail", memberEmail)
+            .get()
+            .addOnSuccessListener{ document->
+                for (i in document.documents) {
+                    memberAccount = i.toObject(MemberClass::class.java)!!
+                    memberAccount.id = i.id
+                    memberList.add(memberAccount)
+                }
+
+            }.await()
+
+       return  memberList
+    }
+
+    fun getCurrentGuestMemberDetailFromFirestore(
+        activity: Activity,
+        memberEmail: String?,
+        mCurrentGroupName: String
+    ) {
+        mFirestoreInstance.collection(Constants.MEMBER)
+            .whereEqualTo("groupName", mCurrentGroupName)
+            .whereEqualTo("memberEmail", memberEmail)
+            .get()
+            .addOnSuccessListener { document->
+                val memberList: ArrayList<MemberClass> = ArrayList()
+                for (i in document.documents){
+                    val member = i.toObject(MemberClass::class.java)
+                    member!!.id = i.id
+                    memberList.add(member)
+                }
+                when(activity){
+                    is GuestProfileActivity -> {
+                        activity.successGettingMemberList(memberList)
+                    }
+                }
+
+            }.addOnFailureListener { exception->
+                when(activity){
+                    is GuestProfileActivity -> {
+                        activity.cancelProgressDialog()
+                        Log.e(
+                            activity.javaClass.simpleName,
+                            "Error while getting Member.",
+                            exception
+                        )
+                    }
+                }
+            }
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
