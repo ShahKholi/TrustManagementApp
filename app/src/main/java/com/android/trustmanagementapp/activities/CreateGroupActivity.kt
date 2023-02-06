@@ -9,6 +9,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.TextUtils
@@ -17,6 +18,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -69,6 +71,7 @@ class CreateGroupActivity : BaseActivity() {
             }
         }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -187,6 +190,7 @@ class CreateGroupActivity : BaseActivity() {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun uploadUserImage() {
         if (validateGroupDetails()) {
             showProgressDialog()
@@ -368,6 +372,8 @@ class CreateGroupActivity : BaseActivity() {
             onBackPressed()
         }
     }
+
+
 
     suspend fun groupUpdateSuccess() {
         val mGroupName: String = groupName.text.toString().trim { it <= ' ' }

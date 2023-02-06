@@ -324,18 +324,22 @@ class GuestProfileActivity : BaseActivity() {
             )
         }else{
 
+            val updatedList: ArrayList<MemberClass>
+            val memberEmails = etMemberEmail.text.toString().trim { it <= ' ' }
+            updatedList = FireStoreClass().getCurrentUpdatedMemberDetail(memberEmails, mGroupName)
+            for(i in updatedList){
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra(Constants.PROFILE_IMAGE, consMemberProfile)
+                intent.putExtra(Constants.MEMBER_PHONE, consMemberPhone)
+                intent.putExtra(Constants.ADMIN_EMAIL, consAdminEmail)
+                intent.putExtra(Constants.MEMBER_EMAIL, consUpdatedMemberEmail)
+                intent.putExtra(Constants.GROUP_NAME, mGroupName)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                getDataResult.launch(intent)
+                finish()
+            }
 
-            Log.e("size 0", "0")
-            val intent = Intent(this, MainActivity::class.java)
-            intent.putExtra(Constants.PROFILE_IMAGE, consMemberProfile)
-            intent.putExtra(Constants.MEMBER_PHONE, consMemberPhone)
-            intent.putExtra(Constants.ADMIN_EMAIL, consAdminEmail)
-            intent.putExtra(Constants.MEMBER_EMAIL, consUpdatedMemberEmail)
-            intent.putExtra(Constants.GROUP_NAME, mGroupName)
-            getDataResult.launch(intent)
-            finish()
         }
-
 
     }
 
@@ -353,7 +357,7 @@ class GuestProfileActivity : BaseActivity() {
             intent.putExtra(Constants.ADMIN_EMAIL, i.memberAdminEmail)
             intent.putExtra(Constants.MEMBER_EMAIL, i.memberEmail)
             intent.putExtra(Constants.GROUP_NAME, i.groupName)
-
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             getDataResult.launch(intent)
             finish()
         }

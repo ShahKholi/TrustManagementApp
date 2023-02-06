@@ -20,7 +20,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import de.hdodenhof.circleimageview.CircleImageView
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
 
     private lateinit var container : ViewPager2
@@ -179,7 +179,9 @@ class MainActivity : AppCompatActivity() {
         layout.layoutParams = layoutParams
     }
 
-
+    override fun onBackPressed() {
+        doubleBackToExit()
+    }
 
     private fun setUpSupportActionBar() {
         val toolbar: Toolbar = findViewById(R.id.toolbar_main_fragment)
