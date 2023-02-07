@@ -56,7 +56,7 @@ class AboutGroupAdapter(
                 when(activity){
                     is AdminAboutGroupActivity -> {
 
-                        builder.setPositiveButton("YES") { dialogInterface, _ ->
+                        builder.setPositiveButton("YES") { _, _ ->
                             activity.showProgressDialog()
                             FireStoreClass().deleteAboutGroup(activity,
                             model.id)

@@ -76,7 +76,7 @@ class GroupViewAdapter(
                 builder.setTitle("DELETE")
                 when(activity){
                     is AdminScreenActivity -> {
-                        builder.setPositiveButton("YES") {dialogInterface, _ ->
+                        builder.setPositiveButton("YES") { _, _ ->
                             activity.showProgressDialog()
                             FireStoreClass().deleteCurrentGroup(context, model.groupName,model.email)
                         }

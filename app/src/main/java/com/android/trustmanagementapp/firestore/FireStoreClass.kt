@@ -2407,13 +2407,28 @@ class FireStoreClass {
             }
     }
 
+    fun deleteMasterAboutGroup(email: String, groupName: String) {
+        mFirestoreInstance.collection(Constants.ABOUT_GROUP)
+            .whereEqualTo("groupName", groupName)
+            .whereEqualTo("adminEmail", email)
+            .get()
+            .addOnSuccessListener {document->
+                for (i in document.documents) {
+                    mFirestoreInstance.collection(Constants.ABOUT_GROUP)
+                        .document(i.id)
+                        .delete()
+                }
+            }
+
+    }
+
     fun deleteAboutGroup(activity: AdminAboutGroupActivity, id: String) {
         mFirestoreInstance.collection(Constants.ABOUT_GROUP)
             .document(id)
             .delete()
-            .addOnSuccessListener{
+            .addOnSuccessListener {
                 activity.deletionSuccess()
-            }.addOnFailureListener{exception ->
+            }.addOnFailureListener { exception ->
                 activity.cancelProgressDialog()
                 Log.e(
                     activity.javaClass.simpleName,
@@ -2724,19 +2739,21 @@ class FireStoreClass {
             }
     }
 
-    fun getAboutDetail(activity: Activity,
-                       adminEmailId: String) {
+    fun getAboutDetail(
+        activity: Activity,
+        adminEmailId: String
+    ) {
         mFirestoreInstance.collection(Constants.ABOUT_GROUP)
             .whereEqualTo("adminEmail", adminEmailId)
             .get()
-            .addOnSuccessListener { document->
+            .addOnSuccessListener { document ->
                 val aboutGroupList: ArrayList<AboutGroup> = ArrayList()
-                for(i in document.documents) {
+                for (i in document.documents) {
                     val aboutGroup = i.toObject(AboutGroup::class.java)!!
                     aboutGroup.id = i.id
                     aboutGroupList.add(aboutGroup)
                 }
-                when(activity){
+                when (activity) {
                     is AdminAboutGroupActivity -> {
                         activity.successLoadAboutList(aboutGroupList)
                     }
@@ -2756,6 +2773,24 @@ class FireStoreClass {
 
 
             }
+    }
+
+    suspend fun checkAboutGroupAvailableinFirestore(
+        adminEmailId: String,
+        groupName: String
+    ): String {
+            var groupFound : String = ""
+        mFirestoreInstance.collection(Constants.ABOUT_GROUP)
+            .whereEqualTo("adminEmail", adminEmailId)
+            .whereEqualTo("groupName",groupName)
+            .get()
+            .addOnSuccessListener { document->
+                for(i in document.documents){
+                    groupFound = i.get("groupName").toString()
+                }
+
+            }.await()
+        return groupFound
     }
 
     fun getExpenseImageDetail(
@@ -2795,8 +2830,6 @@ class FireStoreClass {
                 )
             }
     }
-
-
 
 
 }

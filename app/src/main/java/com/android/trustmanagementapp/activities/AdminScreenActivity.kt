@@ -16,7 +16,6 @@ import com.android.trustmanagementapp.R
 import com.android.trustmanagementapp.adapter.GroupViewAdapter
 import com.android.trustmanagementapp.firestore.FireStoreClass
 import com.android.trustmanagementapp.model.GroupNameClass
-import com.android.trustmanagementapp.model.Timeline
 import com.android.trustmanagementapp.model.UserClass
 import com.android.trustmanagementapp.utils.Constants
 import com.android.trustmanagementapp.utils.MSPButton
@@ -25,21 +24,21 @@ import com.google.firebase.auth.FirebaseAuth
 class AdminScreenActivity : BaseActivity() {
     lateinit var createGroupBtn: MSPButton
     lateinit var btnAddMemberActivity: MSPButton
-    lateinit var btnAddAccountDetail : MSPButton
-    lateinit var btnPreViewActivity : MSPButton
-    lateinit var btnAddExpenseActivity : MSPButton
-    lateinit var btnPreViewMemberDetail : MSPButton
-    lateinit var btnAddTimeline : MSPButton
-    lateinit var btnViewTimeLine : MSPButton
-    lateinit var btnLogout  : MSPButton
-    lateinit var btnAboutGroup : MSPButton
+    lateinit var btnAddAccountDetail: MSPButton
+    lateinit var btnPreViewActivity: MSPButton
+    lateinit var btnAddExpenseActivity: MSPButton
+    lateinit var btnPreViewMemberDetail: MSPButton
+    lateinit var btnAddTimeline: MSPButton
+    lateinit var btnViewTimeLine: MSPButton
+    lateinit var btnLogout: MSPButton
+    lateinit var btnAboutGroup: MSPButton
 
     private lateinit var mGroupList: ArrayList<GroupNameClass>
     private lateinit var recyclerView: RecyclerView
 
-    private lateinit var assignedAdminEmail : String
+    private lateinit var assignedAdminEmail: String
 
-    private lateinit var mAdminUserList : ArrayList<UserClass>
+    private lateinit var mAdminUserList: ArrayList<UserClass>
 
     private val getGroupDataResult: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult())
@@ -131,7 +130,7 @@ class AdminScreenActivity : BaseActivity() {
     private fun getAdminCode() {
         val currentUID = FireStoreClass().getCurrentUserID()
         FireStoreClass().getAdminDetail(this, currentUID)
-        FireStoreClass().getAssignedGroupAdmin(this,currentUID)
+        FireStoreClass().getAssignedGroupAdmin(this, currentUID)
     }
 
     override fun onBackPressed() {
@@ -148,7 +147,7 @@ class AdminScreenActivity : BaseActivity() {
     private fun getGroupListFromFireStore() {
         showProgressDialog()
 
-        if(assignedAdminEmail.isNotEmpty() && assignedAdminEmail != "null"){
+        if (assignedAdminEmail.isNotEmpty() && assignedAdminEmail != "null") {
             val sharedPreferences = getSharedPreferences(
                 Constants.STORE_ASSIGNED_ADMIN_EMAIL_ID, Context.MODE_PRIVATE
             )
@@ -158,15 +157,15 @@ class AdminScreenActivity : BaseActivity() {
             )
             editor.apply()
 
-            FireStoreClass().getAssignedGroupList(this,assignedAdminEmail)
+            FireStoreClass().getAssignedGroupList(this, assignedAdminEmail)
 
-        }else{
+        } else {
             val sharedPreferences = getSharedPreferences(
                 Constants.STORE_EMAIL_ID, Context.MODE_PRIVATE
             )
             val getAdminEmailId = sharedPreferences.getString(Constants.STORE_EMAIL_ID, "")
 
-            FireStoreClass().getGroupList(this,getAdminEmailId!!)
+            FireStoreClass().getGroupList(this, getAdminEmailId!!)
 
         }
 
@@ -180,49 +179,59 @@ class AdminScreenActivity : BaseActivity() {
             recyclerView.layoutManager = LinearLayoutManager(this)
             recyclerView.setHasFixedSize(true)
             groupList.sortBy { it.groupName }
-            val cartListAdapter = GroupViewAdapter(this, mGroupList,
-                this@AdminScreenActivity)
+            val cartListAdapter = GroupViewAdapter(
+                this, mGroupList,
+                this@AdminScreenActivity
+            )
             recyclerView.adapter = cartListAdapter
         }
     }
 
     suspend fun successGroupDeleted(groupName: String, email: String) {
-        Log.e("group","current group was deleted successfully")
+        Log.e("group", "current group was deleted successfully")
 
         val checkMemberGroupName: ArrayList<String> =
             FireStoreClass().checkGroupAvailableinMemberFirestore(
                 email,
                 groupName
             )
-        if(checkMemberGroupName.size > 0){
-            FireStoreClass().deleteMemberDetail(email,groupName)
+        if (checkMemberGroupName.size > 0) {
+            FireStoreClass().deleteMemberDetail(email, groupName)
         }
 
-        val checkMemberAccountList : ArrayList<String> =
+        val checkMemberAccountList: ArrayList<String> =
             FireStoreClass().checkGroupAvailableinMemberAccountFirestore(
                 email,
                 groupName
             )
-        if(checkMemberAccountList.size > 0){
-            FireStoreClass().deleteMemberAccount(email,groupName)
+        if (checkMemberAccountList.size > 0) {
+            FireStoreClass().deleteMemberAccount(email, groupName)
         }
-        val expenseAccountList : ArrayList<String> =
+        val expenseAccountList: ArrayList<String> =
             FireStoreClass().checkExpenseGroupAvailableInFirestore(
                 email,
                 groupName
             )
-        if(expenseAccountList.size > 0){
-            FireStoreClass().deleteExpenseAccount(email,groupName)
+        if (expenseAccountList.size > 0) {
+            FireStoreClass().deleteExpenseAccount(email, groupName)
         }
-        val masterAccountList :  ArrayList<String> =
+        val masterAccountList: ArrayList<String> =
             FireStoreClass().checkMasterGroupAvailableInFirestore(
                 email,
                 groupName
             )
-        if(masterAccountList.size > 0){
-            FireStoreClass().deleteMasterAccount(email,groupName)
+        if (masterAccountList.size > 0) {
+            FireStoreClass().deleteMasterAccount(email, groupName)
         }
-        Log.e("All Data","All the data deleted successfully")
+
+        val checkAboutGroupDetail: String = FireStoreClass().checkAboutGroupAvailableinFirestore(
+            email, groupName
+        )
+        if (checkAboutGroupDetail.isNotEmpty() && checkAboutGroupDetail != "null") {
+            FireStoreClass().deleteMasterAboutGroup(email, groupName)
+        }
+
+        Log.e("All Data", "All the data deleted successfully")
         cancelProgressDialog()
         val intent = intent
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -231,13 +240,13 @@ class AdminScreenActivity : BaseActivity() {
 
     fun successAdminUserList(userList: ArrayList<UserClass>) {
         mAdminUserList = userList
-        for(i in mAdminUserList){
+        for (i in mAdminUserList) {
             val sharedPreferences = getSharedPreferences(
                 Constants.STORE_TIMELINE_MEMBER_NAME, Context.MODE_PRIVATE
             )
             val editor: SharedPreferences.Editor = sharedPreferences.edit()
             editor.putString(
-                Constants.STORE_TIMELINE_MEMBER_NAME, i.firstName + " "+i.lastName
+                Constants.STORE_TIMELINE_MEMBER_NAME, i.firstName + " " + i.lastName
             )
             editor.apply()
         }

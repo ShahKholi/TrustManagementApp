@@ -10,10 +10,12 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.trustmanagementapp.R
@@ -24,6 +26,7 @@ import com.android.trustmanagementapp.model.GroupNameClass
 import com.android.trustmanagementapp.utils.Constants
 import com.android.trustmanagementapp.utils.MSPButton
 import com.android.trustmanagementapp.utils.MSPEditText
+import kotlinx.coroutines.launch
 
 
 class AdminAboutGroupActivity : BaseActivity() {
@@ -68,7 +71,10 @@ class AdminAboutGroupActivity : BaseActivity() {
         loadExpenseDetailFromFireStore()
 
         btnAboutGroup.setOnClickListener {
-            createAboutGroup()
+            lifecycleScope.launch {
+                createAboutGroup()
+            }
+
         }
 
     }
@@ -82,9 +88,10 @@ class AdminAboutGroupActivity : BaseActivity() {
         FireStoreClass().getAboutDetail(this, getAdminEmailId)
     }
 
-    private fun createAboutGroup() {
+    private suspend fun createAboutGroup() {
         if(validateAboutGroupField()){
-            showProgressDialog()
+
+
             val sharedPreferences = getSharedPreferences(
                 Constants.STORE_EMAIL_ID, Context.MODE_PRIVATE
             )
@@ -93,13 +100,24 @@ class AdminAboutGroupActivity : BaseActivity() {
             val address = tvAddressField.text.toString().trim { it <= ' ' }
             val detail = tvAboutDetail.text.toString().trim { it <= ' ' }
 
-            val aboutGroup = AboutGroup(
-                groupName,
-                getAdminEmailId,
-                address,
-                detail
+            val checkAboutGroupAvailable : String = FireStoreClass().checkAboutGroupAvailableinFirestore(
+                getAdminEmailId,groupName
             )
-            FireStoreClass().createAboutGroup(this, aboutGroup)
+            if(checkAboutGroupAvailable.isNotEmpty() && checkAboutGroupAvailable != "null"){
+                Toast.makeText(this, "About Group detail already added in your $groupName",
+                Toast.LENGTH_LONG).show()
+            }else{
+                showProgressDialog()
+                val aboutGroup = AboutGroup(
+                    groupName,
+                    getAdminEmailId,
+                    address,
+                    detail
+                )
+                FireStoreClass().createAboutGroup(this, aboutGroup)
+            }
+
+
         }
     }
 
@@ -184,7 +202,6 @@ class AdminAboutGroupActivity : BaseActivity() {
         val intent = intent
         getAboutDataResult.launch(intent)
         finish()
-
     }
 
     fun successLoadAboutList(aboutList: ArrayList<AboutGroup>) {
