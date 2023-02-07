@@ -102,6 +102,18 @@
                 />
 
             <com.android.trustmanagementapp.utils.MSPButton
+                android:id="@+id/btn_add_about_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/button_background"
+                android:text="@string/add_about_your_group"
+                android:textColor="@color/white"
+                />
+
+            <com.android.trustmanagementapp.utils.MSPButton
                 android:id="@+id/btn_view_account_detail_admin_screen"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -146,6 +158,17 @@
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/button_background"
                 android:text="@string/view_all_timeline"
+                android:textColor="@color/white"
+                />
+            <com.android.trustmanagementapp.utils.MSPButton
+                android:id="@+id/view_your_profile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/button_background"
+                android:text="@string/view_your_profile"
                 android:textColor="@color/white"
                 />
 

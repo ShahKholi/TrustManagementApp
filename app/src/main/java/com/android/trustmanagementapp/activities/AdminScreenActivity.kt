@@ -20,6 +20,7 @@ import com.android.trustmanagementapp.model.Timeline
 import com.android.trustmanagementapp.model.UserClass
 import com.android.trustmanagementapp.utils.Constants
 import com.android.trustmanagementapp.utils.MSPButton
+import com.google.firebase.auth.FirebaseAuth
 
 class AdminScreenActivity : BaseActivity() {
     lateinit var createGroupBtn: MSPButton
@@ -31,6 +32,7 @@ class AdminScreenActivity : BaseActivity() {
     lateinit var btnAddTimeline : MSPButton
     lateinit var btnViewTimeLine : MSPButton
     lateinit var btnLogout  : MSPButton
+    lateinit var btnAboutGroup : MSPButton
 
     private lateinit var mGroupList: ArrayList<GroupNameClass>
     private lateinit var recyclerView: RecyclerView
@@ -66,14 +68,22 @@ class AdminScreenActivity : BaseActivity() {
         btnAddTimeline = findViewById(R.id.btn_add_timeline)
         btnViewTimeLine = findViewById(R.id.btn_view_timeline)
         btnLogout = findViewById(R.id.logout_admin)
+        btnAboutGroup = findViewById(R.id.btn_add_about_group)
 
         getAdminCode()
+
+        btnAboutGroup.setOnClickListener {
+            val intent = Intent(this, AdminAboutGroupActivity::class.java)
+            startActivity(intent)
+        }
 
         btnLogout.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
+
             finish()
+            FirebaseAuth.getInstance().signOut()
         }
 
         btnViewTimeLine.setOnClickListener {

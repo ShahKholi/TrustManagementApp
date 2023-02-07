@@ -13,6 +13,8 @@ import androidx.viewpager2.widget.ViewPager2
 import com.android.trustmanagementapp.R
 import com.android.trustmanagementapp.activities.fragments.GuestDashBoardFragment
 import com.android.trustmanagementapp.adapter.FragmentMyAdapter
+import com.android.trustmanagementapp.firestore.FireStoreClass
+import com.android.trustmanagementapp.model.MemberClass
 import com.android.trustmanagementapp.utils.Constants
 import com.android.trustmanagementapp.utils.GlideLoaderClass
 import com.android.trustmanagementapp.utils.MSPTextViewBold
@@ -55,6 +57,9 @@ class MainActivity : BaseActivity() {
         mSetMemberPhoto = findViewById(R.id.iv_member_image_frag)
         mToolbarText = findViewById(R.id.toolbar_text_guest_main)
 
+
+
+        defaultLoginSetup()
 
 
         if(intent.hasExtra(Constants.PROFILE_IMAGE)){
@@ -111,7 +116,7 @@ class MainActivity : BaseActivity() {
 
         if(intent.hasExtra(Constants.MEMBER_EMAIL)){
             mMemberEmail = intent.getStringExtra(Constants.MEMBER_EMAIL)!!
-            Log.e("main act ", mMemberEmail)
+
             val sharedPreferences = getSharedPreferences(
                 Constants.STORE_MEMBER_EMAIL_ID, Context.MODE_PRIVATE
             )
@@ -172,6 +177,15 @@ class MainActivity : BaseActivity() {
         tabs.getTabAt(1)?.select()
     }
 
+    private fun defaultLoginSetup() {
+        if(intent.hasExtra(Constants.DEFAULT_LOGIN_EMAIL)){
+            val memberEmail = intent.getStringExtra(Constants.DEFAULT_LOGIN_EMAIL)
+            FireStoreClass().getDefaultMemberAccountFromFirestore(this,memberEmail)
+        }
+
+    }
+
+
     private fun resizeTab(){
         val layout = (tabs.getChildAt(0) as LinearLayout).getChildAt(0) as LinearLayout
         val layoutParams = layout.layoutParams as LinearLayout.LayoutParams
@@ -197,5 +211,27 @@ class MainActivity : BaseActivity() {
         toolbar.setNavigationOnClickListener {
             onBackPressed()
         }
+    }
+
+    fun successMemberList(memberList: ArrayList<MemberClass>) {
+        for (i in memberList){
+            mGroupName = i.groupName
+            mMemberProfileImage = i.profileImage
+            mMemberEmail = i.memberEmail
+            mToolbarText.text = i.groupName
+
+            if(mMemberProfileImage.isNotEmpty() && mMemberProfileImage !="null"){
+
+                GlideLoaderClass(this).loadGuestProfilePictures(
+                    mMemberProfileImage, mSetMemberPhoto
+                )
+            }else{
+                GlideLoaderClass(this).loadGuestProfilePictures(
+                    R.drawable.ic_user_placeholder,mSetMemberPhoto
+                )
+            }
+
+        }
+
     }
 }

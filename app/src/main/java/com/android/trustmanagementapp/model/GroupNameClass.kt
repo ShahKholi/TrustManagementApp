@@ -8,11 +8,11 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class GroupNameClass(
     var groupName: String = "",
-    var groupPreviousBalance : Int = 0,
+    var groupPreviousBalance: Int = 0,
     var groupCreatedDate: String = "",
     var email: String = "",
     var groupImage:  String = "",
     var id: String = "",
-    var previousBalance : Int = 0,
-    var code : String = ""
+    var previousBalance: Int = 0,
+    var code: String = ""
 ) : Parcelable

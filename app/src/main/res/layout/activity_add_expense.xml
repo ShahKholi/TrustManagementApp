@@ -143,10 +143,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
                 android:inputType="textCapSentences|textMultiLine"
+                android:scrollHorizontally="false"
                 android:padding="16dp"
                 android:textColor="@color/white"
                 android:textSize="16sp"
-                android:scrollHorizontally="false"
+
                 tools:ignore="SpeakableTextPresentCheck" />
         </com.google.android.material.textfield.TextInputLayout>
 

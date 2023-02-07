@@ -24,7 +24,7 @@ import com.google.firebase.auth.FirebaseAuth
 
 class LoginActivity : BaseActivity() {
     private lateinit var registrationLink: MSPTextViewBold
-    lateinit var etEmail: MSPEditText
+    private lateinit var etEmail: MSPEditText
     private lateinit var llEmailScreen: LinearLayoutCompat
     lateinit var llPasswordScreen: LinearLayoutCompat
     lateinit var llCodeScreen: LinearLayoutCompat
@@ -35,15 +35,13 @@ class LoginActivity : BaseActivity() {
     private lateinit var etCodeLogin: MSPEditText
     private lateinit var forgotPassword: MSPTextViewBold
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.decorView.windowInsetsController!!.hide(
-                android.view.WindowInsets.Type.statusBars()
-            )
-        }*/
+
         window.statusBarColor = ContextCompat.getColor(
             this,
             R.color.bar_color
@@ -69,11 +67,44 @@ class LoginActivity : BaseActivity() {
             startActivity(intent)
         }
 
+        val sharedPreferences = getSharedPreferences(
+            Constants.USER_FLAG, Context.MODE_PRIVATE
+        )
+        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+        editor.putString(
+            Constants.USER_FLAG, "false"
+        )
+        editor.apply()
+
+        checkCurrentLoginEmail()
+
         btnLogin.setOnClickListener {
             loginRegisterUser()
         }
 
     }
+
+    private fun checkCurrentLoginEmail() {
+
+        val sharedPreferencesMemberEmail = getSharedPreferences(
+            Constants.STORE_MEMBER_EMAIL_ID, Context.MODE_PRIVATE
+        )
+        val getMemberEmailId =
+            sharedPreferencesMemberEmail.getString(Constants.STORE_MEMBER_EMAIL_ID, "")!!
+
+        val currentAdminCheck = FireStoreClass().getCurrentUserID()
+
+        if(getMemberEmailId.isNotEmpty() && getMemberEmailId !="null"){
+            val intent = Intent(this,MainActivity::class.java)
+            intent.putExtra(Constants.DEFAULT_LOGIN_EMAIL,getMemberEmailId)
+            startActivity(intent)
+        }
+        else if(currentAdminCheck.isNotEmpty() && currentAdminCheck != "null"){
+            val intent = Intent(this,AdminScreenActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
 
     private fun loginRegisterUser() {
         if (validateEmailPage()) {

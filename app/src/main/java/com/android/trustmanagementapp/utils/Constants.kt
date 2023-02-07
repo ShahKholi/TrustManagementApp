@@ -15,6 +15,7 @@ object Constants {
     const val USER_IMAGE: String = "userImage"
     const val EXPENSE_IMAGE: String = "expenseImage"
     const val TIMELINE_DETAIL = "timelineDetail"
+    const val ABOUT_GROUP = "aboutGroup"
     const val TIMELINE_LIKED_DETAIL = "timelineLikedDetail"
     const val LIKE_ID = "likedEmailList"
 
@@ -27,7 +28,8 @@ object Constants {
     const val STORE_GROUP_NAME_ID: String = "store_group_name_id"
     const val STORE_MEMBER_PROFILE_ID: String = "store_profile_image_id"
     const val TIMELINE_USER_EMAIL: String = "time_line_user_email"
-
+    const val USER_FLAG : String = "user_flag"
+    const val DEFAULT_LOGIN_EMAIL : String = "default_login_email"
 
 
 

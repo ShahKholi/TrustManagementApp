@@ -15,11 +15,20 @@
         android:theme="@style/Theme.TrustManagementApp"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activities.AboutGroupFullViewActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.TrustManagementApp.NoActionBar"/>
+        <activity
+            android:name=".activities.AdminAboutGroupActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.TrustManagementApp.NoActionBar" />
+        <activity
             android:name=".activities.GuestInformationActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.TrustManagementApp.NoActionBar"
-            />
+            android:theme="@style/Theme.TrustManagementApp.NoActionBar" />
         <activity
             android:name=".activities.GuestProfileActivity"
             android:exported="true"

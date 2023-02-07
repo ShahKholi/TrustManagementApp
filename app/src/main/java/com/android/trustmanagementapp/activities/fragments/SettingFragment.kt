@@ -15,6 +15,10 @@ import com.android.trustmanagementapp.activities.LoginActivity
 import com.android.trustmanagementapp.utils.Constants
 import com.android.trustmanagementapp.utils.MSPButton
 import com.android.trustmanagementapp.utils.MSPTextViewBold
+import android.content.SharedPreferences
+
+
+
 
 class SettingFragment : BlankFragment(), View.OnClickListener {
     private lateinit var mAdmin: String
@@ -79,6 +83,12 @@ class SettingFragment : BlankFragment(), View.OnClickListener {
             Intent(this.requireContext(), LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
+        val preferences: SharedPreferences =
+            activity?.getSharedPreferences(Constants.STORE_MEMBER_EMAIL_ID, Context.MODE_PRIVATE)!!
+        val editor = preferences.edit()
+        editor.clear()
+        editor.apply()
+        requireActivity().finish()
 
     }
 

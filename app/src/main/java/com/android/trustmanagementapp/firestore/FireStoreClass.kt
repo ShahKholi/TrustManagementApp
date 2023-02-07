@@ -9,7 +9,6 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.lifecycleScope
 import com.android.trustmanagementapp.activities.*
 import com.android.trustmanagementapp.activities.fragments.TimelineFragment
-import com.android.trustmanagementapp.adapter.AllTimelineAdapter
 import com.android.trustmanagementapp.model.*
 import com.android.trustmanagementapp.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
@@ -42,6 +41,26 @@ class FireStoreClass {
             }
     }
 
+    fun createAboutGroup(
+        adminAboutGroupActivity: AdminAboutGroupActivity,
+        aboutGroup: AboutGroup
+    ) {
+        val document = mFirestoreInstance.collection(Constants.ABOUT_GROUP).document()
+        aboutGroup.id = document.id
+        val set = document.set(aboutGroup, SetOptions.merge())
+        set.addOnSuccessListener {
+            adminAboutGroupActivity.successCreateAboutGroup(aboutGroup)
+        }
+        set.addOnFailureListener { exception ->
+            adminAboutGroupActivity.cancelProgressDialog()
+            Log.e(
+                adminAboutGroupActivity.javaClass.simpleName,
+                "Error while creating about group",
+                exception
+            )
+        }
+    }
+
     fun saveDocumentID(activity: Activity, timeline: Timeline) {
         val document = mFirestoreInstance.collection(Constants.TIMELINE_DETAIL).document()
         timeline.id = document.id
@@ -66,6 +85,20 @@ class FireStoreClass {
 
             }
         }
+    }
+
+    suspend fun checkGroupAvailble(mGroupName: String, getEmailId: String?): String {
+        var groupString: String = ""
+        mFirestoreInstance.collection(Constants.GROUP)
+            .whereEqualTo("groupName", mGroupName)
+            .whereEqualTo("email", getEmailId)
+            .get()
+            .addOnSuccessListener { document ->
+                for (i in document.documents) {
+                    groupString = i.get("groupName").toString()
+                }
+            }.await()
+        return groupString
     }
 
     fun createGroup(createGroupActivity: CreateGroupActivity, createGroup: GroupNameClass) {
@@ -600,6 +633,9 @@ class FireStoreClass {
                         activity.successGroupListFromFirestore(groupList)
                     }
                     is AddTimelineActivity -> {
+                        activity.successGroupListFromFirestore(groupList)
+                    }
+                    is AdminAboutGroupActivity -> {
                         activity.successGroupListFromFirestore(groupList)
                     }
                 }
@@ -1317,7 +1353,7 @@ class FireStoreClass {
         return user.code
     }
 
-    suspend fun getAdminEnableMemberFirestore(email: String): Int {
+    fun getAdminEnableMemberFirestore(email: String): Int {
         var memberClass: MemberClass = MemberClass()
         mFirestoreInstance.collection(Constants.MEMBER)
             .whereEqualTo("memberEmail", email)
@@ -1404,6 +1440,25 @@ class FireStoreClass {
             }
     }
 
+    fun getDefaultMemberAccountFromFirestore(mainActivity: MainActivity, memberEmail: String?) {
+        mFirestoreInstance.collection(Constants.MEMBER)
+            .whereEqualTo("memberEmail", memberEmail)
+            .get()
+            .addOnSuccessListener { document ->
+                val memberList: ArrayList<MemberClass> = ArrayList()
+                for (i in document.documents) {
+                    val member = i.toObject(MemberClass::class.java)
+                    member!!.id = i.id
+                    memberList.add(member)
+                }
+                mainActivity.successMemberList(memberList)
+
+            }.addOnFailureListener { exception ->
+                Log.e("E", exception.toString())
+            }
+
+    }
+
     @RequiresApi(Build.VERSION_CODES.N)
     fun getMemberEmailFromFireStore(
         activity: Activity,
@@ -1458,13 +1513,13 @@ class FireStoreClass {
     }
 
     suspend fun getGroupDate(mAdmin: String, mGroupName: String): String {
-        var groupOrgDate : String = ""
+        var groupOrgDate: String = ""
 
         mFirestoreInstance.collection(Constants.GROUP)
             .whereEqualTo("groupName", mGroupName)
             .whereEqualTo("email", mAdmin)
             .get()
-            .addOnSuccessListener{document->
+            .addOnSuccessListener { document ->
                 for (i in document.documents) {
                     groupOrgDate = i.get("groupCreatedDate").toString()
                 }
@@ -1890,6 +1945,7 @@ class FireStoreClass {
             }.await()
         return expenseList
     }
+
 
     suspend fun getMemberAccountFromFirestore(
         mUserAdminEmail: String,
@@ -2351,6 +2407,22 @@ class FireStoreClass {
             }
     }
 
+    fun deleteAboutGroup(activity: AdminAboutGroupActivity, id: String) {
+        mFirestoreInstance.collection(Constants.ABOUT_GROUP)
+            .document(id)
+            .delete()
+            .addOnSuccessListener{
+                activity.deletionSuccess()
+            }.addOnFailureListener{exception ->
+                activity.cancelProgressDialog()
+                Log.e(
+                    activity.javaClass.simpleName,
+                    "Error while deleting about group.",
+                    exception
+                )
+            }
+    }
+
     fun deleteCurrentTimeline(activity: Activity, id: String) {
         mFirestoreInstance.collection(Constants.TIMELINE_DETAIL)
             .document(id)
@@ -2652,6 +2724,40 @@ class FireStoreClass {
             }
     }
 
+    fun getAboutDetail(activity: Activity,
+                       adminEmailId: String) {
+        mFirestoreInstance.collection(Constants.ABOUT_GROUP)
+            .whereEqualTo("adminEmail", adminEmailId)
+            .get()
+            .addOnSuccessListener { document->
+                val aboutGroupList: ArrayList<AboutGroup> = ArrayList()
+                for(i in document.documents) {
+                    val aboutGroup = i.toObject(AboutGroup::class.java)!!
+                    aboutGroup.id = i.id
+                    aboutGroupList.add(aboutGroup)
+                }
+                when(activity){
+                    is AdminAboutGroupActivity -> {
+                        activity.successLoadAboutList(aboutGroupList)
+                    }
+                }
+
+            }.addOnFailureListener { exception ->
+                when (activity) {
+                    is AdminAboutGroupActivity -> {
+                        activity.cancelProgressDialog()
+                    }
+                }
+                Log.e(
+                    activity.javaClass.simpleName,
+                    "Error while checking about detail.",
+                    exception
+                )
+
+
+            }
+    }
+
     fun getExpenseImageDetail(
         activity: Activity,
         mGroupName: String,
@@ -2689,6 +2795,8 @@ class FireStoreClass {
                 )
             }
     }
+
+
 
 
 }

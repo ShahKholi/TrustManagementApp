@@ -6,7 +6,6 @@ import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -22,11 +21,13 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.android.trustmanagementapp.R
 import com.android.trustmanagementapp.firestore.FireStoreClass
 import com.android.trustmanagementapp.model.GroupNameClass
 import com.android.trustmanagementapp.utils.*
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
 import java.util.*
 import java.io.IOException
 import kotlin.collections.ArrayList
@@ -52,7 +53,6 @@ class CreateGroupActivity : BaseActivity() {
     lateinit var mFinish: String
     lateinit var mPreviousBalance: String
     lateinit var mGroupProfileImage: String
-
 
 
     private val getPhotoActionResult: ActivityResultLauncher<Intent> =
@@ -118,16 +118,36 @@ class CreateGroupActivity : BaseActivity() {
             etPreviousBalance.setText(score.toString())
         }
         btnCreateGroup.setOnClickListener {
-            if (intent.hasExtra(Constants.FINISH)) {
-                updateUploadUserImage()
-            } else {
-                val imageStringCheck: String = mSelectedGroupImageUri.toString()
-                if (imageStringCheck.isNotEmpty() && imageStringCheck != "null") {
-                    uploadUserImage()
+            val mGroupName: String = groupName.text.toString().trim { it <= ' ' }
+            val sharedPreferences = getSharedPreferences(
+                Constants.STORE_EMAIL_ID, Context.MODE_PRIVATE
+            )
+            val getEmailId = sharedPreferences.getString(Constants.STORE_EMAIL_ID, "")
+            lifecycleScope.launch {
+                val checkBeforeGroup: String =
+                    FireStoreClass().checkGroupAvailble(mGroupName, getEmailId)
+
+                if (checkBeforeGroup.isNotEmpty() && checkBeforeGroup != "null" && !intent.hasExtra(Constants.FINISH)) {
+                    Toast.makeText(
+                        this@CreateGroupActivity,
+                        "Group name already available please use different name",
+                        Toast.LENGTH_LONG
+                    ).show()
                 } else {
-                    registerGroupNoPhoto()
+                    if (intent.hasExtra(Constants.FINISH)) {
+                        updateUploadUserImage()
+                    } else {
+                        val imageStringCheck: String = mSelectedGroupImageUri.toString()
+                        if (imageStringCheck.isNotEmpty() && imageStringCheck != "null") {
+                            uploadUserImage()
+                        } else {
+                            registerGroupNoPhoto()
+                        }
+                    }
                 }
+
             }
+
 
         }
     }
@@ -374,7 +394,6 @@ class CreateGroupActivity : BaseActivity() {
     }
 
 
-
     suspend fun groupUpdateSuccess() {
         val mGroupName: String = groupName.text.toString().trim { it <= ' ' }
         mainGroupNewName = mGroupName
@@ -388,49 +407,57 @@ class CreateGroupActivity : BaseActivity() {
                 getEmailId,
                 mainGroupOldName
             )
-        if(checkMemberGroupName.size > 0){
+        if (checkMemberGroupName.size > 0) {
             val userHashMap = HashMap<String, Any>()
-            userHashMap[Constants.GROUP_NAME] =mainGroupNewName
-            FireStoreClass().updateMemberGroup(this, getEmailId,
+            userHashMap[Constants.GROUP_NAME] = mainGroupNewName
+            FireStoreClass().updateMemberGroup(
+                this, getEmailId,
                 userHashMap,
-                mainGroupOldName)
+                mainGroupOldName
+            )
         }
 
-        val checkMemberAccountList : ArrayList<String> =
+        val checkMemberAccountList: ArrayList<String> =
             FireStoreClass().checkGroupAvailableinMemberAccountFirestore(
                 getEmailId,
                 mainGroupOldName
             )
-        if(checkMemberAccountList.size > 0){
+        if (checkMemberAccountList.size > 0) {
             val userHashMap = HashMap<String, Any>()
-            userHashMap[Constants.GROUP_NAME] =mainGroupNewName
-            FireStoreClass().updateMemberAccountGroup(this, getEmailId,
+            userHashMap[Constants.GROUP_NAME] = mainGroupNewName
+            FireStoreClass().updateMemberAccountGroup(
+                this, getEmailId,
                 userHashMap,
-                mainGroupOldName)
+                mainGroupOldName
+            )
         }
-        val expenseAccountList : ArrayList<String> =
+        val expenseAccountList: ArrayList<String> =
             FireStoreClass().checkExpenseGroupAvailableInFirestore(
                 getEmailId,
                 mainGroupOldName
             )
-        if(expenseAccountList.size > 0){
+        if (expenseAccountList.size > 0) {
             val userHashMap = HashMap<String, Any>()
-            userHashMap[Constants.GROUP_NAME] =mainGroupNewName
-            FireStoreClass().updateExpenseAccountGroup(this, getEmailId,
+            userHashMap[Constants.GROUP_NAME] = mainGroupNewName
+            FireStoreClass().updateExpenseAccountGroup(
+                this, getEmailId,
                 userHashMap,
-                mainGroupOldName)
+                mainGroupOldName
+            )
         }
-        val masterAccountList :  ArrayList<String> =
-        FireStoreClass().checkMasterGroupAvailableInFirestore(
-            getEmailId,
-            mainGroupOldName
-        )
-        if(masterAccountList.size > 0){
+        val masterAccountList: ArrayList<String> =
+            FireStoreClass().checkMasterGroupAvailableInFirestore(
+                getEmailId,
+                mainGroupOldName
+            )
+        if (masterAccountList.size > 0) {
             val userHashMap = HashMap<String, Any>()
-            userHashMap[Constants.GROUP_NAME] =mainGroupNewName
-            FireStoreClass().updateMasterAccountGroup(this, getEmailId,
+            userHashMap[Constants.GROUP_NAME] = mainGroupNewName
+            FireStoreClass().updateMasterAccountGroup(
+                this, getEmailId,
                 userHashMap,
-                mainGroupOldName)
+                mainGroupOldName
+            )
         }
 
         cancelProgressDialog()

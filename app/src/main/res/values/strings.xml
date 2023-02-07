@@ -21,6 +21,8 @@
     <string name="please_select_member_dropdown">Please select Member dropdown</string>
     <string name="please_select_date_dropdown">Please select Date dropdown</string>
     <string name="please_enter_amount">Please Amount Detail</string>
+    <string name="please_enter_address">Please enter Address</string>
+    <string name="please_enter_about">About Description Field should not empty</string>
     <string name="err_msg_enter_member_name">Please enter member name.</string>
     <string name="please_enter_detail">Please enter detail</string>
 
@@ -121,6 +123,9 @@
     <string name="your_admin">YOUR ADMIN</string>
     <string name="till_now_you_paid">TILL NOW YOU PAID</string>
     <string name="your_group">YOUR GROUP NAME</string>
+    <string name="add_about_your_group">ADD ABOUT YOUR GROUP</string>
+    <string name="view_your_profile">VIEW YOUR PROFILE</string>
+    <string name="enter_group_address">Enter Group Address</string>
 
 
 </resources>

@@ -92,7 +92,7 @@
                     android:id="@+id/et_group_previous_balance"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textCapCharacters"
+                    android:inputType="number"
                     android:padding="16dp"
                     android:textColor="@color/white"
                     android:textSize="16sp"
