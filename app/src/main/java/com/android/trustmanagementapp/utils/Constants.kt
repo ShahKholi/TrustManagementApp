@@ -19,6 +19,9 @@ object Constants {
     const val TIMELINE_LIKED_DETAIL = "timelineLikedDetail"
     const val LIKE_ID = "likedEmailList"
 
+    const val ABOUT_GROUP_NAME = "aboutGroupName"
+    const val ABOUT_GROUP_ADMIN_EMAIL = "aboutGroupAdminEmail"
+
     //pref detail
     const val STORE_EMAIL_ID: String = "store_email_id"
     const val STORE_ASSIGNED_ADMIN_EMAIL_ID: String = "store_assigned_admin_email_id"

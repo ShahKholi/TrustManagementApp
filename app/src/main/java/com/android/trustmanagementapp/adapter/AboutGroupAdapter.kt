@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
@@ -17,8 +18,10 @@ import com.android.trustmanagementapp.utils.MSPTextViewBold
 import android.view.MotionEvent
 import android.view.View.OnTouchListener
 import android.widget.ImageView
+import com.android.trustmanagementapp.activities.AboutGroupFullViewActivity
 import com.android.trustmanagementapp.activities.AdminAboutGroupActivity
 import com.android.trustmanagementapp.firestore.FireStoreClass
+import com.android.trustmanagementapp.utils.Constants
 
 
 class AboutGroupAdapter(
@@ -45,6 +48,15 @@ class AboutGroupAdapter(
             holder.itemView.findViewById<MSPTextViewBold>(R.id.tv_about_detail).text =
                 model.fullDetail
 
+            holder.itemView.findViewById<MSPTextViewBold>(R.id.tv_group_name_about)
+                .setOnClickListener {
+                    val intent = Intent(activity, AboutGroupFullViewActivity::class.java)
+                    intent.putExtra(Constants.ABOUT_GROUP_NAME,model.groupName)
+                    intent.putExtra(Constants.ABOUT_GROUP_ADMIN_EMAIL, model.adminEmail)
+                    activity.startActivity(intent)
+                }
+
+
             holder.itemView.findViewById<ImageView>(R.id.iv_delete_about_group).setOnClickListener {
                 val builder = AlertDialog.Builder(context, R.style.AlertDialogTheme)
                 builder.setIcon(android.R.drawable.ic_dialog_alert)
@@ -53,13 +65,14 @@ class AboutGroupAdapter(
                         .inflate(R.layout.custom_dilog_box_delete, null)
                 builder.setView(customerLayout)
                 builder.setTitle("DELETE")
-                when(activity){
+                when (activity) {
                     is AdminAboutGroupActivity -> {
-
                         builder.setPositiveButton("YES") { _, _ ->
                             activity.showProgressDialog()
-                            FireStoreClass().deleteAboutGroup(activity,
-                            model.id)
+                            FireStoreClass().deleteAboutGroup(
+                                activity,
+                                model.id
+                            )
                         }
                         builder.setNegativeButton("NO") { dialogInterface, _ ->
                             dialogInterface.dismiss()

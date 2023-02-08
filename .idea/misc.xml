@@ -11,7 +11,7 @@
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/drawable-v24/rv_item_image_background.xml" value="0.19583333333333333" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/drawable/custom_edit_text.xml" value="0.19583333333333333" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/drawable/ic_baseline_edit_24.xml" value="0.19583333333333333" />
-        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_about_group_full_view.xml" value="0.1796875" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_about_group_full_view.xml" value="0.22" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_account_month_wise_detailed.xml" value="0.22" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_add_account.xml" value="0.3333333333333333" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/activity_add_expense.xml" value="0.1796875" />
@@ -47,6 +47,7 @@
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/custom_dilog_box_delete.xml" value="0.1796875" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/custom_dilog_box_edit_text.xml" value="0.3333333333333333" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/custom_dilog_box_group_delete.xml" value="0.3333333333333333" />
+        <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/custom_dilog_box_no_data_found.xml" value="0.1" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/dialog_progress.xml" value="0.1796875" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/dropdown_list_layout.xml" value="0.1796875" />
         <entry key="..\:/Users/r.hameed/AndroidStudioProjects/TrustManagementApp/app/src/main/res/layout/fragment_blank.xml" value="0.1796875" />

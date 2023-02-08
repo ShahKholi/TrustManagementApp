@@ -88,34 +88,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:layout_marginBottom="4dp"
                     android:scaleType="fitXY"
                     android:src="@drawable/ic_user_placeholder" />
-
-                <!--<LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="6dp"
-                    android:layout_gravity="center"
-                    android:gravity="center">
-
-                    <ImageView
-                        android:id="@+id/iv_like_image_view"
-                        android:layout_width="45dp"
-                        android:layout_height="45dp"
-                        android:layout_marginEnd="4dp"
-                        android:src="@drawable/heart_icon_2"/>
-
-                    <com.android.trustmanagementapp.utils.MSPTextViewBold
-                        android:id="@+id/tv_like_count_view"
-                        android:layout_width="wrap_content"
-                        android:layout_height="25dp"
-                        tools:text="5"
-                        android:gravity="center"
-                        android:textColor="@color/white"/>
-                </LinearLayout>-->
-
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>

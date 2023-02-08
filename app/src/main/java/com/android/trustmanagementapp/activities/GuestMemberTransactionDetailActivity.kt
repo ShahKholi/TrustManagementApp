@@ -1,11 +1,14 @@
 package com.android.trustmanagementapp.activities
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.SyncStateContract
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.LinearLayout
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
@@ -38,6 +41,7 @@ class GuestMemberTransactionDetailActivity : BaseActivity() {
     private lateinit var recyclerView: RecyclerView
     lateinit var mTotalAmount: MSPTextViewBold
     lateinit var llBalanceScreen: LinearLayoutCompat
+    lateinit var llHeader : LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,6 +86,7 @@ class GuestMemberTransactionDetailActivity : BaseActivity() {
         recyclerView = findViewById(R.id.rcv_view_account_detail_guest)
         mTotalAmount = findViewById(R.id.tv_total_amount_detail)
         llBalanceScreen = findViewById(R.id.ll_total_balance_detail)
+        llHeader = findViewById(R.id.ll_header)
 
         getCurrentMemberTransactionList()
 
@@ -124,6 +129,22 @@ class GuestMemberTransactionDetailActivity : BaseActivity() {
             mTotalAmount.text = amountList.sum().toString()
         }else{
             llBalanceScreen.visibility = View.GONE
+            llHeader.visibility = View.GONE
+
+            val builder = AlertDialog.Builder(this, R.style.AlertDialogTheme)
+            builder.setIcon(android.R.drawable.ic_dialog_info)
+            val customerLayout: View =
+                LayoutInflater.from(this)
+                    .inflate(R.layout.custom_dilog_box_no_data_found, null)
+            builder.setView(customerLayout)
+            builder.setTitle("INFO")
+            builder.setPositiveButton("OK"){dialogInterface, _ ->
+                dialogInterface.dismiss()
+            }
+            val alertDialog: AlertDialog? = builder.create()
+            // Set other dialog properties
+            alertDialog!!.setCancelable(true)
+            alertDialog.show()
         }
     }
 

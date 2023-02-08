@@ -126,6 +126,7 @@
     <string name="add_about_your_group">ADD ABOUT YOUR GROUP</string>
     <string name="view_your_profile">VIEW YOUR PROFILE</string>
     <string name="enter_group_address">Enter Group Address</string>
+    <string name="there_is_no_data_found">There is no data found</string>
 
 
 </resources>

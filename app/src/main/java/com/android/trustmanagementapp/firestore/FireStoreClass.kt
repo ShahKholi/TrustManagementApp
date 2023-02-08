@@ -602,6 +602,45 @@ class FireStoreClass {
 
     }
 
+    fun getGroupDetail(
+        activity: Activity,
+        storeAdminEmail: String,
+        storeGroupName: String
+    ) {
+        val groupList: ArrayList<GroupNameClass> = ArrayList()
+        mFirestoreInstance.collection(Constants.GROUP)
+            .whereEqualTo("email", storeAdminEmail)
+            .whereEqualTo("groupName", storeGroupName)
+            .get()
+            .addOnSuccessListener{document->
+                for (i in document.documents){
+                    val group = i.toObject(GroupNameClass::class.java)
+                    group!!.id = i.id
+                    groupList.add(group)
+                }
+                when(activity){
+                    is AboutGroupFullViewActivity -> {
+                        activity.successGroupDetail(groupList)
+                    }
+
+                }
+
+            }.addOnFailureListener { exception->
+                when(activity){
+                    is AboutGroupFullViewActivity -> {
+                        activity.cancelProgressDialog()
+                    }
+
+                }
+                Log.e(
+                    activity.javaClass.simpleName,
+                    "Error while checking group.",
+                    exception
+                )
+            }
+    }
+
+
     fun getGroupList(activity: Activity, adminEmail: String) {
         mFirestoreInstance.collection(Constants.GROUP)
             .whereEqualTo("email", adminEmail)
@@ -643,13 +682,13 @@ class FireStoreClass {
                 when (activity) {
                     is AdminScreenActivity -> {
                         activity.cancelProgressDialog()
-                        Log.e(
-                            activity.javaClass.simpleName,
-                            "Error while checking group.",
-                            exception
-                        )
                     }
                 }
+                Log.e(
+                    activity.javaClass.simpleName,
+                    "Error while checking group.",
+                    exception
+                )
             }
 
     }
@@ -2412,7 +2451,7 @@ class FireStoreClass {
             .whereEqualTo("groupName", groupName)
             .whereEqualTo("adminEmail", email)
             .get()
-            .addOnSuccessListener {document->
+            .addOnSuccessListener { document ->
                 for (i in document.documents) {
                     mFirestoreInstance.collection(Constants.ABOUT_GROUP)
                         .document(i.id)
@@ -2739,6 +2778,44 @@ class FireStoreClass {
             }
     }
 
+    fun getFullAboutDetail(
+        activity: Activity,
+        adminEmailId: String,
+        groupName: String
+    ) {
+        mFirestoreInstance.collection(Constants.ABOUT_GROUP)
+            .whereEqualTo("adminEmail", adminEmailId)
+            .whereEqualTo("groupName", groupName)
+            .get()
+            .addOnSuccessListener { document ->
+                val aboutGroupList: ArrayList<AboutGroup> = ArrayList()
+                for (i in document.documents) {
+                    val aboutGroup = i.toObject(AboutGroup::class.java)!!
+                    aboutGroup.id = i.id
+                    aboutGroupList.add(aboutGroup)
+                }
+                when (activity) {
+                    is AboutGroupFullViewActivity -> {
+                        activity.successLoadAboutList(aboutGroupList)
+                    }
+                }
+
+            }.addOnFailureListener { exception ->
+                when (activity) {
+                    is AboutGroupFullViewActivity -> {
+                        activity.cancelProgressDialog()
+                    }
+                }
+                Log.e(
+                    activity.javaClass.simpleName,
+                    "Error while checking about detail.",
+                    exception
+                )
+
+
+            }
+    }
+
     fun getAboutDetail(
         activity: Activity,
         adminEmailId: String
@@ -2779,13 +2856,13 @@ class FireStoreClass {
         adminEmailId: String,
         groupName: String
     ): String {
-            var groupFound : String = ""
+        var groupFound: String = ""
         mFirestoreInstance.collection(Constants.ABOUT_GROUP)
             .whereEqualTo("adminEmail", adminEmailId)
-            .whereEqualTo("groupName",groupName)
+            .whereEqualTo("groupName", groupName)
             .get()
-            .addOnSuccessListener { document->
-                for(i in document.documents){
+            .addOnSuccessListener { document ->
+                for (i in document.documents) {
                     groupFound = i.get("groupName").toString()
                 }
 
