@@ -82,7 +82,7 @@
                         android:orientation="vertical">
 
                         <com.android.trustmanagementapp.utils.MSPTextViewBold
-                            android:id="@+id/tv_fragment_transaction"
+                            android:id="@+id/tv_fragment_about_group"
                             android:layout_width="180dp"
                             android:layout_height="200dp"
                             android:gravity="center"

@@ -8,16 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.android.trustmanagementapp.R
-import com.android.trustmanagementapp.activities.GuestInformationActivity
-import com.android.trustmanagementapp.activities.GuestProfileActivity
-import com.android.trustmanagementapp.activities.GuestViewGroupExpenseActivity
-import com.android.trustmanagementapp.activities.LoginActivity
 import com.android.trustmanagementapp.utils.Constants
 import com.android.trustmanagementapp.utils.MSPButton
 import com.android.trustmanagementapp.utils.MSPTextViewBold
 import android.content.SharedPreferences
-
-
+import com.android.trustmanagementapp.activities.*
 
 
 class SettingFragment : BlankFragment(), View.OnClickListener {
@@ -26,6 +21,7 @@ class SettingFragment : BlankFragment(), View.OnClickListener {
     private lateinit var mMemberEmail: String
 
     private lateinit var mYourProfileInfo: MSPTextViewBold
+    private lateinit var mAboutGroup: MSPTextViewBold
     private lateinit var mLogout: MSPButton
 
     override fun onCreateView(
@@ -64,6 +60,9 @@ class SettingFragment : BlankFragment(), View.OnClickListener {
         mLogout = view.findViewById(R.id.logout_guest)
         mLogout.setOnClickListener(this)
 
+        mAboutGroup = view.findViewById(R.id.tv_fragment_about_group)
+        mAboutGroup.setOnClickListener(this)
+
         return view
     }
 
@@ -75,7 +74,19 @@ class SettingFragment : BlankFragment(), View.OnClickListener {
             R.id.logout_guest-> {
                 goToLoginScreen()
             }
+            R.id.tv_fragment_about_group-> {
+                goToAboutGroupScreen()
+            }
         }
+    }
+
+    private fun goToAboutGroupScreen() {
+        val intent =
+            Intent(this.requireContext(), AboutGroupFullViewActivity::class.java)
+        intent.putExtra(Constants.ABOUT_GROUP_NAME, mGroupName)
+        intent.putExtra(Constants.ABOUT_GROUP_ADMIN_EMAIL, mAdmin)
+        startActivity(intent)
+
     }
 
     private fun goToLoginScreen() {
